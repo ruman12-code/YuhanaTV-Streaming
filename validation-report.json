@@ -1,14 +1,14 @@
 {
-  "generated_at": "2026-09-13T10:52:09+00:00",
-  "build_kind": "pre-validation-seed",
-  "warning": "No stream in this build has been reachability-tested. Channel status is UNVERIFIED and playlists must not be treated as known-working.",
+  "generated_at": "2026-09-13T10:59:53+00:00",
+  "build_kind": "validated",
+  "warning": "",
   "live_channels": {
     "total": 171,
-    "active": 0,
-    "degraded": 0,
+    "active": 118,
+    "degraded": 53,
     "offline": 0,
     "invalid": 0,
-    "unverified": 171,
+    "unverified": 0,
     "by_category": {
       "entertainment": 52,
       "bangladesh": 31,
@@ -29,11 +29,11 @@
   },
   "resolution": {
     "measured_4k": 0,
-    "measured_1080p": 0,
-    "measured_720p": 0,
-    "measured_576p": 0,
-    "measured_480p": 0,
-    "unmeasured": 171,
+    "measured_1080p": 54,
+    "measured_720p": 45,
+    "measured_576p": 4,
+    "measured_480p": 5,
+    "unmeasured": 61,
     "note": "Counts come from #EXT-X-STREAM-INF RESOLUTION only. Source-claimed labels such as '(1080p)' in a channel name are never counted."
   },
   "movies": {
@@ -45,18 +45,53 @@
     "published_as_vod": 0
   },
   "run_health": {
-    "ok": null,
-    "reason": "no validation run recorded yet"
+    "ok": true,
+    "reason": "no baseline (only 0 previously-ACTIVE channels in this run, need 10); results accepted as first measurement",
+    "checked": 171,
+    "newly_failing": 35,
+    "baseline_active": 0,
+    "failure_fraction": 0.2047,
+    "regression_fraction": 0.0
+  },
+  "last_probe": {
+    "$comment": "What the most recent run actually measured, before the 3-strike demotion rule is applied. `live_channels` above reports stored status, which lags deliberately.",
+    "counts": {
+      "ACTIVE": 118,
+      "OFFLINE": 31,
+      "DEGRADED": 18,
+      "INVALID": 4
+    },
+    "failing_stage": {
+      "OFFLINE:http": 30,
+      "DEGRADED:segment": 11,
+      "DEGRADED:variant": 7,
+      "INVALID:manifest": 4,
+      "OFFLINE:dns": 1
+    }
   },
   "reliability": {
-    "channels_with_history": 0,
-    "mean_reliability": null,
-    "fully_reliable": 0,
-    "never_once_up": 0,
+    "channels_with_history": 171,
+    "mean_reliability": 0.7953,
+    "fully_reliable": 136,
+    "never_once_up": 35,
     "flapping": [],
     "note": "reliability is checks_ok/checks_total across validation runs; a channel with checks_total == 0 has never been measured."
   },
-  "history": [],
+  "history": [
+    {
+      "at": "2026-09-13T10:56:49+00:00",
+      "counts": {
+        "ACTIVE": 118,
+        "DEGRADED": 18,
+        "OFFLINE": 31,
+        "INVALID": 4
+      },
+      "health_ok": true,
+      "health_reason": "no baseline (only 0 previously-ACTIVE channels in this run, need 10); results accepted as first measurement",
+      "failure_fraction": 0.2047,
+      "regression_fraction": 0.0
+    }
+  ],
   "epg": {
     "generated": false,
     "channels_covered": 0,
@@ -77,10 +112,225 @@
         "id": "ch-4e93d222ab",
         "name": "MTV HD"
       }
+    ],
+    "status_degraded": [
+      {
+        "id": "ch-d22f3e5657",
+        "name": "ATN News"
+      },
+      {
+        "id": "ch-20946f1d7d",
+        "name": "Bangla TV"
+      },
+      {
+        "id": "ch-f3e6b8415d",
+        "name": "Boishakhi"
+      },
+      {
+        "id": "ch-5bf6b8149f",
+        "name": "BTV News"
+      },
+      {
+        "id": "ch-f5023ed24e",
+        "name": "Channel i"
+      },
+      {
+        "id": "ch-a0f0b63e98",
+        "name": "Desh TV"
+      },
+      {
+        "id": "ch-787284cc9b",
+        "name": "Ekhon"
+      },
+      {
+        "id": "ch-d429a5c212",
+        "name": "Global TV"
+      },
+      {
+        "id": "ch-00d7c1cd76",
+        "name": "Green TV"
+      },
+      {
+        "id": "ch-bcd379bb74",
+        "name": "Jamuna"
+      },
+      {
+        "id": "ch-a718b81488",
+        "name": "My TV"
+      },
+      {
+        "id": "ch-8090d498ec",
+        "name": "News 21 Bangla TV"
+      },
+      {
+        "id": "ch-ebe7086efe",
+        "name": "News 24"
+      },
+      {
+        "id": "ch-f110db1460",
+        "name": "R TV"
+      },
+      {
+        "id": "ch-8c50a7c3cf",
+        "name": "SRK"
+      },
+      {
+        "id": "ch-6066453b6f",
+        "name": "Love Natural"
+      },
+      {
+        "id": "ch-0439e2385e",
+        "name": "National Geographic HD"
+      },
+      {
+        "id": "ch-4c11df595a",
+        "name": "Travel XP HD"
+      },
+      {
+        "id": "ch-b5cca1e8a4",
+        "name": "Ananda TV"
+      },
+      {
+        "id": "ch-cc96aac473",
+        "name": "Calcutta News"
+      },
+      {
+        "id": "ch-f67a0e7931",
+        "name": "CBS"
+      },
+      {
+        "id": "ch-24219d2719",
+        "name": "Colors Bangla HD"
+      },
+      {
+        "id": "ch-67470ff597",
+        "name": "Colors Cineplex HD"
+      },
+      {
+        "id": "ch-73c50f78c8",
+        "name": "Colors HD"
+      },
+      {
+        "id": "ch-87229d40f8",
+        "name": "Colors Infinity HD"
+      },
+      {
+        "id": "ch-6961b2f6bd",
+        "name": "Comedy Central"
+      },
+      {
+        "id": "ch-5944383b7d",
+        "name": "Jalsha Movies HD"
+      },
+      {
+        "id": "ch-aa5eff6477",
+        "name": "R Plus News"
+      },
+      {
+        "id": "ch-2ad197ba32",
+        "name": "Republic Bangla"
+      },
+      {
+        "id": "ch-129414515c",
+        "name": "Sananda"
+      },
+      {
+        "id": "ch-7ccfcd9b22",
+        "name": "Sony Max"
+      },
+      {
+        "id": "ch-91b097739d",
+        "name": "Sony Max 1"
+      },
+      {
+        "id": "ch-fb0a166a34",
+        "name": "Star Gold 2 HD"
+      },
+      {
+        "id": "ch-fa656d45fc",
+        "name": "Star Gold HD"
+      },
+      {
+        "id": "ch-e4a67cae8c",
+        "name": "Star Jalsha HD"
+      },
+      {
+        "id": "ch-676957d364",
+        "name": "Sun Bangla"
+      },
+      {
+        "id": "ch-c37b64312b",
+        "name": "World Channel"
+      },
+      {
+        "id": "ch-f69b4bf4fa",
+        "name": "Zee Bangla HD"
+      },
+      {
+        "id": "ch-b50769e381",
+        "name": "Disney Channel HD"
+      },
+      {
+        "id": "ch-c8ec406b1e",
+        "name": "Disney Junior"
+      },
+      {
+        "id": "ch-89824fa4e9",
+        "name": "DreamWorks Channel Asia"
+      },
+      {
+        "id": "ch-35f2684970",
+        "name": "ETV Bal Bharat"
+      },
+      {
+        "id": "ch-71660af211",
+        "name": "Fashion TV"
+      },
+      {
+        "id": "ch-3b587c8865",
+        "name": "FilmBox"
+      },
+      {
+        "id": "ch-5117886f2d",
+        "name": "Star Movies HD"
+      },
+      {
+        "id": "ch-26cafa75f9",
+        "name": "Star Movies Select HD"
+      },
+      {
+        "id": "ch-96f3c1ce82",
+        "name": "Enlace"
+      },
+      {
+        "id": "ch-6e0f867635",
+        "name": "Music India"
+      },
+      {
+        "id": "ch-a6517d6adb",
+        "name": "Sangeet Bhojpuri"
+      },
+      {
+        "id": "ch-b55bcca7df",
+        "name": "Islamic TV"
+      },
+      {
+        "id": "ch-f47172f491",
+        "name": "Makkah Live"
+      },
+      {
+        "id": "ch-4095e77f9a",
+        "name": "Mundial"
+      },
+      {
+        "id": "ch-650877c69d",
+        "name": "Star Sports 2"
+      }
     ]
   },
   "withheld_counts": {
-    "requires_custom_http_headers": 3
+    "requires_custom_http_headers": 3,
+    "status_degraded": 53
   },
   "broken_urls": [],
   "duplicates": [
@@ -122,45 +372,33 @@
   },
   "playlists": {
     "files": {
-      "live/bangladesh.m3u": 7310,
-      "live/documentary.m3u": 4695,
-      "live/entertainment/hindi.m3u": 4048,
-      "live/entertainment/indian-bangla.m3u": 3797,
-      "live/entertainment/general.m3u": 2610,
-      "live/entertainment/series.m3u": 1602,
-      "live/entertainment/other.m3u": 752,
-      "live/entertainment.m3u": 1166,
-      "live/kids.m3u": 2972,
-      "live/lifestyle.m3u": 2853,
-      "live/movies.m3u": 1732,
-      "live/music.m3u": 3362,
-      "live/news.m3u": 1924,
-      "live/religious.m3u": 2119,
-      "live/sports.m3u": 2034,
-      "live/international.m3u": 1821,
-      "live/live-tv.m3u": 2002,
-      "master.m3u": 765
+      "live/bangladesh.m3u": 3592,
+      "live/documentary.m3u": 4290,
+      "live/entertainment.m3u": 7363,
+      "live/kids.m3u": 1974,
+      "live/lifestyle.m3u": 2711,
+      "live/movies.m3u": 970,
+      "live/music.m3u": 2913,
+      "live/news.m3u": 1872,
+      "live/religious.m3u": 1424,
+      "live/sports.m3u": 1701,
+      "live/international.m3u": 1679,
+      "live/live-tv.m3u": 1860,
+      "master.m3u": 661
     },
-    "total_bytes": 47564,
+    "total_bytes": 33010,
     "structure_ok": true,
     "structure_errors": 0,
-    "structure_warnings": 2,
+    "structure_warnings": 1,
     "circular_references": [],
     "unreachable": [],
     "issues": [
       {
         "severity": "warning",
-        "file": "live/kids.m3u",
-        "line": 11,
-        "code": "DUP_TITLE",
-        "message": "title 'Disney Junior' already used on line 9"
-      },
-      {
-        "severity": "warning",
         "file": "live/music.m3u",
-        "line": 33,
+        "line": 26,
         "code": "DUP_TITLE",
-        "message": "title 'Zoom' already used on line 31"
+        "message": "title 'Zoom' already used on line 24"
       }
     ]
   }
