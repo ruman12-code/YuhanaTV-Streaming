@@ -53,27 +53,31 @@ _YEAR_RE = re.compile(r"(1[89]\d{2}|20\d{2})")
 class RightsVerdict:
     status: str          # CLEARED | UNVERIFIED
     reason: str
+    rule: str = ""       # licence | rights_text | collection | none
 
 
 def classify_rights(meta: dict) -> RightsVerdict:
     licence = str(meta.get("licenseurl") or "")
     if _PD_LICENCE.search(licence):
-        return RightsVerdict("CLEARED", f"declared licence {licence}")
+        return RightsVerdict("CLEARED", f"declared licence {licence}", "licence")
 
     rights_text = " ".join(
         str(meta.get(k) or "") for k in ("rights", "usage", "possible-copyright-status"))
     if _PD_RIGHTS_TEXT.search(rights_text):
-        return RightsVerdict("CLEARED", f"rights metadata states: {rights_text[:80]}")
+        return RightsVerdict("CLEARED", f"rights metadata states: {rights_text[:80]}",
+                             "rights_text")
 
     collections = meta.get("collection") or []
     if isinstance(collections, str):
         collections = [collections]
     hit = next((c for c in collections if c in PD_COLLECTIONS), None)
     if hit:
-        return RightsVerdict("CLEARED", f"member of curated public-domain collection '{hit}'")
+        return RightsVerdict("CLEARED",
+                             f"member of curated public-domain collection '{hit}'",
+                             "collection")
 
     return RightsVerdict("UNVERIFIED",
-                         "no licence or public-domain statement in item metadata")
+                         "no licence or public-domain statement in item metadata", "none")
 
 
 def _pick_video_file(files: list[dict]) -> dict | None:
@@ -197,7 +201,7 @@ class ArchiveOrgAdapter:
             playback_status="UNVERIFIED",
             playback_url=playback_url,
             rights_status=rights.status,
-            notes=f"rights: {rights.reason}; file: {video.get('format')} "
+            notes=f"rights[{rights.rule}]: {rights.reason}; file: {video.get('format')} "
                   f"{int(video.get('size') or 0) // (1024*1024)} MB",
         )
         return movie, ""

@@ -99,6 +99,8 @@ def main() -> int:
                 movie.genre = movie.genre or [query.get("genre", "")] if query.get("genre") else movie.genre
                 collected[movie.id] = movie
                 stats[movie.rights_status] += 1
+                rule = movie.notes.split("]")[0].replace("rights[", "") if "rights[" in movie.notes else "?"
+                stats[f"  cleared by: {rule}"] += 1
                 time.sleep(0.2)   # be a polite guest on a free archive
 
     print()
@@ -112,6 +114,8 @@ def main() -> int:
 
     cleared = sum(1 for m in collected.values() if m.rights_status == "CLEARED")
     print(f"  rights CLEARED: {cleared} / {len(collected)}")
+    print("  (a per-item licence is stronger evidence than collection membership; "
+          "both are recorded in each title's notes)")
 
     if args.dry_run:
         print("dry run: nothing written")
