@@ -44,7 +44,7 @@ Mechanically, each step is one `#EXTINF` whose `type` decides what the app does:
 Depth is 2–3 hops to any channel. `#EXTSIZE`/`#EXTBG` make the category rows read
 as coloured cards rather than a text list.
 
-## Movies → genre → movie → playback (Phase 3, not yet built)
+## Movies → genre → movie → playback
 
 ```
 master.m3u
@@ -64,6 +64,18 @@ A film only appears here when `playback_status == PLAYABLE` **and**
 `rights_status == CLEARED`. Everything else stays in the database and, if wanted,
 surfaces in the optional web catalogue (Phase 10) as a "where to watch" entry —
 never as a tile that looks playable and is not.
+
+`PLAYABLE` is not a label the catalogue assigns itself. `scripts/pipeline.py
+check-vod` fetches the first bytes of every rights-cleared playback URL and
+requires: a real video container or content type, a size plausible for a feature,
+and `Range` support. A file served without `Range` still plays but cannot be
+seeked, so it is recorded `DEGRADED` rather than passed off as fully playable.
+An HTML login wall or a 404 is rejected outright.
+
+Collections behave as views rather than copies. **Top Rated** appears only when
+ratings exist above the threshold — an unrated catalogue gets no Top Rated row
+rather than a fabricated one — and **Trending** is defined as the best-rated of
+the recently added, because there is no usage data to derive real trending from.
 
 ## Why the tree is shaped this way
 

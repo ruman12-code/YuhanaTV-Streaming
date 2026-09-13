@@ -96,7 +96,9 @@ def main() -> int:
                     movie.last_verified = prev.last_verified
                     if prev.rating is not None:
                         movie.rating = prev.rating
-                movie.genre = movie.genre or [query.get("genre", "")] if query.get("genre") else movie.genre
+                hint = query.get("genre")
+                if hint and hint not in movie.genre:
+                    movie.genre.append(hint)
                 collected[movie.id] = movie
                 stats[movie.rights_status] += 1
                 rule = movie.notes.split("]")[0].replace("rights[", "") if "rights[" in movie.notes else "?"

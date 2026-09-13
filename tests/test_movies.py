@@ -245,3 +245,26 @@ class TestVodValidator(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestCollectionQuality(unittest.TestCase):
+    """Collections must not duplicate each other or invent signal."""
+
+    def setUp(self):
+        self.gen = MovieGenerator(config.load(use_cache=False), Path(tempfile.mkdtemp()))
+
+    def test_unrated_catalogue_gets_no_trending_row(self):
+        films = [movie(id=f"m{i}", title=f"F{i}", rating=None, last_verified=f"2026-01-{i+1:02d}")
+                 for i in range(10)]
+        buckets = self.gen._buckets(films)
+        self.assertIn("recently-added", buckets)
+        self.assertNotIn("trending", buckets,
+                         "Trending would be byte-identical to Recently Added here")
+
+    def test_rated_catalogue_gets_a_distinct_trending_row(self):
+        films = [movie(id=f"m{i}", title=f"F{i}", rating=float(i),
+                       last_verified=f"2026-01-{i+1:02d}") for i in range(10)]
+        buckets = self.gen._buckets(films)
+        self.assertIn("trending", buckets)
+        self.assertNotEqual([m.id for m in buckets["trending"]],
+                            [m.id for m in buckets["recently-added"]])

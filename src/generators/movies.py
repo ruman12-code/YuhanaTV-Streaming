@@ -163,12 +163,14 @@ class MovieGenerator:
         if recent:
             buckets["recently-added"] = recent[: self.collection_size]
 
-        # "Trending" without usage data would be a fabrication. It is the
-        # best-rated of the most recently added, and is labelled as such.
-        if recent:
+        # "Trending" without usage data would be a fabrication, so it is defined
+        # as the best-rated of the recently added. With nothing rated, that
+        # ordering collapses into Recently Added itself — and shipping the same
+        # 24 films twice under two names is worse than not shipping the row.
+        if recent and rated:
             trending = sorted(recent[: self.collection_size * 2],
                               key=lambda m: -(m.rating or 0))[: self.collection_size]
-            if trending:
+            if trending and [m.id for m in trending] != [m.id for m in recent[:len(trending)]]:
                 buckets["trending"] = trending
 
         # Drop buckets too small to deserve their own screen.
