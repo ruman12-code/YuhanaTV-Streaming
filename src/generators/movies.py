@@ -87,6 +87,10 @@ class MovieGenerator:
         self.collection_size = int(cfg.get_path("ssiptv.collection_size", 24))
         self.min_rating_top = float(cfg.get_path("movies.min_rating_top_rated", 7.0))
         self.require_rights = bool(cfg.get_path("policy.vod_requires_playable_and_rights", True))
+        # A film RATED below this is withheld. An UNRATED film is kept: absence of
+        # a rating is absence of evidence, not evidence of a bad film, and most
+        # public-domain titles are simply not rated.
+        self.min_rating_publish = float(cfg.get_path("movies.min_rating_publish", 0) or 0)
 
     # --- gating --------------------------------------------------------------
 
@@ -105,6 +109,10 @@ class MovieGenerator:
                 hold(f"playback_{m.playback_status.lower()}", m)
             elif self.require_rights and m.rights_status != "CLEARED":
                 hold(f"rights_{m.rights_status.lower()}", m)
+            elif (self.min_rating_publish
+                  and m.rating is not None
+                  and m.rating < self.min_rating_publish):
+                hold(f"rating_below_{self.min_rating_publish:g}", m)
             else:
                 published.append(m)
         return published, withheld

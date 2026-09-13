@@ -159,6 +159,7 @@ jobs:
           cp -r playlists _site/playlists
           [ -d epg ] && cp -r epg _site/epg || true
           cp validation-report.json _site/ 2>/dev/null || true
+          cp data/search-index.json _site/ 2>/dev/null || true
           # Stable short aliases (spec section 19): /iptv/master.m3u etc.
           mkdir -p _site/iptv
           cp playlists/master.m3u            _site/iptv/master.m3u

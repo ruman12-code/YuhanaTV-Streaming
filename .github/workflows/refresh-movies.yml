@@ -44,6 +44,10 @@ jobs:
             --limit "${{ github.event.inputs.limit || 0 }}" \
             ${{ github.event.inputs.dry_run == 'true' && '--dry-run' || '' }}
 
+      - name: Attach IMDb ratings and build the search index
+        if: github.event.inputs.dry_run != 'true'
+        run: python3 scripts/enrich_movies.py
+
       - name: Verify playback URLs
         if: github.event.inputs.dry_run != 'true'
         run: python3 scripts/pipeline.py check-vod
