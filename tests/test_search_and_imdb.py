@@ -163,3 +163,38 @@ class TestSearchIndex(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestReportAgreesWithTheGate(unittest.TestCase):
+    """The report must never claim more is published than the gate allows."""
+
+    def test_published_count_comes_from_the_gate_not_the_model_property(self):
+        from src.report import build_report
+        films = [movie(id="m1", rating=8.0), movie(id="m2", rating=3.0)]
+        # Both are playable and rights-cleared, so the model property says 2.
+        self.assertEqual(sum(1 for m in films if m.publishable_as_vod), 2)
+        report = build_report(
+            channels=[], movies=films, playlist_result={}, build_files={},
+            withheld={}, ingest_stats=None, epg=None, seed_build=False,
+            movies_published=1, movies_withheld={"rating_below_6": 1},
+        )
+        self.assertEqual(report["movies"]["published_as_vod"], 1)
+        self.assertEqual(report["movies"]["eligible_on_rights_and_playback"], 2)
+        self.assertEqual(report["movies"]["withheld"], {"rating_below_6": 1})
+
+    def test_falls_back_to_the_property_when_the_gate_has_not_run(self):
+        from src.report import build_report
+        report = build_report(
+            channels=[], movies=[movie(id="m1", rating=8.0)], playlist_result={},
+            build_files={}, withheld={}, ingest_stats=None, epg=None, seed_build=False)
+        self.assertEqual(report["movies"]["published_as_vod"], 1)
+
+    def test_rating_statistics_are_reported(self):
+        from src.report import build_report
+        films = [movie(id="m1", rating=8.0, imdb_id="tt1"),
+                 movie(id="m2", rating=6.0, imdb_id="tt2"),
+                 movie(id="m3", rating=None)]
+        r = build_report(channels=[], movies=films, playlist_result={}, build_files={},
+                         withheld={}, ingest_stats=None, epg=None, seed_build=False)["movies"]
+        self.assertEqual((r["rated"], r["unrated"], r["matched_to_imdb"]), (2, 1, 2))
+        self.assertEqual(r["mean_rating"], 7.0)

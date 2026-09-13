@@ -18,7 +18,9 @@ def build_report(*, channels: list[Channel], movies: list[Movie],
                  withheld: dict[str, list], ingest_stats: dict | None,
                  epg: dict | None, seed_build: bool,
                  health: dict | None = None, history: dict | None = None,
-                 probe_results: list | None = None) -> dict:
+                 probe_results: list | None = None,
+                 movies_published: int | None = None,
+                 movies_withheld: dict | None = None) -> dict:
     status_counts = Counter(c.status for c in channels)
     res_counts = Counter(c.resolution_label for c in channels if c.resolution_label)
 
@@ -75,7 +77,20 @@ def build_report(*, channels: list[Channel], movies: list[Movie],
             "discoverable": sum(1 for m in movies if m.playback_status == "DISCOVERABLE"),
             "excluded": sum(1 for m in movies if m.playback_status == "EXCLUDED"),
             "unverified": sum(1 for m in movies if m.playback_status == "UNVERIFIED"),
-            "published_as_vod": sum(1 for m in movies if m.publishable_as_vod),
+            # The real figure comes from the generator's gate, which also applies
+            # the rating threshold. Movie.publishable_as_vod knows only about
+            # rights and playback, so reporting it here overstated what shipped.
+            "published_as_vod": (movies_published
+                                 if movies_published is not None
+                                 else sum(1 for m in movies if m.publishable_as_vod)),
+            "eligible_on_rights_and_playback": sum(1 for m in movies if m.publishable_as_vod),
+            "withheld": movies_withheld or {},
+            "rated": sum(1 for m in movies if m.rating is not None),
+            "unrated": sum(1 for m in movies if m.rating is None),
+            "matched_to_imdb": sum(1 for m in movies if m.imdb_id),
+            "mean_rating": (round(sum(m.rating for m in movies if m.rating is not None)
+                                  / max(1, sum(1 for m in movies if m.rating is not None)), 2)
+                            if any(m.rating is not None for m in movies) else None),
         },
         "run_health": health or {"ok": None, "reason": "no validation run recorded yet"},
         "last_probe": {

@@ -46,14 +46,19 @@ src/
     catalog.py                tile labels, ordering, colours
     live.py                   live tree + master playlist
     movies.py                 Phase 3
+  search.py                   inverted index over films and channels
   sources/
     host_trust.py             provenance classification
+    archive_org/adapter.py    Internet Archive films, with per-item rights reading
+    imdb/datasets.py          IMDb non-commercial datasets: ratings, ids, genres
     streamimdb/               Phase 6 (metadata-only adapter)
   epg/                        Phase 7
   report.py                   validation-report.json
 scripts/
   pipeline.py                 ingest | check | build | verify | report | all
   classify_sources.py         regenerate host-trust.json
+  fetch_movies.py             movie sources -> data/movies/movies.json
+  enrich_movies.py            IMDb ratings + data/search-index.json
   summarise.py                render the report as a CI job summary
 playlists/                    GENERATED — do not hand-edit
 epg/                          GENERATED — Phase 7

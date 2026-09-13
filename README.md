@@ -26,16 +26,23 @@ every endpoint and current counts, regenerated on each run.
 | | |
 |---|---|
 | Catalogued | **208** |
-| **Rights CLEARED** | **208** (170 by per-item licence, 38 by curated public-domain collection) |
-| **PLAYABLE (bytes verified, Range-capable)** | **208** |
-| Published as VOD | **208** across 15 genre and collection playlists |
-| Source | Internet Archive public-domain and openly-licensed films |
+| Rights CLEARED | **208** (170 by per-item licence, 38 by curated public-domain collection) |
+| Playback verified (bytes fetched, Range-capable) | **208** |
+| Matched to IMDb | **129** · rated **121** · mean **6.02** |
+| **Published as VOD** | **160** — 48 withheld for an IMDb rating below 6.0 |
+| Unrated titles | 87, kept: no rating is not a bad rating |
+| Source | Internet Archive public-domain films · ratings from IMDb's non-commercial datasets |
+
+### Search
+`data/search-index.json` — an inverted index over **379 documents** (films and
+channels), 3,705 tokens, 349 KB. SS IPTV has no global search and the M3U layer
+cannot provide one, so the database carries it for the optional web catalogue.
 
 ### Tree
 ```
  30 playlists · 330 movie entries + 128 channel tiles · largest file 43 items / 12 KB
   0 structural errors · 0 circular references · 0 duplicate tiles
-114 tests passing
+151 tests passing
 ```
 
 Every published channel was fetched end to end (manifest → variant → media

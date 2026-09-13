@@ -424,6 +424,8 @@ def cmd_report(args) -> int:
         health=read_json(STATUS_DIR / "health.json", None),
         history=read_json(STATUS_DIR / "history.json", None),
         probe_results=(read_json(STATUS_DIR / "stream-status.json", {}) or {}).get("results"),
+        movies_published=build_state.get("movies_published"),
+        movies_withheld=build_state.get("movies_withheld"),
     )
     write_json(REPO / "validation-report.json", report)
     # The landing page is generated from the same report, so the site root can

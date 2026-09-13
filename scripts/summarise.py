@@ -33,9 +33,15 @@ mv = report.get("movies", {})
 if mv.get("catalogue_total"):
     lines += ["### Movie catalogue", "", "| | |", "|---|---:|",
               f"| Catalogued | {mv['catalogue_total']} |",
-              f"| Playable | {mv['playable']} |",
-              f"| Discoverable | {mv['discoverable']} |",
-              f"| Published as VOD | {mv['published_as_vod']} |", ""]
+              f"| Matched to IMDb | {mv.get('matched_to_imdb', 0)} |",
+              f"| Rated / unrated | {mv.get('rated', 0)} / {mv.get('unrated', 0)} |",
+              f"| Mean rating | {mv.get('mean_rating') if mv.get('mean_rating') is not None else 'n/a'} |",
+              f"| Playback verified | {mv['playable']} |",
+              f"| **Published as VOD** | **{mv['published_as_vod']}** |", ""]
+    if mv.get("withheld"):
+        lines += ["| withheld from the library | titles |", "|---|---:|"]
+        lines += [f"| `{k}` | {v} |" for k, v in mv["withheld"].items()]
+        lines.append("")
 
 probe = report.get("last_probe", {})
 if probe.get("counts"):

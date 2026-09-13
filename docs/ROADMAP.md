@@ -1,6 +1,6 @@
 # Roadmap
 
-Phases 1, 2 and 3 are complete. Each later phase ends with generated output and a report,
+Phases 1-5 are complete. Each later phase ends with generated output and a report,
 and waits for approval before the next begins.
 
 | Phase | Scope | State |
@@ -8,13 +8,13 @@ and waits for approval before the next begins.
 | **1** | `master.m3u`, `live-tv.m3u`, `bangladesh.m3u`; data model; generators; structural validator; 55 tests | **done — unvalidated seed** |
 | **2** | Registry-driven multi-source ingest, run-health gate, reliability tracking, real validation on GitHub-hosted runners, `ACTIVE`-only publishing | **done** |
 | **3** | Nested movie library: 208 rights-cleared, byte-verified titles across 15 genre and collection playlists; VOD validator; Internet Archive adapter | **done** |
-| 4 | Confirm `type="video"` seek/pause behaviour on the actual TV | next |
-| 5 | Ratings and richer metadata (needs a TMDB or OMDb key in repo secrets), full-text search index | |
+| **4** | Nested navigation confirmed on the owner's Toshiba/VIDAA set: Movies opens a screen of genre tiles | **done** |
+| **5** | IMDb ratings via the public non-commercial datasets (no API key needed), `min_rating_publish` gate, full-text search index | **done** |
 | 6 | StreamIMDB adapter — metadata only, `DISCOVERABLE` by default | |
 | 7 | XMLTV generation, `x-tvg-url`, CORS/size/no-gzip constraints, external-network test | |
 | 8 | Scheduling hardening, failure thresholds, alerting on mass-offline | |
 | 9 | Deployment hardening, custom domain, cache headers | |
-| 10 | Optional Netflix-style web catalogue (never a dependency of the SS IPTV path) | |
+| 10 | Optional Netflix-style web catalogue, querying `data/search-index.json` (never a dependency of the SS IPTV path) | |
 
 ## Phase 2 measured outcome
 
