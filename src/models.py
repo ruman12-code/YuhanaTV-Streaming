@@ -146,6 +146,7 @@ class Movie:
     source_url: str = ""
     playback_status: str = "UNVERIFIED"  # PLAYBACK_STATUS
     playback_url: str = ""
+    file_size_bytes: int = 0
     rights_status: str = "UNVERIFIED"    # RIGHTS_STATUS
     last_verified: str = ""
     imdb_id: str = ""

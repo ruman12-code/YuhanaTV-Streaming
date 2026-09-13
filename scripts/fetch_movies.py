@@ -86,7 +86,7 @@ def main() -> int:
                     rejections[reason[:48]] += 1
                     continue
                 if movie.id in collected:
-                    stats["duplicate"] += 1
+                    stats["duplicate (same item)"] += 1
                     continue
 
                 prev = existing.get(movie.id)
@@ -104,6 +104,23 @@ def main() -> int:
                 rule = movie.notes.split("]")[0].replace("rights[", "") if "rights[" in movie.notes else "?"
                 stats[f"  cleared by: {rule}"] += 1
                 time.sleep(0.2)   # be a polite guest on a free archive
+
+    # The same public-domain film is often uploaded to the Archive several times
+    # as independent items with different identifiers. Those are one film to a
+    # viewer, so keep the largest copy and drop the rest.
+    best: dict[tuple, str] = {}
+    for mid, m in list(collected.items()):
+        key = (m.title.strip().lower(), m.year)
+        incumbent = best.get(key)
+        if incumbent is None:
+            best[key] = mid
+            continue
+        if m.file_size_bytes > collected[incumbent].file_size_bytes:
+            del collected[incumbent]
+            best[key] = mid
+        else:
+            del collected[mid]
+        stats["duplicate (same film, another upload)"] += 1
 
     print()
     print(f"collected {len(collected)} titles")

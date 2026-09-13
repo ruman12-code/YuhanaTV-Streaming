@@ -219,6 +219,7 @@ class ArchiveOrgAdapter:
             # PLAYABLE is only asserted after the VOD validator has fetched bytes.
             playback_status="UNVERIFIED",
             playback_url=playback_url,
+            file_size_bytes=int(video.get("size") or 0),
             rights_status=rights.status,
             notes=f"rights[{rights.rule}]: {rights.reason}; file: {video.get('format')} "
                   f"{int(video.get('size') or 0) // (1024*1024)} MB",

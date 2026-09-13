@@ -99,10 +99,21 @@ jobs:
           [ -d epg ] && git add -A epg || true
           if git diff --cached --quiet; then
             echo "no content change"
-          else
-            git commit -m "chore: refresh playlists and validation report [skip ci]"
-            git push
+            exit 0
           fi
+          git commit -m "chore: refresh playlists and validation report [skip ci]"
+          # The live-TV and movie workflows both write to this branch and can
+          # overlap, so a push can lose the race. Rebase onto whatever landed
+          # and try again rather than failing the run.
+          for attempt in 1 2 3; do
+            if git push origin HEAD:"$GITHUB_REF_NAME"; then
+              exit 0
+            fi
+            echo "push rejected (attempt $attempt); rebasing onto the remote"
+            git pull --rebase origin "$GITHUB_REF_NAME" || exit 1
+          done
+          echo "could not push after 3 attempts" >&2
+          exit 1
 
   # Deploy runs only on the repository's default branch, and is allowed to fail
   # without failing the pipeline: GitHub Pages must be enabled by hand once

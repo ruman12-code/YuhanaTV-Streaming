@@ -309,3 +309,37 @@ class TestMetadataParsing(unittest.TestCase):
         buckets = gen._buckets([movie(id="m1", genre=["Crime", "Horror"], language="english")])
         for b in ("crime", "horror", "english"):
             self.assertEqual(len(buckets[b]), 1, b)
+
+
+class TestCrossItemDeduplication(unittest.TestCase):
+    """The same public-domain film is often uploaded to the Archive twice."""
+
+    def _dedupe(self, movies):
+        # Mirrors the rule in scripts/fetch_movies.py.
+        collected = {m.id: m for m in movies}
+        best = {}
+        for mid, m in list(collected.items()):
+            key = (m.title.strip().lower(), m.year)
+            incumbent = best.get(key)
+            if incumbent is None:
+                best[key] = mid
+                continue
+            if m.file_size_bytes > collected[incumbent].file_size_bytes:
+                del collected[incumbent]; best[key] = mid
+            else:
+                del collected[mid]
+        return collected
+
+    def test_largest_copy_wins(self):
+        kept = self._dedupe([
+            movie(id="a", title="Detour", year=1945, file_size_bytes=300_000_000),
+            movie(id="b", title="detour ", year=1945, file_size_bytes=700_000_000),
+        ])
+        self.assertEqual(list(kept), ["b"])
+
+    def test_same_title_different_year_is_not_a_duplicate(self):
+        kept = self._dedupe([
+            movie(id="a", title="The Thing", year=1951, file_size_bytes=1),
+            movie(id="b", title="The Thing", year=1982, file_size_bytes=1),
+        ])
+        self.assertEqual(sorted(kept), ["a", "b"])
