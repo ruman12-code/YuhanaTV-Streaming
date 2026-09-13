@@ -1,0 +1,35 @@
+{
+  "$comment": "Source registry (spec section 30). `redistribution_allowed` and `authorization_status` are set by a human after review, never by the pipeline. `trust_tier` records how the stream reached us and is what the publish gate reads.",
+  "trust_tiers": {
+    "broadcaster_official": "Published by the rights holder on its own domain for open web playback.",
+    "fast_platform": "A free ad-supported platform (Amagi, Rakuten, Samsung TV+, Tubi, Xumo, Wurl, Frequency, Pluto) distributing under its own licences.",
+    "aggregator": "A third-party aggregator or CDN re-serving channels; the rights position is not visible to us.",
+    "unknown": "Provenance not established."
+  },
+  "sources": [
+    {
+      "id": "src-user-m3u",
+      "name": "User-supplied working playlist (Channel_List.txt)",
+      "url": "",
+      "type": "m3u",
+      "authorization_status": "UNVERIFIED",
+      "redistribution_allowed": false,
+      "trust_tier": "unknown",
+      "last_checked": "",
+      "status": "IMPORTED",
+      "notes": "Snapshot provided by the repository owner and stored verbatim at data/sources/imported-channel-list.m3u. Imported as-is for their own personal playback. Per-host trust tiers are recorded in host-trust.json; no entry is asserted to be licensed for redistribution."
+    },
+    {
+      "id": "src-streamimdb",
+      "name": "StreamIMDB",
+      "url": "https://streamimdb.ru/",
+      "type": "scrape",
+      "authorization_status": "UNVERIFIED",
+      "redistribution_allowed": false,
+      "trust_tier": "unknown",
+      "last_checked": "",
+      "status": "NOT_IMPLEMENTED",
+      "notes": "Phase 6. Metadata-only adapter. Every imported title defaults to playback_status=DISCOVERABLE; nothing from this source may enter a VOD playlist unless a direct playback URL is independently authorised."
+    }
+  ]
+}

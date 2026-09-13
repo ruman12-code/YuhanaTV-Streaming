@@ -1,0 +1,89 @@
+"""validation-report.json (spec section 32)."""
+
+from __future__ import annotations
+
+from collections import Counter
+from datetime import datetime, timezone
+from pathlib import Path
+
+from .models import Channel, Movie, read_json
+
+
+def _iso() -> str:
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+
+
+def build_report(*, channels: list[Channel], movies: list[Movie],
+                 playlist_result: dict, build_files: dict[str, int],
+                 withheld: dict[str, list], ingest_stats: dict | None,
+                 epg: dict | None, seed_build: bool) -> dict:
+    status_counts = Counter(c.status for c in channels)
+    res_counts = Counter(c.resolution_label for c in channels if c.resolution_label)
+
+    broken = [
+        {"id": c.id, "name": c.name, "status": c.status,
+         "host": c.stream_url.split("/")[2] if "://" in c.stream_url else "",
+         "note": c.notes}
+        for c in channels if c.status in ("OFFLINE", "INVALID")
+    ]
+
+    return {
+        "generated_at": _iso(),
+        "build_kind": "pre-validation-seed" if seed_build else "validated",
+        "warning": (
+            "No stream in this build has been reachability-tested. Channel status is "
+            "UNVERIFIED and playlists must not be treated as known-working."
+            if seed_build else ""
+        ),
+        "live_channels": {
+            "total": len(channels),
+            "active": status_counts.get("ACTIVE", 0),
+            "degraded": status_counts.get("DEGRADED", 0),
+            "offline": status_counts.get("OFFLINE", 0),
+            "invalid": status_counts.get("INVALID", 0),
+            "unverified": status_counts.get("UNVERIFIED", 0),
+            "by_category": dict(Counter(c.category for c in channels).most_common()),
+            "by_country": dict(Counter(c.country or "unknown" for c in channels).most_common()),
+        },
+        "resolution": {
+            "measured_4k": res_counts.get("4K", 0),
+            "measured_1080p": res_counts.get("1080p", 0),
+            "measured_720p": res_counts.get("720p", 0),
+            "measured_576p": res_counts.get("576p", 0),
+            "measured_480p": res_counts.get("480p", 0),
+            "unmeasured": sum(1 for c in channels if not c.resolution_label),
+            "note": "Counts come from #EXT-X-STREAM-INF RESOLUTION only. "
+                    "Source-claimed labels such as '(1080p)' in a channel name are never counted.",
+        },
+        "movies": {
+            "catalogue_total": len(movies),
+            "playable": sum(1 for m in movies if m.playback_status == "PLAYABLE"),
+            "discoverable": sum(1 for m in movies if m.playback_status == "DISCOVERABLE"),
+            "excluded": sum(1 for m in movies if m.playback_status == "EXCLUDED"),
+            "unverified": sum(1 for m in movies if m.playback_status == "UNVERIFIED"),
+            "published_as_vod": sum(1 for m in movies if m.publishable_as_vod),
+        },
+        "epg": epg or {"generated": False, "channels_covered": 0,
+                       "coverage_percent": 0.0, "note": "EPG is Phase 7"},
+        "withheld_from_playlists": {
+            reason: [{"id": c.id, "name": c.name} for c in items]
+            for reason, items in sorted(withheld.items())
+        },
+        "withheld_counts": {reason: len(items) for reason, items in sorted(withheld.items())},
+        "broken_urls": broken,
+        "duplicates": (ingest_stats or {}).get("duplicates", []),
+        "ingest": {
+            k: v for k, v in (ingest_stats or {}).items()
+            if k in ("entries_parsed", "channels_accepted", "needs_custom_headers")
+        },
+        "playlists": {
+            "files": build_files,
+            "total_bytes": sum(build_files.values()),
+            "structure_ok": playlist_result.get("ok"),
+            "structure_errors": playlist_result.get("errors", 0),
+            "structure_warnings": playlist_result.get("warnings", 0),
+            "circular_references": playlist_result.get("cycles", []),
+            "unreachable": playlist_result.get("unreachable", []),
+            "issues": playlist_result.get("issues", []),
+        },
+    }

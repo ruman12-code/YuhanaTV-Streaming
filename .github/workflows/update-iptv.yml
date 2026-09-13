@@ -1,0 +1,133 @@
+name: Update IPTV
+
+# Spec section 20 pipeline:
+#   FETCH -> VALIDATE -> NORMALIZE -> DEDUPE -> CHECK STREAMS -> UPDATE DB
+#   -> GENERATE M3U -> GENERATE EPG -> VALIDATE M3U -> VALIDATE EPG -> DEPLOY -> PUBLISH
+#
+# NOTE ON GEOGRAPHY: GitHub-hosted runners are outside Bangladesh. A channel that
+# is only served to BD clients will be reported OFFLINE here even though it plays
+# on the owner's TV. That is why `consecutive_failures_before_offline` exists and
+# why a single failing run never removes a channel. See docs/LIMITATIONS.md.
+
+on:
+  schedule:
+    - cron: '0 */8 * * *'      # stream validation, every 8 hours (spec section 21)
+  workflow_dispatch:
+    inputs:
+      seed:
+        description: 'Publish UNVERIFIED channels (pre-validation seed build)'
+        type: boolean
+        default: false
+      limit:
+        description: 'Validate only the first N channels (0 = all)'
+        type: string
+        default: '0'
+  push:
+    branches: [main]
+    paths:
+      - 'data/**'
+      - 'src/**'
+      - 'config/**'
+      - '.github/workflows/update-iptv.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-iptv
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Unit tests
+        run: python3 -m unittest discover -s tests -v
+
+      - name: Normalize and de-duplicate the source registry
+        run: python3 scripts/pipeline.py ingest
+
+      - name: Classify source provenance
+        run: python3 scripts/classify_sources.py
+
+      - name: Check streams
+        run: python3 scripts/pipeline.py check --limit "${{ github.event.inputs.limit || 0 }}"
+
+      - name: Generate playlists
+        run: |
+          if [ "${{ github.event.inputs.seed }}" = "true" ]; then
+            python3 scripts/pipeline.py build --seed
+          else
+            python3 scripts/pipeline.py build
+          fi
+
+      - name: Validate playlists
+        run: python3 scripts/pipeline.py verify --verbose
+
+      - name: Validation report
+        run: python3 scripts/pipeline.py report
+
+      - name: Upload report as an artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-report
+          path: |
+            validation-report.json
+            data/status/
+
+      - name: Commit refreshed playlists
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add playlists data epg validation-report.json
+          if git diff --cached --quiet; then
+            echo "no content change"
+          else
+            git commit -m "chore: refresh playlists and validation report [skip ci]"
+            git push
+          fi
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Stage the public site
+        run: |
+          mkdir -p _site
+          touch _site/.nojekyll
+          cp -r playlists _site/playlists
+          [ -d epg ] && cp -r epg _site/epg || true
+          cp validation-report.json _site/ 2>/dev/null || true
+          # Stable short aliases (spec section 19): /iptv/master.m3u etc.
+          mkdir -p _site/iptv
+          cp playlists/master.m3u            _site/iptv/master.m3u
+          cp playlists/live/live-tv.m3u      _site/iptv/live-tv.m3u
+          cp playlists/live/bangladesh.m3u   _site/iptv/bangladesh.m3u
+          [ -f playlists/live/international.m3u ] && cp playlists/live/international.m3u _site/iptv/international.m3u || true
+          [ -f playlists/movies/movies.m3u ]      && cp playlists/movies/movies.m3u      _site/iptv/movies.m3u || true
+          [ -f epg/epg.xml ]                      && cp epg/epg.xml                      _site/iptv/epg.xml || true
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4

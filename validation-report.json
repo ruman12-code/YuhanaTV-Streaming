@@ -1,0 +1,154 @@
+{
+  "generated_at": "2026-09-13T10:41:48+00:00",
+  "build_kind": "pre-validation-seed",
+  "warning": "No stream in this build has been reachability-tested. Channel status is UNVERIFIED and playlists must not be treated as known-working.",
+  "live_channels": {
+    "total": 171,
+    "active": 0,
+    "degraded": 0,
+    "offline": 0,
+    "invalid": 0,
+    "unverified": 171,
+    "by_category": {
+      "entertainment": 52,
+      "bangladesh": 31,
+      "documentary": 22,
+      "music": 16,
+      "kids": 12,
+      "lifestyle": 9,
+      "sports": 9,
+      "news": 7,
+      "religious": 7,
+      "movies": 6
+    },
+    "by_country": {
+      "unknown": 105,
+      "in": 35,
+      "bd": 31
+    }
+  },
+  "resolution": {
+    "measured_4k": 0,
+    "measured_1080p": 0,
+    "measured_720p": 0,
+    "measured_576p": 0,
+    "measured_480p": 0,
+    "unmeasured": 171,
+    "note": "Counts come from #EXT-X-STREAM-INF RESOLUTION only. Source-claimed labels such as '(1080p)' in a channel name are never counted."
+  },
+  "movies": {
+    "catalogue_total": 0,
+    "playable": 0,
+    "discoverable": 0,
+    "excluded": 0,
+    "unverified": 0,
+    "published_as_vod": 0
+  },
+  "epg": {
+    "generated": false,
+    "channels_covered": 0,
+    "coverage_percent": 0.0,
+    "note": "EPG is Phase 7"
+  },
+  "withheld_from_playlists": {
+    "requires_custom_http_headers": [
+      {
+        "id": "ch-390978bcfc",
+        "name": "National Geographic"
+      },
+      {
+        "id": "ch-baa2030749",
+        "name": "MTV"
+      },
+      {
+        "id": "ch-4e93d222ab",
+        "name": "MTV HD"
+      }
+    ]
+  },
+  "withheld_counts": {
+    "requires_custom_http_headers": 3
+  },
+  "broken_urls": [],
+  "duplicates": [
+    {
+      "kept": "National Geographic HD",
+      "dropped": "National Geographic HD",
+      "on": "url"
+    },
+    {
+      "kept": "Star Gold HD",
+      "dropped": "Star Gold HD",
+      "on": "url"
+    },
+    {
+      "kept": "Star Plus HD",
+      "dropped": "StarPlus HD (1080i)",
+      "on": "url"
+    },
+    {
+      "kept": "Star Movies HD",
+      "dropped": "Star Movies HD",
+      "on": "url"
+    },
+    {
+      "kept": "Star Movies Select HD",
+      "dropped": "Star Movies Select HD",
+      "on": "url"
+    },
+    {
+      "kept": "yrf Music",
+      "dropped": "YRF Music",
+      "on": "url"
+    }
+  ],
+  "ingest": {
+    "entries_parsed": 177,
+    "channels_accepted": 171,
+    "needs_custom_headers": 3
+  },
+  "playlists": {
+    "files": {
+      "live/bangladesh.m3u": 7310,
+      "live/documentary.m3u": 4695,
+      "live/entertainment/hindi.m3u": 4048,
+      "live/entertainment/indian-bangla.m3u": 3797,
+      "live/entertainment/general.m3u": 2610,
+      "live/entertainment/series.m3u": 1602,
+      "live/entertainment/other.m3u": 752,
+      "live/entertainment.m3u": 1166,
+      "live/kids.m3u": 2972,
+      "live/lifestyle.m3u": 2853,
+      "live/movies.m3u": 1732,
+      "live/music.m3u": 3362,
+      "live/news.m3u": 1924,
+      "live/religious.m3u": 2119,
+      "live/sports.m3u": 2034,
+      "live/international.m3u": 1821,
+      "live/live-tv.m3u": 2002,
+      "master.m3u": 765
+    },
+    "total_bytes": 47564,
+    "structure_ok": true,
+    "structure_errors": 0,
+    "structure_warnings": 2,
+    "circular_references": [],
+    "unreachable": [],
+    "issues": [
+      {
+        "severity": "warning",
+        "file": "live/kids.m3u",
+        "line": 11,
+        "code": "DUP_TITLE",
+        "message": "title 'Disney Junior' already used on line 9"
+      },
+      {
+        "severity": "warning",
+        "file": "live/music.m3u",
+        "line": 33,
+        "code": "DUP_TITLE",
+        "message": "title 'Zoom' already used on line 31"
+      }
+    ]
+  }
+}

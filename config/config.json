@@ -1,0 +1,56 @@
+{
+  "$comment": "Central configuration. Every generator/validator reads this file. Override any value with the matching YUHANA_* environment variable (see src/config.py).",
+
+  "site": {
+    "base_url": "https://ruman12-code.github.io/YuhanaTV-Streaming",
+    "playlist_path": "/playlists",
+    "epg_path": "/epg",
+    "brand": "YuhanaTV"
+  },
+
+  "ssiptv": {
+    "$comment": "Limits taken from SS IPTV operator documentation and Smart-TV memory constraints.",
+    "max_items_per_playlist": 120,
+    "max_xmltv_bytes": 5242880,
+    "attach_epg_to_live": true,
+    "emit_explicit_content_type": true,
+    "tile_size_root": "big",
+    "tile_size_category": "medium",
+    "tile_size_channel": "small",
+    "tile_size_movie": "medium",
+    "subsplit_threshold": 40,
+    "never_subsplit": ["bangladesh"]
+  },
+
+  "validation": {
+    "timeout_connect_seconds": 8,
+    "timeout_read_seconds": 12,
+    "max_redirects": 5,
+    "retries": 2,
+    "retry_backoff_seconds": [2, 5],
+    "concurrency": 8,
+    "per_host_concurrency": 2,
+    "per_host_delay_seconds": 1.0,
+    "check_first_segment": true,
+    "segment_probe_bytes": 65536,
+    "consecutive_failures_before_offline": 3,
+    "degraded_latency_ms": 4000,
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36",
+    "publish_statuses": ["ACTIVE"],
+    "publish_statuses_when_empty": ["ACTIVE", "DEGRADED"]
+  },
+
+  "security": {
+    "allowed_url_schemes": ["http", "https"],
+    "denied_url_schemes": ["javascript", "data", "file", "ftp", "smb", "rtmp", "rtsp", "udp", "rtp", "mms"],
+    "block_private_ip_targets": true,
+    "max_manifest_bytes": 2097152
+  },
+
+  "policy": {
+    "$comment": "Content-rights gating. 'require_rights_review' blocks a source from the published playlist until a human sets redistribution_allowed.",
+    "publish_unverified_rights_live": true,
+    "publish_unverified_rights_vod": false,
+    "vod_requires_playable_and_rights": true
+  }
+}

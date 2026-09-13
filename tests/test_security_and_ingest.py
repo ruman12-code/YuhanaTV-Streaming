@@ -1,0 +1,125 @@
+"""URL safety, ingest, de-duplication and publication-gate tests."""
+import sys, tempfile, unittest
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+from src import config
+from src.models import Channel
+from src.util.urls import check_url
+from src.ingest.m3u_import import parse_m3u, import_file
+from src.generators.live import LiveGenerator
+
+
+class TestUrlSafety(unittest.TestCase):
+    def test_dangerous_schemes_blocked(self):
+        for url in ("javascript:alert(1)", "file:///etc/passwd", "data:text/html,x",
+                    "vbscript:x", "smb://host/share"):
+            self.assertFalse(check_url(url).ok, url)
+
+    def test_local_paths_blocked(self):
+        for url in ("/var/media/a.ts", "C:\\media\\a.mp4", "./rel.m3u8", "../up.m3u8"):
+            self.assertFalse(check_url(url).ok, url)
+
+    def test_private_targets_blocked_by_default(self):
+        for url in ("http://127.0.0.1/a.m3u8", "http://10.1.2.3/a.m3u8",
+                    "http://192.168.0.1/a.m3u8", "http://[::1]/a.m3u8",
+                    "http://169.254.1.1/a.m3u8"):
+            self.assertFalse(check_url(url).ok, url)
+
+    def test_private_targets_allowed_when_opted_in(self):
+        self.assertTrue(check_url("http://127.0.0.1/a.m3u8", block_private=False).ok)
+
+    def test_executable_downloads_blocked(self):
+        for url in ("https://h/x.apk", "https://h/x.exe", "https://h/x.sh"):
+            self.assertFalse(check_url(url).ok, url)
+
+    def test_normal_stream_urls_pass(self):
+        for url in ("https://cdn.example/master.m3u8", "http://cdn.example:8080/live/index.m3u8"):
+            self.assertTrue(check_url(url).ok, url)
+
+
+class TestParser(unittest.TestCase):
+    def test_parses_attributes_and_title(self):
+        entries, _, problems = parse_m3u(
+            '#EXTM3U\n#EXTINF:-1 group-title="News" tvg-logo="https://h/l.png",BBC World\n'
+            'https://h/a.m3u8\n')
+        self.assertEqual(problems, [])
+        self.assertEqual(entries[0].title, "BBC World")
+        self.assertEqual(entries[0].attrs["group-title"], "News")
+
+    def test_title_containing_comma_survives(self):
+        entries, _, _ = parse_m3u('#EXTM3U\n#EXTINF:-1,News, Sport and Weather\nhttps://h/a.m3u8\n')
+        self.assertEqual(entries[0].title, "News, Sport and Weather")
+
+    def test_vlcopt_headers_are_captured(self):
+        entries, _, _ = parse_m3u(
+            '#EXTM3U\n#EXTINF:-1,X\n#EXTVLCOPT:http-referrer=https://ref.test/\nhttps://h/a.m3u8\n')
+        self.assertEqual(entries[0].vlc_opts["http-referrer"], "https://ref.test/")
+
+    def test_missing_header_is_tolerated_for_imports(self):
+        entries, _, problems = parse_m3u('#EXTINF:-1,X\nhttps://h/a.m3u8\n')
+        self.assertEqual(len(entries), 1)
+
+    def test_extinf_without_url_is_reported(self):
+        _, _, problems = parse_m3u('#EXTM3U\n#EXTINF:-1,X\n#EXTINF:-1,Y\nhttps://h/b.m3u8\n')
+        self.assertTrue(problems)
+
+    def test_quality_claim_is_demoted_to_a_note(self):
+        tmp = Path(tempfile.mkdtemp()) / "s.m3u"
+        tmp.write_text('#EXTM3U\n#EXTINF:-1 group-title="News",Some Channel (1080p)\n'
+                       'https://h/a.m3u8\n', encoding="utf-8")
+        chans, _ = import_file(tmp, "src-test")
+        self.assertEqual(chans[0].name, "Some Channel")
+        self.assertEqual(chans[0].resolution_label, "",
+                         "a source's own quality claim must never become a measured label")
+        self.assertIn("unverified", chans[0].notes)
+
+
+class TestDeduplication(unittest.TestCase):
+    def test_identical_urls_are_collapsed(self):
+        tmp = Path(tempfile.mkdtemp()) / "s.m3u"
+        tmp.write_text('#EXTM3U\n#EXTINF:-1,A\nhttps://h/a.m3u8\n'
+                       '#EXTINF:-1,A copy\nhttps://h/a.m3u8\n', encoding="utf-8")
+        chans, stats = import_file(tmp, "src-test")
+        self.assertEqual(len(chans), 1)
+        self.assertEqual(len(stats["duplicates"]), 1)
+
+
+class TestPublicationGate(unittest.TestCase):
+    def setUp(self):
+        self.cfg = config.load(use_cache=False)
+        self.gen = LiveGenerator(self.cfg, Path(tempfile.mkdtemp()))
+
+    def _ch(self, **kw):
+        base = dict(id="c1", name="C", stream_url="https://h/a.m3u8", category="news")
+        base.update(kw)
+        return Channel(**base)
+
+    def test_only_active_is_published_by_default(self):
+        chans = [self._ch(id=s, status=s) for s in
+                 ("ACTIVE", "DEGRADED", "OFFLINE", "INVALID", "UNVERIFIED")]
+        published, withheld = self.gen._partition(chans, allow_unverified=False)
+        self.assertEqual([c.id for c in published], ["ACTIVE"])
+        self.assertEqual(sum(len(v) for v in withheld.values()), 4)
+
+    def test_seed_mode_admits_unverified(self):
+        chans = [self._ch(id=s, status=s) for s in ("UNVERIFIED", "OFFLINE")]
+        published, _ = self.gen._partition(chans, allow_unverified=True)
+        self.assertEqual([c.id for c in published], ["UNVERIFIED"])
+
+    def test_excluded_rights_never_published(self):
+        published, withheld = self.gen._partition(
+            [self._ch(status="ACTIVE", rights_status="EXCLUDED")], allow_unverified=True)
+        self.assertEqual(published, [])
+        self.assertIn("rights_excluded", withheld)
+
+    def test_streams_needing_custom_headers_are_withheld(self):
+        """SS IPTV cannot send a per-stream Referer, so such a stream is a dead tile."""
+        published, withheld = self.gen._partition(
+            [self._ch(status="ACTIVE", http_referrer="https://ref.test/")], allow_unverified=False)
+        self.assertEqual(published, [])
+        self.assertIn("requires_custom_http_headers", withheld)
+
+
+if __name__ == "__main__":
+    unittest.main()
