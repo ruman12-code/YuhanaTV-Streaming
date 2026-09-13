@@ -33,6 +33,7 @@ from src.generators.live import LiveGenerator, build_master  # noqa: E402
 from src.generators.movies import MovieGenerator             # noqa: E402
 from src.validators.vod_validator import VodValidator        # noqa: E402
 from src.report import build_report                        # noqa: E402
+from src.generators.site import write as write_site        # noqa: E402
 
 CHANNELS_DIR = REPO / "data" / "channels"
 MOVIES_DIR = REPO / "data" / "movies"
@@ -425,6 +426,10 @@ def cmd_report(args) -> int:
         probe_results=(read_json(STATUS_DIR / "stream-status.json", {}) or {}).get("results"),
     )
     write_json(REPO / "validation-report.json", report)
+    # The landing page is generated from the same report, so the site root can
+    # never disagree with what was measured — and Pages stops answering / with 404.
+    size = write_site(report, cfg, PLAYLISTS, REPO / "site" / "index.html")
+    print(f"wrote site/index.html ({size} bytes)")
     print(json.dumps({k: v for k, v in report.items()
                       if k in ("generated_at", "build_kind", "live_channels", "playlists")},
                      indent=2, ensure_ascii=False)[:1600])

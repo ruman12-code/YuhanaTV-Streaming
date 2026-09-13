@@ -101,7 +101,7 @@ jobs:
           # always conflicts: this run's files are the newer measurement, so the
           # remote is taken as the new base and the outputs are re-applied on top.
           commit_outputs() {
-            git add -A playlists data validation-report.json
+            git add -A playlists data site validation-report.json
             [ -d epg ] && git add -A epg || true
             if git diff --cached --quiet; then
               echo "no content change"
@@ -119,7 +119,7 @@ jobs:
             fi
             echo "push rejected (attempt $attempt); rebasing outputs onto the remote"
             STAGE=$(mktemp -d)
-            cp -r playlists data validation-report.json "$STAGE"/ 2>/dev/null || true
+            cp -r playlists data site validation-report.json "$STAGE"/ 2>/dev/null || true
             [ -d epg ] && cp -r epg "$STAGE"/ || true
             git fetch origin "$GITHUB_REF_NAME"
             git reset --hard "origin/$GITHUB_REF_NAME"
@@ -153,6 +153,9 @@ jobs:
         run: |
           mkdir -p _site
           touch _site/.nojekyll
+          # Without an index.html, Pages answers the site root with its own 404
+          # even though every playlist under it is served correctly.
+          cp site/index.html _site/index.html
           cp -r playlists _site/playlists
           [ -d epg ] && cp -r epg _site/epg || true
           cp validation-report.json _site/ 2>/dev/null || true
@@ -164,6 +167,8 @@ jobs:
           [ -f playlists/live/international.m3u ] && cp playlists/live/international.m3u _site/iptv/international.m3u || true
           [ -f playlists/movies/movies.m3u ]      && cp playlists/movies/movies.m3u      _site/iptv/movies.m3u || true
           [ -f epg/epg.xml ]                      && cp epg/epg.xml                      _site/iptv/epg.xml || true
+          echo "--- published files ---"
+          find _site -type f | sort
 
       # enablement: true turns Pages on via the API if it is not already on,
       # which removes the manual Settings step entirely.

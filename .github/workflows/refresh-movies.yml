@@ -75,7 +75,7 @@ jobs:
           # always conflicts: this run's files are the newer measurement, so the
           # remote is taken as the new base and the outputs are re-applied on top.
           commit_outputs() {
-            git add -A playlists data validation-report.json
+            git add -A playlists data site validation-report.json
             [ -d epg ] && git add -A epg || true
             if git diff --cached --quiet; then
               echo "no content change"
@@ -93,7 +93,7 @@ jobs:
             fi
             echo "push rejected (attempt $attempt); rebasing outputs onto the remote"
             STAGE=$(mktemp -d)
-            cp -r playlists data validation-report.json "$STAGE"/ 2>/dev/null || true
+            cp -r playlists data site validation-report.json "$STAGE"/ 2>/dev/null || true
             [ -d epg ] && cp -r epg "$STAGE"/ || true
             git fetch origin "$GITHUB_REF_NAME"
             git reset --hard "origin/$GITHUB_REF_NAME"
