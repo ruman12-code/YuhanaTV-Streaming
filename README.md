@@ -10,7 +10,8 @@ Target player: **SS IPTV** on a **VIDAA** TV.
 
 ## Status: Phase 3 complete — live and validated
 
-**The site is deployed:** https://ruman12-code.github.io/YuhanaTV-Streaming/
+**Live:** https://ruman12-code.github.io/YuhanaTV-Streaming/ — status page with
+every endpoint and current counts, regenerated on each run.
 
 ### Live TV
 | | |

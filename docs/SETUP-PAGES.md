@@ -45,6 +45,19 @@ Not into GitHub at all. It goes into the TV:
 https://ruman12-code.github.io/YuhanaTV-Streaming/iptv/master.m3u
 ```
 
+## "Your site is live at …" but the link shows 404
+
+That is the expected result of opening the **site root** when the site has no
+`index.html`. Pages was serving correctly the whole time — the 404 came from
+GitHub, for `/` specifically, while `/iptv/master.m3u` and everything under
+`/playlists/` were being served normally.
+
+A landing page is now generated on every run (`site/index.html`, built from
+`validation-report.json`), so the root shows the library's current state and the
+URL to paste into the TV. If you see a 404 again after a deploy, allow a minute
+for the Pages CDN, then check the `deploy` job's *Stage the public site* step —
+it lists every published file.
+
 ## Checking it worked
 
 * **Settings → Pages** shows *"Your site is live at https://ruman12-code.github.io/YuhanaTV-Streaming/"*.
