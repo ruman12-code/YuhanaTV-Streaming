@@ -8,46 +8,41 @@ Target player: **SS IPTV** on a **VIDAA** TV.
 
 ---
 
-## Status: Phase 3 complete — live and validated
+## Status: Phases 1-7 complete
 
-**Live:** https://ruman12-code.github.io/YuhanaTV-Streaming/ — status page with
-every endpoint and current counts, regenerated on each run.
+**Live:** https://ruman12-code.github.io/YuhanaTV-Streaming/
 
 ### Live TV
 | | |
 |---|---|
 | Channels in registry | **171** |
-| **ACTIVE (verified reachable)** | **131** |
-| 🇧🇩 Bangladesh | **23–26 of 31**, varying by run |
-| Measured 1080p / 720p / 576p / 480p | 54 / 47 / 4 / 5 |
-| Published | **128** (3 withheld: need headers SS IPTV cannot send) |
+| ACTIVE (verified reachable) | **128** |
+| Measured 1080p / 720p | 54 / 47 |
+| Canonical `tvg-id` assigned | **104** |
 
 ### Movie Library
 | | |
 |---|---|
-| Catalogued | **208** |
-| Rights CLEARED | **208** (170 by per-item licence, 38 by curated public-domain collection) |
-| Playback verified (bytes fetched, Range-capable) | **208** |
-| Matched to IMDb | **129** · rated **121** · mean **6.02** |
-| **Published as VOD** | **160** — 48 withheld for an IMDb rating below 6.0 |
-| Unrated titles | 87, kept: no rating is not a bad rating |
-| Source | Internet Archive public-domain films · ratings from IMDb's non-commercial datasets |
+| Catalogued | **663** — 0 adult titles (screened at import) |
+| Rights CLEARED, playback byte-verified | **663** |
+| **Published as VOD** | **529** |
+| Withheld | {"rating_below_6": 122, "playback_discoverable": 11, "playback_unverified": 1} |
+| Matched to IMDb / rated | 287 / 271 · mean 5.91 |
+| HD 720p+ / Full HD 1080p+ / 4K | **70 / 41 / 7** |
 
-### Search
-`data/search-index.json` — an inverted index over **379 documents** (films and
-channels), 3,705 tokens, 349 KB. SS IPTV has no global search and the M3U layer
-cannot provide one, so the database carries it for the optional web catalogue.
+### EPG
+| | |
+|---|---|
+| Channels in `epg.xml` | 77 |
+| Programmes | **0** — no schedule is ever fabricated |
+| Channels with a public guide source available | 73 (only 1 Bangladeshi) |
 
 ### Tree
 ```
- 30 playlists · 330 movie entries + 128 channel tiles · largest file 43 items / 12 KB
-  0 structural errors · 0 circular references · 0 duplicate tiles
-151 tests passing
+37 playlists · ~1,180 entries · no screen over the 120-item budget
+ 0 structural errors · 0 circular references · 0 duplicate tiles
+199 tests passing
 ```
-
-Every published channel was fetched end to end (manifest → variant → media
-segment). Every published film had its first bytes fetched and its `Range`
-support confirmed. Resolutions come from `EXT-X-STREAM-INF`, never from a name.
 
 ## Use it
 

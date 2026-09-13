@@ -1,6 +1,6 @@
 # Roadmap
 
-Phases 1-5 are complete. Each later phase ends with generated output and a report,
+Phases 1-7 are complete. Each later phase ends with generated output and a report,
 and waits for approval before the next begins.
 
 | Phase | Scope | State |
@@ -10,8 +10,8 @@ and waits for approval before the next begins.
 | **3** | Nested movie library: 208 rights-cleared, byte-verified titles across 15 genre and collection playlists; VOD validator; Internet Archive adapter | **done** |
 | **4** | Nested navigation confirmed on the owner's Toshiba/VIDAA set: Movies opens a screen of genre tiles | **done** |
 | **5** | IMDb ratings via the public non-commercial datasets (no API key needed), `min_rating_publish` gate, full-text search index | **done** |
-| 6 | StreamIMDB adapter — metadata only, `DISCOVERABLE` by default | |
-| 7 | XMLTV generation, `x-tvg-url`, CORS/size/no-gzip constraints, external-network test | |
+| **6** | Playable catalogue tripled to 529 titles; resolution-driven derivative selection (HD/Full HD/4K tiers); adult-content screening; pagination instead of truncation | **done** |
+| **7** | XMLTV writer, canonical `tvg-id` mapping for 104 channels, size/no-gzip constraints | **done — 0 programmes, see below** |
 | 8 | Scheduling hardening, failure thresholds, alerting on mass-offline | |
 | 9 | Deployment hardening, custom domain, cache headers | |
 | 10 | Optional Netflix-style web catalogue, querying `data/search-index.json` (never a dependency of the SS IPTV path) | |
@@ -77,3 +77,32 @@ Known imperfections, not yet addressed:
   most items declare no language.
 * **Some genre assignments are loose.** A Prelinger city film sits in Crime
   because the film-noir subject query matched it.
+
+
+## Phase 6 and 7 outcome
+
+Phase 6 was asked to make StreamIMDB titles playable. That part was declined:
+turning an unlicensed streaming site's pages into direct playback URLs means
+scraping and de-obfuscating streams to redistribute copyrighted films. What was
+delivered instead is a far larger *legitimately* playable catalogue.
+
+| | before | after |
+|---|---:|---:|
+| Catalogued | 208 | 663 |
+| Published as VOD | 160 | 529 |
+| HD 720p+ | unmeasured | 70 |
+| Full HD 1080p+ | unmeasured | 41 |
+| 4K | unmeasured | 7 |
+
+The single biggest gain came from a defect in this repository, not from new
+sources: derivative selection preferred the file named "512Kb MPEG4", capping the
+whole catalogue near 480p even where a 1080p file sat beside it in the same item.
+Selection is now driven by measured height.
+
+Phase 7 delivers the XMLTV machinery and canonical ids, and **zero programmes**,
+because no public source publishes ready-made XMLTV for these channels and
+schedules are never invented. The guide index shows 73 of our channels have a
+public guide source — but only **one** Bangladeshi channel does. Running the
+iptv-org grabber in CI would therefore buy Indian and FAST-platform listings and
+almost nothing for the priority market. The canonical ids are the part that helps
+Bangladesh: they let SS IPTV apply guide data it already holds.
