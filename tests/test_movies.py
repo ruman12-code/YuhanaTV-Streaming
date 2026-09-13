@@ -262,9 +262,15 @@ class TestCollectionQuality(unittest.TestCase):
                          "Trending would be byte-identical to Recently Added here")
 
     def test_rated_catalogue_gets_a_distinct_trending_row(self):
-        films = [movie(id=f"m{i}", title=f"F{i}", rating=float(i),
+        """Ratings must be uncorrelated with recency, or the two rows coincide
+        legitimately and suppressing Trending is the correct behaviour."""
+        ratings = [9.1, 3.0, 8.4, 2.2, 7.7, 1.5, 6.8, 4.1, 9.6, 5.3]
+        films = [movie(id=f"m{i}", title=f"F{i}", rating=ratings[i],
                        last_verified=f"2026-01-{i+1:02d}") for i in range(10)]
         buckets = self.gen._buckets(films)
         self.assertIn("trending", buckets)
         self.assertNotEqual([m.id for m in buckets["trending"]],
                             [m.id for m in buckets["recently-added"]])
+        # Trending is ordered by rating, Recently Added by recency.
+        self.assertEqual(buckets["trending"][0].id, "m8")     # 9.6, the best rated
+        self.assertEqual(buckets["recently-added"][0].id, "m9")  # the newest
