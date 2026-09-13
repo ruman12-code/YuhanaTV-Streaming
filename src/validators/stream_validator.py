@@ -169,10 +169,28 @@ class StreamValidator:
             body = resp.read(max_bytes + 1)
             return resp.status, resp.geturl(), dict(resp.headers), body, recorder.count
 
+    def _fetch_retry(self, url: str, *, max_bytes: int, referrer: str = "",
+                     agent: str = "", range_bytes: int = 0, attempts: int = 2):
+        """_fetch with a retry. Sub-resources need it as much as the manifest does:
+        each one opens a fresh TLS session, and an origin with an unstable chain
+        fails some handshakes while serving the very next request fine."""
+        last = None
+        for attempt in range(max(1, attempts)):
+            if attempt:
+                time.sleep(self.backoff[min(attempt - 1, len(self.backoff) - 1)])
+            try:
+                self._throttle(host_of(url))
+                return self._fetch(url, max_bytes=max_bytes, referrer=referrer,
+                                   agent=agent, range_bytes=range_bytes)
+            except Exception as exc:  # noqa: BLE001
+                last = exc
+        raise last
+
     # --- manifest analysis ---------------------------------------------------
 
     def _analyse_manifest(self, text: str, base_url: str, result: ValidationResult) -> str:
-        head = text.lstrip()
+        # str.lstrip() does not remove U+FEFF, so name the characters explicitly.
+        head = text.lstrip("\ufeff \t\r\n")
         if head.startswith("<?xml") and "MPD" in head[:400]:
             result.manifest_kind = "dash"
             return ""
@@ -232,13 +250,25 @@ class StreamValidator:
             return ""
         return "HLS manifest contains neither variants nor segments"
 
-    def _first_segment_url(self, text: str, base_url: str) -> str:
-        for line in text.splitlines():
-            line = line.strip()
-            if not line or line.startswith("#"):
-                continue
-            return absolutise(base_url, line)
-        return ""
+    def _probe_segment_url(self, text: str, base_url: str) -> str:
+        """Pick the segment to probe from a media playlist.
+
+        The LAST listed segment, not the first. A live HLS playlist is a sliding
+        window a few segments wide: the oldest entry expires within seconds, so
+        probing it produces a 404 that says nothing about the channel's health —
+        only about how long we queued. The newest segment is the one the origin
+        is certainly still serving, and is what a player would load on join.
+        """
+        segments = [
+            line.strip() for line in text.splitlines()
+            if line.strip() and not line.strip().startswith("#")
+        ]
+        if not segments:
+            return ""
+        # An ENDLIST playlist is VOD: it does not slide, so the first entry is
+        # the one a player actually starts with.
+        newest = segments[0] if "#EXT-X-ENDLIST" in text else segments[-1]
+        return absolutise(base_url, newest)
 
     # --- public --------------------------------------------------------------
 
@@ -312,7 +342,9 @@ class StreamValidator:
             result.stages = [asdict(s) for s in stages]
             return result
 
-        text = body.decode("utf-8", errors="replace")
+        # utf-8-sig: some origins prepend a BOM. Refusing those as "not a
+        # manifest" would be our bug, not theirs.
+        text = body.decode("utf-8-sig", errors="replace")
         manifest_error = self._analyse_manifest(text, result.final_url or channel.stream_url, result)
         stages.append(StageResult("manifest", not manifest_error,
                                   manifest_error or f"{result.manifest_kind} "
@@ -328,15 +360,19 @@ class StreamValidator:
         probe_text, probe_base = text, (result.final_url or channel.stream_url)
         if self.check_segment and result.manifest_kind == "master" and result.variant_url:
             try:
-                self._throttle(host_of(result.variant_url))
-                vs, vfinal, _, vbody, _ = self._fetch(
+                vs, vfinal, _, vbody, _ = self._fetch_retry(
                     result.variant_url, max_bytes=self.max_manifest_bytes,
                     referrer=channel.http_referrer, agent=channel.http_user_agent,
                 )
-                probe_text = vbody.decode("utf-8", errors="replace")
+                # Tolerate a BOM and leading blank lines before #EXTM3U.
+                probe_text = vbody.decode("utf-8-sig", errors="replace")
                 probe_base = vfinal
-                variant_ok = vs == 200 and probe_text.lstrip().startswith("#EXTM3U")
-                stages.append(StageResult("variant", variant_ok, f"HTTP {vs}"))
+                head = probe_text.lstrip("\ufeff \t\r\n")
+                variant_ok = vs == 200 and head.startswith("#EXTM3U")
+                detail = f"HTTP {vs}"
+                if not variant_ok:
+                    detail += f", body starts {head[:60]!r}"
+                stages.append(StageResult("variant", variant_ok, detail))
                 if not variant_ok:
                     result.status = "DEGRADED"
                     result.error = "master manifest served but its variant playlist was not usable"
@@ -350,12 +386,11 @@ class StreamValidator:
                 return result
 
         if self.check_segment and result.manifest_kind in ("media", "master"):
-            seg_url = self._first_segment_url(probe_text, probe_base)
+            seg_url = self._probe_segment_url(probe_text, probe_base)
             if seg_url:
                 t0 = time.monotonic()
                 try:
-                    self._throttle(host_of(seg_url))
-                    st, _, _, seg_body, _ = self._fetch(
+                    st, _, _, seg_body, _ = self._fetch_retry(
                         seg_url, max_bytes=self.segment_bytes,
                         referrer=channel.http_referrer, agent=channel.http_user_agent,
                         range_bytes=self.segment_bytes,

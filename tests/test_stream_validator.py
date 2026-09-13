@@ -110,3 +110,87 @@ class TestValidator(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class _SlidingH(http.server.BaseHTTPRequestHandler):
+    """A live origin whose oldest segment has already expired.
+
+    Reproduces the real failure seen on the first CI run: a healthy live channel
+    reported DEGRADED because the validator probed the oldest segment in the
+    sliding window, which the origin had already dropped.
+    """
+    protocol_version = "HTTP/1.0"
+    def log_message(self, *a): pass
+    def do_GET(self):
+        p = self.path.split("?")[0]
+        if p == "/live.m3u8":
+            body = (b"#EXTM3U\n#EXT-X-TARGETDURATION:6\n#EXT-X-MEDIA-SEQUENCE:900\n"
+                    b"#EXTINF:6.0,\nexpired.ts\n#EXTINF:6.0,\nmiddle.ts\n#EXTINF:6.0,\nfresh.ts\n")
+            return self._ok(body, "application/vnd.apple.mpegurl")
+        if p == "/vod.m3u8":
+            body = (b"#EXTM3U\n#EXT-X-TARGETDURATION:6\n#EXTINF:6.0,\nfirst.ts\n"
+                    b"#EXTINF:6.0,\nlast.ts\n#EXT-X-ENDLIST\n")
+            return self._ok(body, "application/vnd.apple.mpegurl")
+        if p == "/bom.m3u8":
+            return self._ok(b"\xef\xbb\xbf\n\n#EXTM3U\n#EXTINF:6.0,\nfresh.ts\n",
+                            "application/vnd.apple.mpegurl")
+        if p == "/fresh.ts":
+            return self._ok(b"\x47" * 1024, "video/mp2t")
+        if p == "/first.ts":
+            return self._ok(b"\x47" * 1024, "video/mp2t")
+        # expired.ts, middle.ts, last.ts -> gone
+        self.send_response(404); self.send_header("Content-Length", "0"); self.end_headers()
+    def _ok(self, body, ctype):
+        self.send_response(200); self.send_header("Content-Type", ctype)
+        self.send_header("Content-Length", str(len(body))); self.end_headers()
+        self.wfile.write(body)
+
+
+class TestSlidingWindow(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        socketserver.TCPServer.allow_reuse_address = True
+        cls.srv = socketserver.ThreadingTCPServer(("127.0.0.1", 0), _SlidingH)
+        cls.port = cls.srv.server_address[1]
+        threading.Thread(target=cls.srv.serve_forever, daemon=True).start()
+        time.sleep(0.2)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.srv.shutdown(); cls.srv.server_close()
+
+    def setUp(self):
+        cfg = config.load(use_cache=False)
+        cfg["security"]["block_private_ip_targets"] = False
+        cfg["validation"].update({"retries": 0, "per_host_delay_seconds": 0,
+                                  "retry_backoff_seconds": [0, 0]})
+        self.v = StreamValidator(cfg)
+
+    def _check(self, path):
+        return self.v.validate(Channel(id="t", name="t",
+                                       stream_url=f"http://127.0.0.1:{self.port}{path}"))
+
+    def test_live_playlist_probes_the_newest_segment(self):
+        """The oldest segment is 404; the channel is still healthy."""
+        r = self._check("/live.m3u8")
+        self.assertEqual(r.status, "ACTIVE",
+                         "probing an expired segment must not condemn a live channel")
+        self.assertTrue(r.segment_ok)
+
+    def test_vod_playlist_probes_the_first_segment(self):
+        """An ENDLIST playlist does not slide, so a player starts at the front."""
+        r = self._check("/vod.m3u8")
+        self.assertEqual(r.status, "ACTIVE")
+        self.assertTrue(r.segment_ok)
+
+    def test_bom_and_leading_blank_lines_are_tolerated(self):
+        r = self._check("/bom.m3u8")
+        self.assertEqual(r.status, "ACTIVE")
+
+    def test_segment_selection_helper(self):
+        live = "#EXTM3U\n#EXTINF:6,\na.ts\n#EXTINF:6,\nb.ts\n#EXTINF:6,\nc.ts\n"
+        vod = live + "#EXT-X-ENDLIST\n"
+        base = "https://h/live/index.m3u8"
+        self.assertEqual(self.v._probe_segment_url(live, base), "https://h/live/c.ts")
+        self.assertEqual(self.v._probe_segment_url(vod, base), "https://h/live/a.ts")
+        self.assertEqual(self.v._probe_segment_url("#EXTM3U\n", base), "")
