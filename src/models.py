@@ -147,6 +147,9 @@ class Movie:
     playback_status: str = "UNVERIFIED"  # PLAYBACK_STATUS
     playback_url: str = ""
     file_size_bytes: int = 0
+    width: int = 0
+    height: int = 0
+    resolution_label: str = ""     # only ever set from measured pixels
     rights_status: str = "UNVERIFIED"    # RIGHTS_STATUS
     last_verified: str = ""
     imdb_id: str = ""

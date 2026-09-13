@@ -39,12 +39,16 @@ PD_COLLECTIONS = {
     "short_films", "publicdomainmovies",
 }
 
-# Preferred derivative formats, best first. Archive.org's 512Kb MPEG4 derivative
-# is the right trade-off for a TV: h.264, modest bitrate, always range-served.
-_FORMAT_PREFERENCE = (
-    "512Kb MPEG4", "MPEG4", "h.264", "H.264", "HiRes MPEG4", "512Kb MPEG4 Video",
-)
-_VIDEO_EXT = (".mp4", ".m4v", ".webm", ".ogv")
+# Formats a TV can open. Ordering here is a tie-break only: the real selection
+# criterion is measured resolution, because an item's "512Kb" derivative is a
+# deliberately low-bitrate encode and preferring it by name was capping the whole
+# catalogue at roughly 480p even where a 720p or 1080p file sat beside it.
+_CONTAINER_PREFERENCE = (".mp4", ".m4v", ".webm", ".ogv")
+_VIDEO_EXT = _CONTAINER_PREFERENCE
+
+# Above this the file is too large to stream comfortably to a TV over a home
+# connection, and is usually a lossless preservation master rather than a viewing copy.
+_MAX_SENSIBLE_BYTES = 6 * 1024 * 1024 * 1024
 
 _YEAR_RE = re.compile(r"(1[89]\d{2}|20\d{2})")
 _CLOCK_RE = re.compile(r"^(?:(\d+):)?(\d{1,2}):(\d{2})(?:\.\d+)?$")
@@ -102,24 +106,61 @@ def classify_rights(meta: dict) -> RightsVerdict:
                          "no licence or public-domain statement in item metadata", "none")
 
 
+def _as_int(value) -> int:
+    try:
+        return int(float(str(value)))
+    except (TypeError, ValueError):
+        return 0
+
+
 def _pick_video_file(files: list[dict]) -> dict | None:
-    """Choose the derivative a TV should play."""
-    videos = [
-        f for f in files
-        if str(f.get("name", "")).lower().endswith(_VIDEO_EXT)
-        and int(f.get("size") or 0) > 0
-    ]
+    """Choose the derivative a TV should play: the highest resolution available.
+
+    Archive file metadata usually carries `height` and `width`. Where it does
+    not, file size stands in as a proxy for quality, which is crude but strictly
+    better than preferring a derivative because of its name.
+    """
+    videos = []
+    for f in files:
+        name = str(f.get("name", "")).lower()
+        size = _as_int(f.get("size"))
+        if not name.endswith(_VIDEO_EXT) or size <= 0:
+            continue
+        if size > _MAX_SENSIBLE_BYTES:
+            continue
+        videos.append(f)
     if not videos:
         return None
+
     def rank(f):
-        fmt = str(f.get("format", ""))
-        try:
-            pref = _FORMAT_PREFERENCE.index(fmt)
-        except ValueError:
-            pref = len(_FORMAT_PREFERENCE)
-        return (pref, -int(f.get("size") or 0))
+        height = _as_int(f.get("height"))
+        size = _as_int(f.get("size"))
+        ext = next((i for i, e in enumerate(_CONTAINER_PREFERENCE)
+                    if str(f.get("name", "")).lower().endswith(e)),
+                   len(_CONTAINER_PREFERENCE))
+        # Highest resolution first; then size as a proxy where height is absent;
+        # then the most broadly playable container.
+        return (-height, -size, ext)
+
     videos.sort(key=rank)
     return videos[0]
+
+
+def resolution_label(width: int, height: int) -> str:
+    """Marketing label derived ONLY from measured pixels."""
+    if height >= 2000 or width >= 3600:
+        return "4K"
+    if height >= 1000:
+        return "1080p"
+    if height >= 700:
+        return "720p"
+    if height >= 560:
+        return "576p"
+    if height >= 400:
+        return "480p"
+    if height > 0:
+        return f"{height}p"
+    return ""
 
 
 def _pick_poster(identifier: str, files: list[dict]) -> str:
@@ -219,9 +260,15 @@ class ArchiveOrgAdapter:
             # PLAYABLE is only asserted after the VOD validator has fetched bytes.
             playback_status="UNVERIFIED",
             playback_url=playback_url,
-            file_size_bytes=int(video.get("size") or 0),
+            file_size_bytes=_as_int(video.get("size")),
+            width=_as_int(video.get("width")),
+            height=_as_int(video.get("height")),
+            resolution_label=resolution_label(_as_int(video.get("width")),
+                                              _as_int(video.get("height"))),
             rights_status=rights.status,
             notes=f"rights[{rights.rule}]: {rights.reason}; file: {video.get('format')} "
-                  f"{int(video.get('size') or 0) // (1024*1024)} MB",
+                  f"{_as_int(video.get('size')) // (1024*1024)} MB"
+                  + (f" {_as_int(video.get('width'))}x{_as_int(video.get('height'))}"
+                     if _as_int(video.get('height')) else " (dimensions not declared)"),
         )
         return movie, ""

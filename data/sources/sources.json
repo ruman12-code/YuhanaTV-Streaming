@@ -50,42 +50,71 @@
       "trust_tier": "broadcaster_official",
       "last_checked": "",
       "status": "ACTIVE",
-      "notes": "Per-item rights are read from the item's own licenceurl/rights metadata or curated public-domain collection membership. Items without such a statement are imported as rights_status UNVERIFIED and can never enter a VOD playlist.",
+      "notes": "Per-item rights are read from the item's own licenceurl/rights metadata or curated public-domain collection membership. Items without such a statement are imported as rights_status UNVERIFIED and can never enter a VOD playlist. Derivative selection is resolution-driven: the highest-resolution playable file is chosen, not the lowest-bitrate one.",
       "queries": [
         {
           "label": "public-domain feature films",
-          "q": "collection:(feature_films) AND mediatype:(movies) AND format:(MPEG4)",
-          "rows": 120
+          "rows": 250,
+          "q": "collection:(feature_films) AND mediatype:(movies) AND format:(MPEG4)"
         },
         {
           "label": "classic animation",
-          "q": "collection:(animationandcartoons) AND mediatype:(movies) AND format:(MPEG4)",
-          "rows": 40,
-          "genre": "animation"
+          "rows": 120,
+          "genre": "animation",
+          "q": "collection:(animationandcartoons) AND mediatype:(movies) AND format:(MPEG4)"
         },
         {
           "label": "documentaries (Prelinger)",
-          "q": "collection:(prelinger) AND mediatype:(movies) AND format:(MPEG4)",
-          "rows": 30,
-          "genre": "documentary"
+          "rows": 100,
+          "genre": "documentary",
+          "q": "collection:(prelinger) AND mediatype:(movies) AND format:(MPEG4)"
         },
         {
           "label": "film noir",
-          "q": "subject:(\"film noir\") AND mediatype:(movies) AND format:(MPEG4)",
-          "rows": 30,
-          "genre": "crime"
+          "rows": 60,
+          "genre": "crime",
+          "q": "subject:(\"film noir\") AND mediatype:(movies) AND format:(MPEG4)"
         },
         {
           "label": "sci-fi and horror",
-          "q": "collection:(SciFi_Horror) AND mediatype:(movies) AND format:(MPEG4)",
-          "rows": 25,
-          "genre": "scifi"
+          "rows": 80,
+          "genre": "scifi",
+          "q": "collection:(SciFi_Horror) AND mediatype:(movies) AND format:(MPEG4)"
         },
         {
-          "label": "classic comedy shorts",
-          "q": "collection:(comedy_films) AND mediatype:(movies) AND format:(MPEG4)",
+          "label": "classic comedy",
+          "rows": 80,
+          "genre": "comedy",
+          "q": "collection:(comedy_films) AND mediatype:(movies) AND format:(MPEG4)"
+        },
+        {
+          "label": "classic westerns",
+          "rows": 60,
+          "genre": "adventure",
+          "q": "collection:(western_films) AND mediatype:(movies) AND format:(MPEG4)"
+        },
+        {
+          "label": "silent film classics",
+          "rows": 60,
+          "genre": "drama",
+          "q": "collection:(silent_films) AND mediatype:(movies) AND format:(MPEG4)"
+        },
+        {
+          "label": "open / Creative Commons films in HD",
+          "rows": 80,
+          "q": "collection:(opensource_movies) AND mediatype:(movies) AND format:(MPEG4) AND licenseurl:(*creativecommons*)"
+        },
+        {
+          "label": "Blender open movies",
           "rows": 30,
-          "genre": "comedy"
+          "genre": "animation",
+          "q": "creator:(\"Blender Foundation\") AND mediatype:(movies)"
+        },
+        {
+          "label": "NASA and public-agency films",
+          "rows": 60,
+          "genre": "documentary",
+          "q": "collection:(nasa) AND mediatype:(movies) AND format:(MPEG4)"
         }
       ]
     }

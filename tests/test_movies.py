@@ -149,13 +149,52 @@ class TestArchiveRights(unittest.TestCase):
         self.assertEqual(v.status, "UNVERIFIED")
         self.assertIn("no licence", v.reason)
 
-    def test_video_derivative_preference(self):
+    def test_highest_resolution_derivative_wins(self):
+        """Selection is by measured height, not by derivative name.
+
+        Preferring the '512Kb' derivative by name capped the whole catalogue at
+        roughly 480p even where a 1080p file sat beside it in the same item.
+        """
         files = [
-            {"name": "a.ogv", "format": "Ogg Video", "size": "900000000"},
-            {"name": "b.mp4", "format": "512Kb MPEG4", "size": "400000000"},
+            {"name": "a_512kb.mp4", "format": "512Kb MPEG4", "size": "300000000",
+             "width": "640", "height": "360"},
+            {"name": "a.mp4", "format": "h.264", "size": "1400000000",
+             "width": "1920", "height": "1080"},
             {"name": "c.txt", "format": "Text", "size": "10"},
         ]
-        self.assertEqual(_pick_video_file(files)["name"], "b.mp4")
+        self.assertEqual(_pick_video_file(files)["name"], "a.mp4")
+
+    def test_size_stands_in_when_dimensions_are_not_declared(self):
+        files = [
+            {"name": "small.mp4", "format": "512Kb MPEG4", "size": "100000000"},
+            {"name": "big.mp4", "format": "MPEG4", "size": "900000000"},
+        ]
+        self.assertEqual(_pick_video_file(files)["name"], "big.mp4")
+
+    def test_a_declared_resolution_beats_a_bigger_file_without_one(self):
+        files = [
+            {"name": "unknown.mp4", "format": "MPEG4", "size": "2000000000"},
+            {"name": "hd.mp4", "format": "h.264", "size": "800000000",
+             "width": "1280", "height": "720"},
+        ]
+        self.assertEqual(_pick_video_file(files)["name"], "hd.mp4")
+
+    def test_oversized_preservation_master_is_skipped(self):
+        """A lossless master is not a viewing copy and will not stream to a TV."""
+        files = [
+            {"name": "master.mp4", "format": "MPEG4", "size": str(40 * 1024**3),
+             "width": "3840", "height": "2160"},
+            {"name": "view.mp4", "format": "h.264", "size": "900000000",
+             "width": "1920", "height": "1080"},
+        ]
+        self.assertEqual(_pick_video_file(files)["name"], "view.mp4")
+
+    def test_resolution_label_comes_from_pixels(self):
+        from src.sources.archive_org.adapter import resolution_label
+        self.assertEqual(resolution_label(3840, 2160), "4K")
+        self.assertEqual(resolution_label(1920, 1080), "1080p")
+        self.assertEqual(resolution_label(1280, 720), "720p")
+        self.assertEqual(resolution_label(0, 0), "")
 
     def test_no_video_returns_none(self):
         self.assertIsNone(_pick_video_file([{"name": "a.txt", "format": "Text", "size": "10"}]))
@@ -343,3 +382,29 @@ class TestCrossItemDeduplication(unittest.TestCase):
             movie(id="b", title="The Thing", year=1982, file_size_bytes=1),
         ])
         self.assertEqual(sorted(kept), ["a", "b"])
+
+
+class TestQualityTiers(unittest.TestCase):
+    """HD tiers come from the height the file declares, never from a guess."""
+
+    def setUp(self):
+        self.gen = MovieGenerator(config.load(use_cache=False), Path(tempfile.mkdtemp()))
+
+    def test_hd_and_fullhd_buckets(self):
+        films = [
+            movie(id="sd", title="SD Film", height=480, resolution_label="480p"),
+            movie(id="hd", title="HD Film", height=720, resolution_label="720p"),
+            movie(id="fhd", title="FHD Film", height=1080, resolution_label="1080p"),
+        ]
+        buckets = self.gen._buckets(films)
+        self.assertEqual({m.id for m in buckets["hd"]}, {"hd", "fhd"})
+        self.assertEqual({m.id for m in buckets["fullhd"]}, {"fhd"})
+
+    def test_unknown_dimensions_are_not_counted_as_hd(self):
+        buckets = self.gen._buckets([movie(id="x", height=0)])
+        self.assertNotIn("hd", buckets)
+        self.assertNotIn("fullhd", buckets)
+
+    def test_resolution_appears_on_the_tile_only_when_measured(self):
+        self.assertIn("1080p", MovieGenerator.description(movie(resolution_label="1080p")))
+        self.assertNotIn("p •", MovieGenerator.description(movie(resolution_label="")))

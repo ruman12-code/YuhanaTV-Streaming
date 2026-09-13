@@ -131,6 +131,8 @@ class MovieGenerator:
             bits.append(f"★ {movie.rating:.1f}")
         if movie.runtime_minutes:
             bits.append(f"{movie.runtime_minutes} min")
+        if movie.resolution_label:
+            bits.append(movie.resolution_label)   # measured, never claimed
         return " • ".join(bits)
 
     def _leaf(self, movies: list[Movie], title: str) -> M3UBuilder:
@@ -170,6 +172,16 @@ class MovieGenerator:
                 g = normalise_genre(raw)
                 if g:
                     place(g, m)
+
+        # Quality tiers, from the height the file actually declares. A film whose
+        # dimensions the source never stated is absent from both, rather than
+        # optimistically counted as HD.
+        hd = [m for m in movies if m.height >= 700]
+        if hd:
+            buckets["hd"] = sorted(hd, key=lambda m: (-(m.rating or 0), m.title.lower()))
+        fullhd = [m for m in movies if m.height >= 1000]
+        if fullhd:
+            buckets["fullhd"] = sorted(fullhd, key=lambda m: (-(m.rating or 0), m.title.lower()))
 
         # Collections are views over the same films, not extra copies.
         rated = [m for m in movies if m.rating is not None]
