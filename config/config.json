@@ -1,13 +1,11 @@
 {
   "$comment": "Central configuration. Every generator/validator reads this file. Override any value with the matching YUHANA_* environment variable (see src/config.py).",
-
   "site": {
     "base_url": "https://ruman12-code.github.io/YuhanaTV-Streaming",
     "playlist_path": "/playlists",
     "epg_path": "/epg",
     "brand": "YuhanaTV"
   },
-
   "ssiptv": {
     "$comment": "Limits taken from SS IPTV operator documentation and Smart-TV memory constraints.",
     "max_items_per_playlist": 120,
@@ -19,15 +17,19 @@
     "tile_size_channel": "small",
     "tile_size_movie": "medium",
     "subsplit_threshold": 40,
-    "never_subsplit": ["bangladesh"]
+    "never_subsplit": [
+      "bangladesh"
+    ]
   },
-
   "validation": {
     "timeout_connect_seconds": 8,
     "timeout_read_seconds": 12,
     "max_redirects": 5,
     "retries": 2,
-    "retry_backoff_seconds": [2, 5],
+    "retry_backoff_seconds": [
+      2,
+      5
+    ],
     "concurrency": 8,
     "per_host_concurrency": 2,
     "per_host_delay_seconds": 1.0,
@@ -36,17 +38,44 @@
     "consecutive_failures_before_offline": 3,
     "degraded_latency_ms": 4000,
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36",
-    "publish_statuses": ["ACTIVE"],
-    "publish_statuses_when_empty": ["ACTIVE", "DEGRADED"]
+    "publish_statuses": [
+      "ACTIVE"
+    ],
+    "publish_statuses_when_empty": [
+      "ACTIVE",
+      "DEGRADED"
+    ],
+    "health_gate": {
+      "$comment": "Refuses to publish a validation run that looks like a vantage-point failure rather than a real outage. Only active once a baseline of previously-ACTIVE channels exists.",
+      "enabled": true,
+      "max_failure_fraction": 0.7,
+      "max_regression_fraction": 0.4,
+      "min_baseline": 10
+    },
+    "history_runs_kept": 30,
+    "min_reliability": 0.34,
+    "min_checks_for_reliability_gate": 5
   },
-
   "security": {
-    "allowed_url_schemes": ["http", "https"],
-    "denied_url_schemes": ["javascript", "data", "file", "ftp", "smb", "rtmp", "rtsp", "udp", "rtp", "mms"],
+    "allowed_url_schemes": [
+      "http",
+      "https"
+    ],
+    "denied_url_schemes": [
+      "javascript",
+      "data",
+      "file",
+      "ftp",
+      "smb",
+      "rtmp",
+      "rtsp",
+      "udp",
+      "rtp",
+      "mms"
+    ],
     "block_private_ip_targets": true,
     "max_manifest_bytes": 2097152
   },
-
   "policy": {
     "$comment": "Content-rights gating. 'require_rights_review' blocks a source from the published playlist until a human sets redistribution_allowed.",
     "publish_unverified_rights_live": true,

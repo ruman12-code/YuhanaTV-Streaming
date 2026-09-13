@@ -23,10 +23,10 @@ on:
         type: string
         default: '0'
   push:
-    branches: [main]
     paths:
       - 'data/**'
       - 'src/**'
+      - 'scripts/**'
       - 'config/**'
       - '.github/workflows/update-iptv.yml'
 
@@ -68,11 +68,19 @@ jobs:
             python3 scripts/pipeline.py build
           fi
 
+      # These run even when the build step failed, so a shut health gate still
+      # produces a readable report instead of an opaque red cross.
       - name: Validate playlists
+        if: always()
         run: python3 scripts/pipeline.py verify --verbose
 
       - name: Validation report
+        if: always()
         run: python3 scripts/pipeline.py report
+
+      - name: Job summary
+        if: always()
+        run: python3 scripts/summarise.py
 
       - name: Upload report as an artifact
         if: always()
@@ -95,8 +103,13 @@ jobs:
             git push
           fi
 
+  # Deploy runs only on the repository's default branch, and is allowed to fail
+  # without failing the pipeline: GitHub Pages must be enabled by hand once
+  # (Settings -> Pages -> Source: GitHub Actions) before it can succeed.
   deploy:
     needs: build
+    if: github.ref_name == github.event.repository.default_branch
+    continue-on-error: true
     runs-on: ubuntu-latest
     permissions:
       pages: write

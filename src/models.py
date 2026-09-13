@@ -81,6 +81,13 @@ class Channel:
     http_referrer: str = ""
     http_user_agent: str = ""
     consecutive_failures: int = 0
+    # Reliability history, accumulated across validation runs. A channel that
+    # passes once and fails four times is not the same asset as one that always
+    # passes, and the difference has to survive into the published playlist.
+    checks_total: int = 0
+    checks_ok: int = 0
+    first_seen: str = ""
+    last_status_change: str = ""
     notes: str = ""
     tags: list[str] = field(default_factory=list)
 
@@ -99,6 +106,20 @@ class Channel:
     @property
     def requires_custom_headers(self) -> bool:
         return bool(self.http_referrer or self.http_user_agent)
+
+    @property
+    def reliability(self) -> float:
+        """Fraction of validation runs in which this channel was usable (0.0-1.0).
+
+        Returns 0.0 when never checked; callers must distinguish that from a
+        measured 0.0 using `checks_total`.
+        """
+        return (self.checks_ok / self.checks_total) if self.checks_total else 0.0
+
+    @property
+    def is_flapping(self) -> bool:
+        """Intermittent rather than reliably up or reliably down."""
+        return self.checks_total >= 4 and 0.25 <= self.reliability <= 0.75
 
     def to_dict(self) -> dict:
         return asdict(self)

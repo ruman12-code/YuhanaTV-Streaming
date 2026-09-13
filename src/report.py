@@ -16,7 +16,8 @@ def _iso() -> str:
 def build_report(*, channels: list[Channel], movies: list[Movie],
                  playlist_result: dict, build_files: dict[str, int],
                  withheld: dict[str, list], ingest_stats: dict | None,
-                 epg: dict | None, seed_build: bool) -> dict:
+                 epg: dict | None, seed_build: bool,
+                 health: dict | None = None, history: dict | None = None) -> dict:
     status_counts = Counter(c.status for c in channels)
     res_counts = Counter(c.resolution_label for c in channels if c.resolution_label)
 
@@ -26,6 +27,10 @@ def build_report(*, channels: list[Channel], movies: list[Movie],
          "note": c.notes}
         for c in channels if c.status in ("OFFLINE", "INVALID")
     ]
+
+    checked = [c for c in channels if c.checks_total]
+    flapping = sorted((c for c in channels if c.is_flapping),
+                      key=lambda c: c.reliability)
 
     return {
         "generated_at": _iso(),
@@ -63,6 +68,22 @@ def build_report(*, channels: list[Channel], movies: list[Movie],
             "unverified": sum(1 for m in movies if m.playback_status == "UNVERIFIED"),
             "published_as_vod": sum(1 for m in movies if m.publishable_as_vod),
         },
+        "run_health": health or {"ok": None, "reason": "no validation run recorded yet"},
+        "reliability": {
+            "channels_with_history": len(checked),
+            "mean_reliability": round(
+                sum(c.reliability for c in checked) / len(checked), 4) if checked else None,
+            "fully_reliable": sum(1 for c in checked if c.reliability == 1.0),
+            "never_once_up": sum(1 for c in checked if c.checks_ok == 0),
+            "flapping": [
+                {"id": c.id, "name": c.name, "reliability": round(c.reliability, 3),
+                 "checks": c.checks_total}
+                for c in flapping[:40]
+            ],
+            "note": "reliability is checks_ok/checks_total across validation runs; "
+                    "a channel with checks_total == 0 has never been measured.",
+        },
+        "history": (history or {}).get("runs", [])[-10:],
         "epg": epg or {"generated": False, "channels_covered": 0,
                        "coverage_percent": 0.0, "note": "EPG is Phase 7"},
         "withheld_from_playlists": {

@@ -123,3 +123,86 @@ class TestPublicationGate(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestReliabilityGate(unittest.TestCase):
+    """A channel that answers only occasionally must stop being published."""
+
+    def setUp(self):
+        self.cfg = config.load(use_cache=False)
+        self.cfg["validation"]["min_reliability"] = 0.34
+        self.cfg["validation"]["min_checks_for_reliability_gate"] = 5
+        self.gen = LiveGenerator(self.cfg, Path(tempfile.mkdtemp()))
+
+    def _ch(self, **kw):
+        base = dict(id="c1", name="C", stream_url="https://h/a.m3u8",
+                    category="news", status="ACTIVE")
+        base.update(kw)
+        return Channel(**base)
+
+    def test_chronically_unreliable_channel_is_withheld(self):
+        published, withheld = self.gen._partition(
+            [self._ch(checks_total=10, checks_ok=2)], allow_unverified=False)
+        self.assertEqual(published, [])
+        self.assertIn("unreliable", withheld)
+
+    def test_reliable_channel_passes(self):
+        published, _ = self.gen._partition(
+            [self._ch(checks_total=10, checks_ok=9)], allow_unverified=False)
+        self.assertEqual(len(published), 1)
+
+    def test_gate_waits_for_enough_evidence(self):
+        """Two failures out of three is not yet a verdict."""
+        published, _ = self.gen._partition(
+            [self._ch(checks_total=3, checks_ok=1)], allow_unverified=False)
+        self.assertEqual(len(published), 1)
+
+
+class TestReliabilityMath(unittest.TestCase):
+    def test_unchecked_channel_reports_zero_but_is_not_flapping(self):
+        c = Channel(id="c", name="C")
+        self.assertEqual(c.reliability, 0.0)
+        self.assertFalse(c.is_flapping)
+
+    def test_flapping_detection(self):
+        self.assertTrue(Channel(id="c", name="C", checks_total=8, checks_ok=4).is_flapping)
+        self.assertFalse(Channel(id="c", name="C", checks_total=8, checks_ok=8).is_flapping)
+        self.assertFalse(Channel(id="c", name="C", checks_total=8, checks_ok=0).is_flapping)
+
+
+class TestEmptyBuildSafety(unittest.TestCase):
+    """A build that can publish nothing must not destroy what is already published."""
+
+    def test_nothing_publishable_leaves_the_existing_tree_untouched(self):
+        root = Path(tempfile.mkdtemp())
+        live = root / "live"
+        live.mkdir(parents=True)
+        existing = live / "bangladesh.m3u"
+        existing.write_text("#EXTM3U\n#EXTINF:-1,Keep me\nhttps://h/a.m3u8\n", encoding="utf-8")
+
+        cfg = config.load(use_cache=False)
+        gen = LiveGenerator(cfg, root)
+        result = gen.build(
+            [Channel(id="c", name="C", stream_url="https://h/b.m3u8", status="UNVERIFIED")],
+            allow_unverified=False,
+        )
+        self.assertEqual(result.published, [])
+        self.assertEqual(result.files, {})
+        self.assertTrue(existing.exists(), "existing playlists must survive an empty build")
+        self.assertIn("Keep me", existing.read_text(encoding="utf-8"))
+
+    def test_a_successful_build_removes_stale_playlists(self):
+        root = Path(tempfile.mkdtemp())
+        live = root / "live"
+        live.mkdir(parents=True)
+        stale = live / "sports.m3u"
+        stale.write_text("#EXTM3U\n#EXTINF:-1,Gone\nhttps://h/old.m3u8\n", encoding="utf-8")
+
+        gen = LiveGenerator(config.load(use_cache=False), root)
+        result = gen.build(
+            [Channel(id="c", name="C", stream_url="https://h/b.m3u8",
+                     category="news", status="ACTIVE")],
+            allow_unverified=False,
+        )
+        self.assertTrue(result.published)
+        self.assertFalse(stale.exists(), "a category with no channels must not linger")
