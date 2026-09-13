@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-09-13T11:06:43+00:00",
+  "generated_at": "2026-09-13T11:12:38+00:00",
   "build_kind": "validated",
   "warning": "",
   "live_channels": {
     "total": 171,
     "active": 131,
-    "degraded": 40,
-    "offline": 0,
-    "invalid": 0,
+    "degraded": 11,
+    "offline": 28,
+    "invalid": 1,
     "unverified": 0,
     "by_category": {
       "entertainment": 52,
@@ -46,35 +46,35 @@
   },
   "run_health": {
     "ok": true,
-    "reason": "0% of 118 baseline channels regressed; within limits",
+    "reason": "2% of 131 baseline channels regressed; within limits",
     "checked": 171,
-    "newly_failing": 34,
-    "baseline_active": 118,
-    "failure_fraction": 0.1988,
-    "regression_fraction": 0.0
+    "newly_failing": 31,
+    "baseline_active": 131,
+    "failure_fraction": 0.1813,
+    "regression_fraction": 0.0153
   },
   "last_probe": {
     "$comment": "What the most recent run actually measured, before the 3-strike demotion rule is applied. `live_channels` above reports stored status, which lags deliberately.",
     "counts": {
       "ACTIVE": 131,
       "OFFLINE": 30,
-      "DEGRADED": 6,
-      "INVALID": 4
+      "DEGRADED": 9,
+      "INVALID": 1
     },
     "failing_stage": {
       "OFFLINE:http": 29,
-      "INVALID:manifest": 4,
-      "DEGRADED:variant": 3,
-      "DEGRADED:segment": 2,
-      "DEGRADED:none": 1,
-      "OFFLINE:dns": 1
+      "DEGRADED:segment": 4,
+      "DEGRADED:variant": 4,
+      "OFFLINE:dns": 1,
+      "INVALID:manifest": 1,
+      "DEGRADED:none": 1
     }
   },
   "reliability": {
     "channels_with_history": 171,
-    "mean_reliability": 0.7982,
-    "fully_reliable": 135,
-    "never_once_up": 33,
+    "mean_reliability": 0.8051,
+    "fully_reliable": 134,
+    "never_once_up": 29,
     "flapping": [],
     "note": "reliability is checks_ok/checks_total across validation runs; a channel with checks_total == 0 has never been measured."
   },
@@ -104,6 +104,19 @@
       "health_reason": "0% of 118 baseline channels regressed; within limits",
       "failure_fraction": 0.1988,
       "regression_fraction": 0.0
+    },
+    {
+      "at": "2026-09-13T11:09:33+00:00",
+      "counts": {
+        "ACTIVE": 131,
+        "OFFLINE": 30,
+        "DEGRADED": 9,
+        "INVALID": 1
+      },
+      "health_ok": true,
+      "health_reason": "2% of 131 baseline channels regressed; within limits",
+      "failure_fraction": 0.1813,
+      "regression_fraction": 0.0153
     }
   ],
   "epg": {
@@ -129,8 +142,8 @@
     ],
     "status_degraded": [
       {
-        "id": "ch-5bf6b8149f",
-        "name": "BTV News"
+        "id": "ch-a0f0b63e98",
+        "name": "Desh TV"
       },
       {
         "id": "ch-787284cc9b",
@@ -141,16 +154,52 @@
         "name": "Ekushe TV"
       },
       {
+        "id": "ch-d429a5c212",
+        "name": "Global TV"
+      },
+      {
         "id": "ch-00d7c1cd76",
         "name": "Green TV"
       },
       {
-        "id": "ch-8090d498ec",
-        "name": "News 21 Bangla TV"
+        "id": "ch-a718b81488",
+        "name": "My TV"
       },
       {
-        "id": "ch-1f11408447",
-        "name": "History Asia"
+        "id": "ch-b5cca1e8a4",
+        "name": "Ananda TV"
+      },
+      {
+        "id": "ch-71660af211",
+        "name": "Fashion TV"
+      },
+      {
+        "id": "ch-3b587c8865",
+        "name": "FilmBox"
+      },
+      {
+        "id": "ch-b55bcca7df",
+        "name": "Islamic TV"
+      },
+      {
+        "id": "ch-f47172f491",
+        "name": "Makkah Live"
+      }
+    ],
+    "status_invalid": [
+      {
+        "id": "ch-c37b64312b",
+        "name": "World Channel"
+      }
+    ],
+    "status_offline": [
+      {
+        "id": "ch-5bf6b8149f",
+        "name": "BTV News"
+      },
+      {
+        "id": "ch-8090d498ec",
+        "name": "News 21 Bangla TV"
       },
       {
         "id": "ch-6066453b6f",
@@ -163,10 +212,6 @@
       {
         "id": "ch-4c11df595a",
         "name": "Travel XP HD"
-      },
-      {
-        "id": "ch-b5cca1e8a4",
-        "name": "Ananda TV"
       },
       {
         "id": "ch-cc96aac473",
@@ -197,20 +242,12 @@
         "name": "Comedy Central"
       },
       {
-        "id": "ch-5944383b7d",
-        "name": "Jalsha Movies HD"
-      },
-      {
         "id": "ch-2ad197ba32",
         "name": "Republic Bangla"
       },
       {
         "id": "ch-129414515c",
         "name": "Sananda"
-      },
-      {
-        "id": "ch-7ccfcd9b22",
-        "name": "Sony Max"
       },
       {
         "id": "ch-91b097739d",
@@ -225,16 +262,8 @@
         "name": "Star Gold HD"
       },
       {
-        "id": "ch-e4a67cae8c",
-        "name": "Star Jalsha HD"
-      },
-      {
         "id": "ch-676957d364",
         "name": "Sun Bangla"
-      },
-      {
-        "id": "ch-c37b64312b",
-        "name": "World Channel"
       },
       {
         "id": "ch-f69b4bf4fa",
@@ -251,10 +280,6 @@
       {
         "id": "ch-89824fa4e9",
         "name": "DreamWorks Channel Asia"
-      },
-      {
-        "id": "ch-3b587c8865",
-        "name": "FilmBox"
       },
       {
         "id": "ch-5117886f2d",
@@ -277,14 +302,6 @@
         "name": "Sangeet Bhojpuri"
       },
       {
-        "id": "ch-b55bcca7df",
-        "name": "Islamic TV"
-      },
-      {
-        "id": "ch-f47172f491",
-        "name": "Makkah Live"
-      },
-      {
         "id": "ch-650877c69d",
         "name": "Star Sports 2"
       }
@@ -292,9 +309,215 @@
   },
   "withheld_counts": {
     "requires_custom_http_headers": 3,
-    "status_degraded": 40
+    "status_degraded": 11,
+    "status_invalid": 1,
+    "status_offline": 28
   },
-  "broken_urls": [],
+  "broken_urls": [
+    {
+      "id": "ch-5bf6b8149f",
+      "name": "BTV News",
+      "status": "OFFLINE",
+      "host": "tvsen6.aynaott.com",
+      "note": ""
+    },
+    {
+      "id": "ch-8090d498ec",
+      "name": "News 21 Bangla TV",
+      "status": "OFFLINE",
+      "host": "103.190.133.68:1935",
+      "note": ""
+    },
+    {
+      "id": "ch-6066453b6f",
+      "name": "Love Natural",
+      "status": "OFFLINE",
+      "host": "27.124.71.27",
+      "note": ""
+    },
+    {
+      "id": "ch-0439e2385e",
+      "name": "National Geographic HD",
+      "status": "OFFLINE",
+      "host": "103.165.93.31:8095",
+      "note": "source claimed quality '576p' (unverified)"
+    },
+    {
+      "id": "ch-4c11df595a",
+      "name": "Travel XP HD",
+      "status": "OFFLINE",
+      "host": "103.159.180.34:5001",
+      "note": ""
+    },
+    {
+      "id": "ch-cc96aac473",
+      "name": "Calcutta News",
+      "status": "OFFLINE",
+      "host": "akdnetwork.co.in",
+      "note": ""
+    },
+    {
+      "id": "ch-f67a0e7931",
+      "name": "CBS",
+      "status": "OFFLINE",
+      "host": "stream.cammonitorplus.net",
+      "note": "source claimed quality '1080p' (unverified)"
+    },
+    {
+      "id": "ch-24219d2719",
+      "name": "Colors Bangla HD",
+      "status": "OFFLINE",
+      "host": "103.165.93.31:8095",
+      "note": ""
+    },
+    {
+      "id": "ch-67470ff597",
+      "name": "Colors Cineplex HD",
+      "status": "OFFLINE",
+      "host": "66.102.126.10:8000",
+      "note": "source claimed quality '1080p' (unverified)"
+    },
+    {
+      "id": "ch-73c50f78c8",
+      "name": "Colors HD",
+      "status": "OFFLINE",
+      "host": "66.102.126.10:8000",
+      "note": "source claimed quality '1080p' (unverified)"
+    },
+    {
+      "id": "ch-87229d40f8",
+      "name": "Colors Infinity HD",
+      "status": "OFFLINE",
+      "host": "66.102.126.10:8000",
+      "note": "source claimed quality '1080p' (unverified)"
+    },
+    {
+      "id": "ch-6961b2f6bd",
+      "name": "Comedy Central",
+      "status": "OFFLINE",
+      "host": "23.237.104.106:8080",
+      "note": "source claimed quality '1080p' (unverified)"
+    },
+    {
+      "id": "ch-2ad197ba32",
+      "name": "Republic Bangla",
+      "status": "OFFLINE",
+      "host": "vg-republictvyupp.akamaized.net",
+      "note": ""
+    },
+    {
+      "id": "ch-129414515c",
+      "name": "Sananda",
+      "status": "OFFLINE",
+      "host": "27.124.71.27",
+      "note": ""
+    },
+    {
+      "id": "ch-91b097739d",
+      "name": "Sony Max 1",
+      "status": "OFFLINE",
+      "host": "103.159.180.34:5001",
+      "note": "source claimed quality '720p' (unverified)"
+    },
+    {
+      "id": "ch-fb0a166a34",
+      "name": "Star Gold 2 HD",
+      "status": "OFFLINE",
+      "host": "66.102.126.10:8000",
+      "note": "source claimed quality '1080p' (unverified)"
+    },
+    {
+      "id": "ch-fa656d45fc",
+      "name": "Star Gold HD",
+      "status": "OFFLINE",
+      "host": "66.102.126.10:8000",
+      "note": ""
+    },
+    {
+      "id": "ch-676957d364",
+      "name": "Sun Bangla",
+      "status": "OFFLINE",
+      "host": "27.124.71.27",
+      "note": ""
+    },
+    {
+      "id": "ch-c37b64312b",
+      "name": "World Channel",
+      "status": "INVALID",
+      "host": "world.lls.pbs.org",
+      "note": "source claimed quality '1080p' (unverified)"
+    },
+    {
+      "id": "ch-f69b4bf4fa",
+      "name": "Zee Bangla HD",
+      "status": "OFFLINE",
+      "host": "103.165.93.31:8095",
+      "note": "source claimed quality '1080p' (unverified)"
+    },
+    {
+      "id": "ch-b50769e381",
+      "name": "Disney Channel HD",
+      "status": "OFFLINE",
+      "host": "66.102.126.10:8000",
+      "note": "source claimed quality '1080p' (unverified)"
+    },
+    {
+      "id": "ch-c8ec406b1e",
+      "name": "Disney Junior",
+      "status": "OFFLINE",
+      "host": "149.71.34.166:8000",
+      "note": "source claimed quality '576p' (unverified)"
+    },
+    {
+      "id": "ch-89824fa4e9",
+      "name": "DreamWorks Channel Asia",
+      "status": "OFFLINE",
+      "host": "cdn12.178.indevs.in",
+      "note": "source claimed quality '1080p' (unverified)"
+    },
+    {
+      "id": "ch-5117886f2d",
+      "name": "Star Movies HD",
+      "status": "OFFLINE",
+      "host": "66.102.126.10:8000",
+      "note": "source claimed quality '1080p' (unverified)"
+    },
+    {
+      "id": "ch-26cafa75f9",
+      "name": "Star Movies Select HD",
+      "status": "OFFLINE",
+      "host": "66.102.126.10:8000",
+      "note": "source claimed quality '1080p' (unverified)"
+    },
+    {
+      "id": "ch-96f3c1ce82",
+      "name": "Enlace",
+      "status": "OFFLINE",
+      "host": "177.234.249.178:8888",
+      "note": "source claimed quality '720p' (unverified)"
+    },
+    {
+      "id": "ch-6e0f867635",
+      "name": "Music India",
+      "status": "OFFLINE",
+      "host": "cdn-2.pishow.tv",
+      "note": ""
+    },
+    {
+      "id": "ch-a6517d6adb",
+      "name": "Sangeet Bhojpuri",
+      "status": "OFFLINE",
+      "host": "cdn-4.pishow.tv",
+      "note": ""
+    },
+    {
+      "id": "ch-650877c69d",
+      "name": "Star Sports 2",
+      "status": "OFFLINE",
+      "host": "tvsen7.aynaott.com",
+      "note": ""
+    }
+  ],
   "duplicates": [
     {
       "kept": "National Geographic HD",
@@ -334,11 +557,11 @@
   },
   "playlists": {
     "files": {
-      "live/bangladesh.m3u": 6030,
-      "live/documentary.m3u": 4035,
-      "live/entertainment.m3u": 7577,
+      "live/bangladesh.m3u": 5089,
+      "live/documentary.m3u": 4290,
+      "live/entertainment.m3u": 8258,
       "live/kids.m3u": 2155,
-      "live/lifestyle.m3u": 2873,
+      "live/lifestyle.m3u": 2711,
       "live/movies.m3u": 970,
       "live/music.m3u": 2913,
       "live/news.m3u": 1872,
@@ -348,7 +571,7 @@
       "live/live-tv.m3u": 1860,
       "master.m3u": 661
     },
-    "total_bytes": 35903,
+    "total_bytes": 35736,
     "structure_ok": true,
     "structure_errors": 0,
     "structure_warnings": 1,
