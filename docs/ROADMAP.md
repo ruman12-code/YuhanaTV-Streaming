@@ -16,6 +16,21 @@ and waits for approval before the next begins.
 | 9 | Deployment hardening, custom domain, cache headers | |
 | 10 | Optional Netflix-style web catalogue (never a dependency of the SS IPTV path) | |
 
+## Phase 2 measured outcome
+
+Three validation runs on GitHub-hosted runners:
+
+| run | ACTIVE | Bangladesh | notes |
+|---|---:|---:|---|
+| 1 | 118 | 16/31 | first measurement; exposed three validator bugs |
+| 2 | 131 | 26/31 | after fixing sliding-window segment probing, BOM handling, sub-resource retries |
+| 3 | 131 | 23/31 | after adding direct MPEG-TS support; health gate reported 2% regression |
+
+Most of run 1's apparent failures were the validator's fault, not the origins':
+it probed the oldest segment of a live sliding window, rejected manifests
+carrying a byte-order mark, and gave sub-resource fetches no retry. Fixing those
+moved 13 channels — 10 of them Bangladeshi — from DEGRADED to ACTIVE.
+
 ## Phase 2 outcome
 
 * Validation runs on GitHub-hosted runners (decided), with the run-health gate,

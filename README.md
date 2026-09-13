@@ -16,18 +16,22 @@ Real validation, run on GitHub-hosted runners.
 |---|---|
 | Channels in registry | **171** (177 source entries, 6 duplicates dropped) |
 | **ACTIVE (verified reachable)** | **131** |
-| DEGRADED | 40 |
-| OFFLINE / INVALID | 0 stored (see `last_probe` for the raw run) |
-| 🇧🇩 Bangladesh | **26 of 31 ACTIVE** |
+| DEGRADED / OFFLINE / INVALID | 11 / 28 / 1 |
+| 🇧🇩 Bangladesh | **23–26 of 31 ACTIVE**, varying by run |
 | Measured 1080p / 720p / 576p / 480p | 54 / 47 / 4 / 5 |
-| Channels published | 131 (3 withheld: need HTTP headers SS IPTV cannot send) |
-| Playlists generated | 13, largest 31 items / 7.6 KB |
+| **Channels published** | **128** (3 ACTIVE withheld: need HTTP headers SS IPTV cannot send) |
+| Playlists generated | 13, largest 34 items / 8.3 KB |
 | Structural errors | **0**, no circular references |
+| Mean reliability over 3 runs | **0.81**; 134 channels usable in every run, 29 never once up |
 | Tests | **77 passing** |
 
 Every published channel has been fetched end to end — manifest, variant playlist,
 and a real media segment — from a GitHub runner. Resolutions are measured from
 `EXT-X-STREAM-INF`, never from a channel name.
+
+The Bangladesh figure moves between runs because six channels on one origin have
+an unstable TLS chain. That variance is the point of the reliability counters: a
+channel is judged on its record, not on one run.
 
 Live results: [`validation-report.json`](validation-report.json) ·
 per-channel detail: [`data/status/stream-status.json`](data/status/stream-status.json)
