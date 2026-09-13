@@ -17,7 +17,8 @@ def build_report(*, channels: list[Channel], movies: list[Movie],
                  playlist_result: dict, build_files: dict[str, int],
                  withheld: dict[str, list], ingest_stats: dict | None,
                  epg: dict | None, seed_build: bool,
-                 health: dict | None = None, history: dict | None = None) -> dict:
+                 health: dict | None = None, history: dict | None = None,
+                 probe_results: list | None = None) -> dict:
     status_counts = Counter(c.status for c in channels)
     res_counts = Counter(c.resolution_label for c in channels if c.resolution_label)
 
@@ -27,6 +28,14 @@ def build_report(*, channels: list[Channel], movies: list[Movie],
          "note": c.notes}
         for c in channels if c.status in ("OFFLINE", "INVALID")
     ]
+
+    probe_counts = Counter(r.get("status") for r in (probe_results or []))
+    probe_errors = Counter()
+    for r in (probe_results or []):
+        if r.get("status") not in ("ACTIVE",):
+            stage = next((s["name"] for s in reversed(r.get("stages", []))
+                          if not s.get("ok")), "none")
+            probe_errors[f"{r.get('status')}:{stage}"] += 1
 
     checked = [c for c in channels if c.checks_total]
     flapping = sorted((c for c in channels if c.is_flapping),
@@ -69,6 +78,13 @@ def build_report(*, channels: list[Channel], movies: list[Movie],
             "published_as_vod": sum(1 for m in movies if m.publishable_as_vod),
         },
         "run_health": health or {"ok": None, "reason": "no validation run recorded yet"},
+        "last_probe": {
+            "$comment": "What the most recent run actually measured, before the "
+                        "3-strike demotion rule is applied. `live_channels` above "
+                        "reports stored status, which lags deliberately.",
+            "counts": dict(probe_counts.most_common()),
+            "failing_stage": dict(probe_errors.most_common()),
+        },
         "reliability": {
             "channels_with_history": len(checked),
             "mean_reliability": round(

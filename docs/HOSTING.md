@@ -36,9 +36,32 @@ the URLs do not.
 | Option | Use it when | Cost |
 |---|---|---|
 | **GitHub Pages** (default) | normal case | free |
-| `raw.githubusercontent.com/...` | Pages is not enabled | free; ~5 min CDN cache, `text/plain` content type |
+| `raw.githubusercontent.com/...` | Pages is not enabled yet — **works today, this repository is public** | free; ~5 min CDN cache, `text/plain` content type |
 | **Cloudflare Pages** | you need control over response headers — the likely Phase 7 answer if GitHub Pages' gzip negotiation breaks XMLTV | free tier |
 | **Own domain + CDN** | you want a short URL to type on a TV remote | domain cost |
+
+## Using it before Pages is enabled
+
+Pages needs one manual step and cannot be enabled through the API. Until it is done,
+the same tree is already served from `raw.githubusercontent.com`, because this
+repository is public. To switch, set one value:
+
+```json
+// config/config.json
+"base_url": "https://raw.githubusercontent.com/ruman12-code/YuhanaTV-Streaming/claude/awesome-pasteur-p98iqn"
+```
+
+then `python3 scripts/pipeline.py build && python3 scripts/pipeline.py verify` and commit.
+Every child-playlist URL in the tree is rewritten to match, and SS IPTV points at:
+
+```
+https://raw.githubusercontent.com/ruman12-code/YuhanaTV-Streaming/claude/awesome-pasteur-p98iqn/playlists/master.m3u
+```
+
+Caveats: the URL is long to type on a remote, responses are `text/plain`, there is a
+CDN cache of roughly five minutes, and the branch name is baked into the path — so this
+is a stopgap, not the destination. Pages gives the shorter, stable `/iptv/master.m3u`
+form and is worth the one-time setup.
 
 ## Custom domain
 

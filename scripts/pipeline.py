@@ -363,6 +363,7 @@ def cmd_report(args) -> int:
         ingest_stats=ingest_stats, epg=None, seed_build=args.seed,
         health=read_json(STATUS_DIR / "health.json", None),
         history=read_json(STATUS_DIR / "history.json", None),
+        probe_results=(read_json(STATUS_DIR / "stream-status.json", {}) or {}).get("results"),
     )
     write_json(REPO / "validation-report.json", report)
     print(json.dumps({k: v for k, v in report.items()

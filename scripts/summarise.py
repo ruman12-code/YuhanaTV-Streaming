@@ -29,6 +29,18 @@ lines = [
     "",
 ]
 
+probe = report.get("last_probe", {})
+if probe.get("counts"):
+    lines += ["### What this run actually measured", "",
+              "_Stored status lags by design: a first failure demotes to DEGRADED "
+              "rather than condemning the channel._", "",
+              "| probe result | channels |", "|---|---:|"]
+    lines += [f"| {k} | {v} |" for k, v in probe["counts"].items()]
+    if probe.get("failing_stage"):
+        lines += ["", "| failure (status : last failing stage) | channels |", "|---|---:|"]
+        lines += [f"| `{k}` | {v} |" for k, v in probe["failing_stage"].items()]
+    lines.append("")
+
 if report["withheld_counts"]:
     lines += ["### Withheld from playlists", "", "| reason | channels |", "|---|---:|"]
     lines += [f"| `{k}` | {v} |" for k, v in report["withheld_counts"].items()]

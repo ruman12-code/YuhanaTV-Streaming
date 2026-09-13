@@ -30,13 +30,24 @@ CI runs in a US/EU datacentre. Channels served only to Bangladeshi IP ranges wil
 reported `OFFLINE` by CI even though they play on the owner's TV — a false negative
 that would silently delete working channels.
 
-**Mitigation.** A single failure never removes a channel: `consecutive_failures_before_offline`
-(default 3) demotes to `DEGRADED` first, and only sustained failure across separate runs
-marks a channel `OFFLINE`. If false negatives persist, the honest fix is to run
-`scripts/pipeline.py check` from a machine on the target network (a self-hosted runner,
-or a cron job on a home box) and commit the resulting status file — not to disguise the
-failure. **This is unresolved until you decide where validation should run; see the open
-question in the handover.**
+**Decision (Phase 2): validation runs on GitHub-hosted runners.** The false-negative risk
+is accepted in exchange for zero infrastructure. Three mechanisms contain it:
+
+1. `consecutive_failures_before_offline` (default 3) — one failure demotes a channel to
+   `DEGRADED`; only sustained failure across separate runs marks it `OFFLINE`.
+2. The **run-health gate** (`src/validators/health.py`) — if more than 40% of
+   previously-`ACTIVE` channels fail in a single run, the run is treated as a fault in the
+   vantage point rather than in the channels: statuses are not updated and the published
+   playlists are left exactly as they were. This is precisely the "US runner briefly cannot
+   reach Bangladesh" scenario.
+3. **Reliability counters** — `checks_ok / checks_total` accrues on every run, including
+   runs the gate rejected. A channel that is genuinely BD-locked will show a stable low
+   reliability rather than flapping, which distinguishes it from an intermittent origin.
+
+If BD channels turn out to be systematically unreachable from CI, the remaining honest fix
+is to run `scripts/pipeline.py check` from a machine on the target network and commit the
+resulting status file. The pipeline already supports this: `data/status/` is the only thing
+that would need to come from elsewhere.
 
 ## 3. SS IPTV cannot send per-stream HTTP headers
 
