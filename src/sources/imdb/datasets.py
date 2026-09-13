@@ -57,6 +57,7 @@ class ImdbTitle:
     year: int | None
     title_type: str
     genres: list[str]
+    is_adult: bool = False
     rating: float | None = None
     votes: int = 0
 
@@ -117,6 +118,7 @@ class ImdbDatasets:
                     found[row[0]] = ImdbTitle(
                         tconst=row[0], title=row[2], year=year, title_type=row[1],
                         genres=[g for g in row[8].split(",") if g and g != r"\N"],
+                        is_adult=(row[4] == "1"),
                     )
                     break
         return found

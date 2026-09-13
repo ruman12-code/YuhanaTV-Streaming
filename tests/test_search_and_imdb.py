@@ -49,27 +49,27 @@ class TestMatching(unittest.TestCase):
     def test_exact_year_beats_a_neighbour(self):
         m = movie(title="Detour", year=1945)
         match = best_match(m, [
-            ImdbTitle("tt1", "Detour", 1944, "movie", [], 7.0, 50_000),
-            ImdbTitle("tt2", "Detour", 1945, "movie", [], 6.9, 10),
+            ImdbTitle("tt1", "Detour", 1944, "movie", [], rating=7.0, votes=50_000),
+            ImdbTitle("tt2", "Detour", 1945, "movie", [], rating=6.9, votes=10),
         ])
         self.assertEqual(match.tconst, "tt2")
 
     def test_votes_break_a_tie_within_the_same_year(self):
         m = movie(title="Detour", year=1945)
         match = best_match(m, [
-            ImdbTitle("tt1", "Detour", 1945, "movie", [], 5.0, 10),
-            ImdbTitle("tt2", "Detour", 1945, "movie", [], 7.2, 90_000),
+            ImdbTitle("tt1", "Detour", 1945, "movie", [], rating=5.0, votes=10),
+            ImdbTitle("tt2", "Detour", 1945, "movie", [], rating=7.2, votes=90_000),
         ])
         self.assertEqual(match.tconst, "tt2")
 
     def test_a_distant_year_is_rejected_rather_than_accepted(self):
         """A confident wrong rating is worse than no rating."""
         m = movie(title="The Thing", year=1951)
-        self.assertIsNone(best_match(m, [ImdbTitle("tt1", "The Thing", 1982, "movie", [], 8.2, 400_000)]))
+        self.assertIsNone(best_match(m, [ImdbTitle("tt1", "The Thing", 1982, "movie", [], rating=8.2, votes=400_000)]))
 
     def test_a_different_title_is_rejected(self):
         m = movie(title="Detour", year=1945)
-        self.assertIsNone(best_match(m, [ImdbTitle("tt1", "Detour to Nowhere", 1945, "movie", [], 7.0, 10)]))
+        self.assertIsNone(best_match(m, [ImdbTitle("tt1", "Detour to Nowhere", 1945, "movie", [], rating=7.0, votes=10)]))
 
     def test_no_candidates_means_no_match(self):
         self.assertIsNone(best_match(movie(), []))

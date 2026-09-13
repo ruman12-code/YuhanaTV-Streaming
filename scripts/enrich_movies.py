@@ -76,6 +76,12 @@ def main() -> int:
             if match is None:
                 stats["no IMDb match"] += 1
                 continue
+            if match.is_adult:
+                # IMDb's own flag, as a second gate behind the keyword screen.
+                m.playback_status = "EXCLUDED"
+                m.notes = (m.notes + "; " if m.notes else "") + "excluded: IMDb isAdult"
+                stats["excluded by IMDb adult flag"] += 1
+                continue
             m.imdb_id = match.tconst
             if match.rating is not None:
                 m.rating = match.rating

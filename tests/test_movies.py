@@ -337,14 +337,18 @@ class TestMetadataParsing(unittest.TestCase):
 
     def test_no_duplicate_tiles_when_genres_alias_together(self):
         """'Crime' and 'Film-Noir' both map to crime; the film belongs once."""
-        gen = MovieGenerator(config.load(use_cache=False), Path(tempfile.mkdtemp()))
+        cfg = config.load(use_cache=False)
+        cfg["ssiptv"]["min_bucket_size"] = 1     # this test is about duplication
+        gen = MovieGenerator(cfg, Path(tempfile.mkdtemp()))
         films = [movie(id="m1", title="C-Man", genre=["Crime", "Film-Noir", "Mystery"])]
         buckets = gen._buckets(films)
         self.assertEqual(len(buckets["crime"]), 1)
         self.assertEqual([m.id for m in buckets["crime"]], ["m1"])
 
     def test_a_film_still_reaches_every_distinct_bucket(self):
-        gen = MovieGenerator(config.load(use_cache=False), Path(tempfile.mkdtemp()))
+        cfg = config.load(use_cache=False)
+        cfg["ssiptv"]["min_bucket_size"] = 1
+        gen = MovieGenerator(cfg, Path(tempfile.mkdtemp()))
         buckets = gen._buckets([movie(id="m1", genre=["Crime", "Horror"], language="english")])
         for b in ("crime", "horror", "english"):
             self.assertEqual(len(buckets[b]), 1, b)
@@ -391,6 +395,7 @@ class TestQualityTiers(unittest.TestCase):
         self.gen = MovieGenerator(config.load(use_cache=False), Path(tempfile.mkdtemp()))
 
     def test_hd_and_fullhd_buckets(self):
+        # HD tiers are exempt from the floor: they are curated views.
         films = [
             movie(id="sd", title="SD Film", height=480, resolution_label="480p"),
             movie(id="hd", title="HD Film", height=720, resolution_label="720p"),

@@ -22,6 +22,7 @@ from dataclasses import dataclass
 
 from ...models import Movie, stable_id, slugify
 from ...util.urls import check_url
+from ...content_policy import adult_reason
 
 SEARCH_URL = "https://archive.org/advancedsearch.php"
 METADATA_URL = "https://archive.org/metadata/"
@@ -37,7 +38,13 @@ PD_COLLECTIONS = {
     "publicmoviescollection", "prelinger", "feature_films", "classic_cartoons",
     "film_noir", "SciFi_Horror", "more_animation", "animationandcartoons",
     "short_films", "publicdomainmovies",
+    # Works of the US federal government are not subject to copyright (17 USC 105),
+    # so NASA's own films are public domain whether or not the item says so.
+    "nasa", "nasaimages",
 }
+
+# Creators whose entire output is released under a known open licence.
+PD_CREATORS = {"blender foundation"}
 
 # Formats a TV can open. Ordering here is a tie-break only: the real selection
 # criterion is measured resolution, because an item's "512Kb" derivative is a
@@ -101,6 +108,12 @@ def classify_rights(meta: dict) -> RightsVerdict:
         return RightsVerdict("CLEARED",
                              f"member of curated public-domain collection '{hit}'",
                              "collection")
+
+    creator = str(meta.get("creator") or "").strip().lower()
+    if creator in PD_CREATORS:
+        return RightsVerdict("CLEARED",
+                             f"creator '{creator}' releases its films under an open licence",
+                             "creator")
 
     return RightsVerdict("UNVERIFIED",
                          "no licence or public-domain statement in item metadata", "none")
@@ -211,9 +224,16 @@ class ArchiveOrgAdapter:
         if video is None:
             return None, "no playable video derivative in the item"
 
-        rights = classify_rights(meta)
-
         title = str(meta.get("title") or identifier).strip()
+        subjects_raw = meta.get("subject") or []
+        if isinstance(subjects_raw, str):
+            subjects_raw = [subjects_raw]
+        reason = adult_reason(title, " ".join(str(s) for s in subjects_raw),
+                              str(meta.get("description") or ""))
+        if reason:
+            return None, f"adult material (matched '{reason}')"
+
+        rights = classify_rights(meta)
         # `publicdate` is when the file was uploaded to the Archive, not when the
         # film was made: using it dates 1940s footage to whenever someone scanned
         # it. Only fields that describe the work itself are consulted.

@@ -205,8 +205,12 @@ class MovieGenerator:
             if trending and [m.id for m in trending] != [m.id for m in recent[:len(trending)]]:
                 buckets["trending"] = trending
 
-        # Drop buckets too small to deserve their own screen.
-        return {k: v for k, v in buckets.items() if len(v) >= 1}
+        # A one-title screen is a wasted click; collections are exempt because
+        # they are curated views rather than accidental leftovers.
+        floor = int(self.cfg.get_path("ssiptv.min_bucket_size", 3))
+        exempt = set(COLLECTIONS) | {"hd", "fullhd"}
+        return {k: v for k, v in buckets.items()
+                if len(v) >= floor or k in exempt}
 
     # --- build ---------------------------------------------------------------
 
