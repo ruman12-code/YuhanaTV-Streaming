@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-09-13T10:59:53+00:00",
+  "generated_at": "2026-09-13T11:06:43+00:00",
   "build_kind": "validated",
   "warning": "",
   "live_channels": {
     "total": 171,
-    "active": 118,
-    "degraded": 53,
+    "active": 131,
+    "degraded": 40,
     "offline": 0,
     "invalid": 0,
     "unverified": 0,
@@ -30,10 +30,10 @@
   "resolution": {
     "measured_4k": 0,
     "measured_1080p": 54,
-    "measured_720p": 45,
+    "measured_720p": 47,
     "measured_576p": 4,
     "measured_480p": 5,
-    "unmeasured": 61,
+    "unmeasured": 59,
     "note": "Counts come from #EXT-X-STREAM-INF RESOLUTION only. Source-claimed labels such as '(1080p)' in a channel name are never counted."
   },
   "movies": {
@@ -46,34 +46,35 @@
   },
   "run_health": {
     "ok": true,
-    "reason": "no baseline (only 0 previously-ACTIVE channels in this run, need 10); results accepted as first measurement",
+    "reason": "0% of 118 baseline channels regressed; within limits",
     "checked": 171,
-    "newly_failing": 35,
-    "baseline_active": 0,
-    "failure_fraction": 0.2047,
+    "newly_failing": 34,
+    "baseline_active": 118,
+    "failure_fraction": 0.1988,
     "regression_fraction": 0.0
   },
   "last_probe": {
     "$comment": "What the most recent run actually measured, before the 3-strike demotion rule is applied. `live_channels` above reports stored status, which lags deliberately.",
     "counts": {
-      "ACTIVE": 118,
-      "OFFLINE": 31,
-      "DEGRADED": 18,
+      "ACTIVE": 131,
+      "OFFLINE": 30,
+      "DEGRADED": 6,
       "INVALID": 4
     },
     "failing_stage": {
-      "OFFLINE:http": 30,
-      "DEGRADED:segment": 11,
-      "DEGRADED:variant": 7,
+      "OFFLINE:http": 29,
       "INVALID:manifest": 4,
+      "DEGRADED:variant": 3,
+      "DEGRADED:segment": 2,
+      "DEGRADED:none": 1,
       "OFFLINE:dns": 1
     }
   },
   "reliability": {
     "channels_with_history": 171,
-    "mean_reliability": 0.7953,
-    "fully_reliable": 136,
-    "never_once_up": 35,
+    "mean_reliability": 0.7982,
+    "fully_reliable": 135,
+    "never_once_up": 33,
     "flapping": [],
     "note": "reliability is checks_ok/checks_total across validation runs; a channel with checks_total == 0 has never been measured."
   },
@@ -89,6 +90,19 @@
       "health_ok": true,
       "health_reason": "no baseline (only 0 previously-ACTIVE channels in this run, need 10); results accepted as first measurement",
       "failure_fraction": 0.2047,
+      "regression_fraction": 0.0
+    },
+    {
+      "at": "2026-09-13T11:03:35+00:00",
+      "counts": {
+        "ACTIVE": 131,
+        "OFFLINE": 30,
+        "DEGRADED": 6,
+        "INVALID": 4
+      },
+      "health_ok": true,
+      "health_reason": "0% of 118 baseline channels regressed; within limits",
+      "failure_fraction": 0.1988,
       "regression_fraction": 0.0
     }
   ],
@@ -115,64 +129,28 @@
     ],
     "status_degraded": [
       {
-        "id": "ch-d22f3e5657",
-        "name": "ATN News"
-      },
-      {
-        "id": "ch-20946f1d7d",
-        "name": "Bangla TV"
-      },
-      {
-        "id": "ch-f3e6b8415d",
-        "name": "Boishakhi"
-      },
-      {
         "id": "ch-5bf6b8149f",
         "name": "BTV News"
-      },
-      {
-        "id": "ch-f5023ed24e",
-        "name": "Channel i"
-      },
-      {
-        "id": "ch-a0f0b63e98",
-        "name": "Desh TV"
       },
       {
         "id": "ch-787284cc9b",
         "name": "Ekhon"
       },
       {
-        "id": "ch-d429a5c212",
-        "name": "Global TV"
+        "id": "ch-8fd784bf92",
+        "name": "Ekushe TV"
       },
       {
         "id": "ch-00d7c1cd76",
         "name": "Green TV"
       },
       {
-        "id": "ch-bcd379bb74",
-        "name": "Jamuna"
-      },
-      {
-        "id": "ch-a718b81488",
-        "name": "My TV"
-      },
-      {
         "id": "ch-8090d498ec",
         "name": "News 21 Bangla TV"
       },
       {
-        "id": "ch-ebe7086efe",
-        "name": "News 24"
-      },
-      {
-        "id": "ch-f110db1460",
-        "name": "R TV"
-      },
-      {
-        "id": "ch-8c50a7c3cf",
-        "name": "SRK"
+        "id": "ch-1f11408447",
+        "name": "History Asia"
       },
       {
         "id": "ch-6066453b6f",
@@ -221,10 +199,6 @@
       {
         "id": "ch-5944383b7d",
         "name": "Jalsha Movies HD"
-      },
-      {
-        "id": "ch-aa5eff6477",
-        "name": "R Plus News"
       },
       {
         "id": "ch-2ad197ba32",
@@ -279,14 +253,6 @@
         "name": "DreamWorks Channel Asia"
       },
       {
-        "id": "ch-35f2684970",
-        "name": "ETV Bal Bharat"
-      },
-      {
-        "id": "ch-71660af211",
-        "name": "Fashion TV"
-      },
-      {
         "id": "ch-3b587c8865",
         "name": "FilmBox"
       },
@@ -319,10 +285,6 @@
         "name": "Makkah Live"
       },
       {
-        "id": "ch-4095e77f9a",
-        "name": "Mundial"
-      },
-      {
         "id": "ch-650877c69d",
         "name": "Star Sports 2"
       }
@@ -330,7 +292,7 @@
   },
   "withheld_counts": {
     "requires_custom_http_headers": 3,
-    "status_degraded": 53
+    "status_degraded": 40
   },
   "broken_urls": [],
   "duplicates": [
@@ -372,21 +334,21 @@
   },
   "playlists": {
     "files": {
-      "live/bangladesh.m3u": 3592,
-      "live/documentary.m3u": 4290,
-      "live/entertainment.m3u": 7363,
-      "live/kids.m3u": 1974,
-      "live/lifestyle.m3u": 2711,
+      "live/bangladesh.m3u": 6030,
+      "live/documentary.m3u": 4035,
+      "live/entertainment.m3u": 7577,
+      "live/kids.m3u": 2155,
+      "live/lifestyle.m3u": 2873,
       "live/movies.m3u": 970,
       "live/music.m3u": 2913,
       "live/news.m3u": 1872,
       "live/religious.m3u": 1424,
-      "live/sports.m3u": 1701,
+      "live/sports.m3u": 1854,
       "live/international.m3u": 1679,
       "live/live-tv.m3u": 1860,
       "master.m3u": 661
     },
-    "total_bytes": 33010,
+    "total_bytes": 35903,
     "structure_ok": true,
     "structure_errors": 0,
     "structure_warnings": 1,
