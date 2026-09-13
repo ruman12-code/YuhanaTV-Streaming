@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-09-13T12:00:48+00:00",
+  "generated_at": "2026-09-13T12:05:51+00:00",
   "build_kind": "validated",
   "warning": "",
   "live_channels": {
     "total": 171,
-    "active": 125,
-    "degraded": 17,
-    "offline": 28,
-    "invalid": 1,
+    "active": 129,
+    "degraded": 11,
+    "offline": 29,
+    "invalid": 2,
     "unverified": 0,
     "by_category": {
       "entertainment": 52,
@@ -46,100 +46,119 @@
   },
   "run_health": {
     "ok": true,
-    "reason": "5% of 130 baseline channels regressed; within limits",
+    "reason": "0% of 125 baseline channels regressed; within limits",
     "checked": 171,
-    "newly_failing": 15,
-    "baseline_active": 130,
-    "failure_fraction": 0.1056,
-    "regression_fraction": 0.0462
+    "newly_failing": 5,
+    "baseline_active": 125,
+    "failure_fraction": 0.0352,
+    "regression_fraction": 0.0
   },
   "last_probe": {
     "$comment": "What the most recent run actually measured, before the 3-strike demotion rule is applied. `live_channels` above reports stored status, which lags deliberately.",
     "counts": {
-      "ACTIVE": 125,
-      "OFFLINE": 42,
-      "INVALID": 2,
-      "DEGRADED": 2
+      "ACTIVE": 129,
+      "OFFLINE": 32,
+      "DEGRADED": 8,
+      "INVALID": 2
     },
     "failing_stage": {
-      "OFFLINE:http": 41,
+      "OFFLINE:http": 31,
+      "DEGRADED:variant": 5,
       "INVALID:manifest": 2,
-      "OFFLINE:dns": 1,
-      "DEGRADED:variant": 1,
-      "DEGRADED:none": 1
+      "DEGRADED:none": 2,
+      "DEGRADED:segment": 1,
+      "OFFLINE:dns": 1
     }
   },
   "reliability": {
     "channels_with_history": 171,
-    "mean_reliability": 0.793,
+    "mean_reliability": 0.7943,
     "fully_reliable": 123,
     "never_once_up": 29,
     "flapping": [
       {
         "id": "ch-a0f0b63e98",
         "name": "Desh TV",
-        "reliability": 0.4,
-        "checks": 5
-      },
-      {
-        "id": "ch-7ccfcd9b22",
-        "name": "Sony Max",
-        "reliability": 0.4,
-        "checks": 5
-      },
-      {
-        "id": "ch-d429a5c212",
-        "name": "Global TV",
-        "reliability": 0.6,
-        "checks": 5
-      },
-      {
-        "id": "ch-00d7c1cd76",
-        "name": "Green TV",
-        "reliability": 0.6,
-        "checks": 5
-      },
-      {
-        "id": "ch-5944383b7d",
-        "name": "Jalsha Movies HD",
-        "reliability": 0.6,
-        "checks": 5
+        "reliability": 0.5,
+        "checks": 6
       },
       {
         "id": "ch-c6ce2c281c",
         "name": "Sananda Tv",
-        "reliability": 0.6,
-        "checks": 5
+        "reliability": 0.5,
+        "checks": 6
       },
       {
-        "id": "ch-e4a67cae8c",
-        "name": "Star Jalsha HD",
-        "reliability": 0.6,
-        "checks": 5
+        "id": "ch-7ccfcd9b22",
+        "name": "Sony Max",
+        "reliability": 0.5,
+        "checks": 6
       },
       {
         "id": "ch-7304184149",
         "name": "Nick Bangla",
-        "reliability": 0.6,
-        "checks": 5
+        "reliability": 0.5,
+        "checks": 6
+      },
+      {
+        "id": "ch-d429a5c212",
+        "name": "Global TV",
+        "reliability": 0.667,
+        "checks": 6
+      },
+      {
+        "id": "ch-00d7c1cd76",
+        "name": "Green TV",
+        "reliability": 0.667,
+        "checks": 6
+      },
+      {
+        "id": "ch-f110db1460",
+        "name": "R TV",
+        "reliability": 0.667,
+        "checks": 6
+      },
+      {
+        "id": "ch-b5cca1e8a4",
+        "name": "Ananda TV",
+        "reliability": 0.667,
+        "checks": 6
+      },
+      {
+        "id": "ch-5944383b7d",
+        "name": "Jalsha Movies HD",
+        "reliability": 0.667,
+        "checks": 6
+      },
+      {
+        "id": "ch-e4a67cae8c",
+        "name": "Star Jalsha HD",
+        "reliability": 0.667,
+        "checks": 6
       },
       {
         "id": "ch-3b587c8865",
         "name": "FilmBox",
-        "reliability": 0.6,
-        "checks": 5
+        "reliability": 0.667,
+        "checks": 6
       },
       {
         "id": "ch-b55bcca7df",
         "name": "Islamic TV",
-        "reliability": 0.6,
-        "checks": 5
+        "reliability": 0.667,
+        "checks": 6
+      },
+      {
+        "id": "ch-f47172f491",
+        "name": "Makkah Live",
+        "reliability": 0.667,
+        "checks": 6
       },
       {
         "id": "ch-ae793780a7",
         "name": "Medina Live",
-        "reliability": 0.6,
-        "checks": 5
+        "reliability": 0.667,
+        "checks": 6
       }
     ],
     "note": "reliability is checks_ok/checks_total across validation runs; a channel with checks_total == 0 has never been measured."
@@ -209,6 +228,19 @@
       "health_reason": "5% of 130 baseline channels regressed; within limits",
       "failure_fraction": 0.1056,
       "regression_fraction": 0.0462
+    },
+    {
+      "at": "2026-09-13T12:02:47+00:00",
+      "counts": {
+        "ACTIVE": 129,
+        "OFFLINE": 32,
+        "DEGRADED": 8,
+        "INVALID": 2
+      },
+      "health_ok": true,
+      "health_reason": "0% of 125 baseline channels regressed; within limits",
+      "failure_fraction": 0.0352,
+      "regression_fraction": 0.0
     }
   ],
   "epg": {
@@ -234,20 +266,8 @@
     ],
     "status_degraded": [
       {
-        "id": "ch-5cc55e1ac4",
-        "name": "Channel S"
-      },
-      {
-        "id": "ch-a0f0b63e98",
-        "name": "Desh TV"
-      },
-      {
         "id": "ch-787284cc9b",
         "name": "Ekhon"
-      },
-      {
-        "id": "ch-8fd784bf92",
-        "name": "Ekushe TV"
       },
       {
         "id": "ch-d429a5c212",
@@ -270,24 +290,12 @@
         "name": "Ananda TV"
       },
       {
-        "id": "ch-c6ce2c281c",
-        "name": "Sananda Tv"
-      },
-      {
-        "id": "ch-7ccfcd9b22",
-        "name": "Sony Max"
-      },
-      {
-        "id": "ch-7304184149",
-        "name": "Nick Bangla"
-      },
-      {
-        "id": "ch-6359a66294",
-        "name": "Fashion&LifeStyle"
-      },
-      {
         "id": "ch-3b587c8865",
         "name": "FilmBox"
+      },
+      {
+        "id": "ch-75ed62a802",
+        "name": "9XM"
       },
       {
         "id": "ch-b55bcca7df",
@@ -303,6 +311,10 @@
       }
     ],
     "status_invalid": [
+      {
+        "id": "ch-c6ce2c281c",
+        "name": "Sananda Tv"
+      },
       {
         "id": "ch-c37b64312b",
         "name": "World Channel"
@@ -398,6 +410,10 @@
         "name": "DreamWorks Channel Asia"
       },
       {
+        "id": "ch-7304184149",
+        "name": "Nick Bangla"
+      },
+      {
         "id": "ch-5117886f2d",
         "name": "Star Movies HD"
       },
@@ -425,9 +441,9 @@
   },
   "withheld_counts": {
     "requires_custom_http_headers": 3,
-    "status_degraded": 17,
-    "status_invalid": 1,
-    "status_offline": 28
+    "status_degraded": 11,
+    "status_invalid": 2,
+    "status_offline": 29
   },
   "broken_urls": [
     {
@@ -529,6 +545,13 @@
       "note": ""
     },
     {
+      "id": "ch-c6ce2c281c",
+      "name": "Sananda Tv",
+      "status": "INVALID",
+      "host": "live-stream.amarbanglatv.in:8080",
+      "note": ""
+    },
+    {
       "id": "ch-91b097739d",
       "name": "Sony Max 1",
       "status": "OFFLINE",
@@ -590,6 +613,13 @@
       "status": "OFFLINE",
       "host": "cdn12.178.indevs.in",
       "note": "source claimed quality '1080p' (unverified)"
+    },
+    {
+      "id": "ch-7304184149",
+      "name": "Nick Bangla",
+      "status": "OFFLINE",
+      "host": "live.balajibroadband.com:3500",
+      "note": ""
     },
     {
       "id": "ch-5117886f2d",
@@ -673,13 +703,13 @@
   },
   "playlists": {
     "files": {
-      "live/bangladesh.m3u": 4463,
+      "live/bangladesh.m3u": 5415,
       "live/documentary.m3u": 4290,
-      "live/entertainment.m3u": 7782,
+      "live/entertainment.m3u": 8041,
       "live/kids.m3u": 1963,
-      "live/lifestyle.m3u": 2697,
+      "live/lifestyle.m3u": 2873,
       "live/movies.m3u": 970,
-      "live/music.m3u": 2913,
+      "live/music.m3u": 2672,
       "live/news.m3u": 1872,
       "live/religious.m3u": 1098,
       "live/sports.m3u": 1854,
@@ -703,7 +733,7 @@
       "movies/movies.m3u": 2775,
       "master.m3u": 835
     },
-    "total_bytes": 129687,
+    "total_bytes": 130833,
     "structure_ok": true,
     "structure_errors": 0,
     "structure_warnings": 9,
@@ -713,9 +743,9 @@
       {
         "severity": "warning",
         "file": "live/music.m3u",
-        "line": 26,
+        "line": 24,
         "code": "DUP_TITLE",
-        "message": "title 'Zoom' already used on line 24"
+        "message": "title 'Zoom' already used on line 22"
       },
       {
         "severity": "warning",
