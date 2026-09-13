@@ -135,9 +135,36 @@ class MovieGenerator:
             bits.append(movie.resolution_label)   # measured, never claimed
         return " • ".join(bits)
 
+    @staticmethod
+    def _page_label(chunk: list[Movie]) -> str:
+        """An A-F style range label from the titles a page actually holds."""
+        def initial(m: Movie) -> str:
+            for ch in m.title.strip():
+                if ch.isalnum():
+                    return ch.upper()
+            return "#"
+        first, last = initial(chunk[0]), initial(chunk[-1])
+        return first if first == last else f"{first}-{last}"
+
+    def _paginate(self, movies: list[Movie]) -> list[tuple[str, list[Movie]]]:
+        """Split an oversized bucket into alphabetical pages.
+
+        Previously the leaf simply sliced to the cap, which dropped titles with no
+        record that it had happened - 31 films vanished from the library that way.
+        Pagination keeps every title and keeps each screen within the Smart-TV
+        budget, which is what the cap was for.
+        """
+        ordered = sorted(movies, key=lambda m: m.title.lower())
+        if len(ordered) <= self.max_items:
+            return [("", ordered)]
+        pages = (len(ordered) + self.max_items - 1) // self.max_items
+        per = (len(ordered) + pages - 1) // pages
+        chunks = [ordered[i:i + per] for i in range(0, len(ordered), per)]
+        return [(self._page_label(c), c) for c in chunks if c]
+
     def _leaf(self, movies: list[Movie], title: str) -> M3UBuilder:
         b = M3UBuilder(default_size=self.size_movie, default_description=title)
-        for m in movies[: self.max_items]:
+        for m in movies:
             b.add_video(
                 m.title if not m.year else f"{m.title} ({m.year})",
                 m.playback_url,
@@ -226,13 +253,36 @@ class MovieGenerator:
         if self.movies_dir.exists():
             for stale in self.movies_dir.rglob("*.m3u"):
                 stale.unlink()
+            for d in sorted((d for d in self.movies_dir.rglob("*") if d.is_dir()),
+                            reverse=True):
+                if not any(d.iterdir()):
+                    d.rmdir()
 
         files: dict[str, int] = {}
         for slug, items in buckets.items():
-            meta = MOVIE_CATEGORY_META.get(slug, {"label": slug.title()})
-            items = sorted(items, key=lambda m: (-(m.rating or 0), m.title.lower()))
-            files[f"movies/{slug}.m3u"] = self._leaf(items, meta["label"]).write(
-                self.movies_dir / f"{slug}.m3u")
+            meta = MOVIE_CATEGORY_META.get(slug, {"label": slug.title(), "bg": "#444444"})
+            pages = self._paginate(items)
+
+            if len(pages) == 1:
+                ranked = sorted(items, key=lambda m: (-(m.rating or 0), m.title.lower()))
+                files[f"movies/{slug}.m3u"] = self._leaf(ranked, meta["label"]).write(
+                    self.movies_dir / f"{slug}.m3u")
+                continue
+
+            # Too many for one screen: an index of alphabetical pages.
+            index = M3UBuilder(default_size=self.size_cat,
+                               default_description=meta["label"])
+            for n, (label, chunk) in enumerate(pages, start=1):
+                rel = f"movies/{slug}/{n:02d}.m3u"
+                files[rel] = self._leaf(
+                    chunk, f"{meta['label']} {label}").write(
+                    self.movies_dir / slug / f"{n:02d}.m3u")
+                index.add_playlist(
+                    f"{meta['label']} {label} ({len(chunk)})",
+                    self.cfg.playlist_url(rel),
+                    description=f"{len(chunk)} titles",
+                    size=self.size_cat, background=meta.get("bg", "#444444"))
+            files[f"movies/{slug}.m3u"] = index.write(self.movies_dir / f"{slug}.m3u")
 
         root = M3UBuilder(
             default_size=self.size_cat,

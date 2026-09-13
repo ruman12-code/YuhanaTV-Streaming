@@ -118,13 +118,17 @@ class TestTree(unittest.TestCase):
         self.assertEqual(result.files, {})
         self.assertFalse((self.root / "movies" / "movies.m3u").exists())
 
-    def test_leaf_respects_the_item_budget(self):
+    def test_budget_is_respected_by_paginating_not_by_dropping_titles(self):
         self.cfg["ssiptv"]["max_items_per_playlist"] = 5
         gen = MovieGenerator(self.cfg, self.root)
-        films = [movie(id=f"m{i}", title=f"F{i}", genre=["Drama"]) for i in range(20)]
+        films = [movie(id=f"m{i}", title=f"F{i:02d}", genre=["Drama"]) for i in range(20)]
         gen.build(films)
-        leaf = (self.root / "movies" / "drama.m3u").read_text(encoding="utf-8")
-        self.assertEqual(leaf.count("#EXTINF"), 5)
+        pages = sorted((self.root / "movies" / "drama").glob("*.m3u"))
+        self.assertGreater(len(pages), 1)
+        for page in pages:
+            self.assertLessEqual(page.read_text(encoding="utf-8").count("#EXTINF"), 5)
+        total = sum(p.read_text(encoding="utf-8").count("#EXTINF") for p in pages)
+        self.assertEqual(total, 20, "every title must survive pagination")
 
     def test_description_never_invents_a_rating(self):
         self.assertNotIn("★", MovieGenerator.description(movie(rating=None)))
@@ -413,3 +417,53 @@ class TestQualityTiers(unittest.TestCase):
     def test_resolution_appears_on_the_tile_only_when_measured(self):
         self.assertIn("1080p", MovieGenerator.description(movie(resolution_label="1080p")))
         self.assertNotIn("p •", MovieGenerator.description(movie(resolution_label="")))
+
+
+class TestPagination(unittest.TestCase):
+    """An oversized bucket is paginated, never truncated.
+
+    Slicing to the cap dropped 31 films out of the library with no record that it
+    had happened.
+    """
+
+    def setUp(self):
+        self.root = Path(tempfile.mkdtemp())
+        self.cfg = config.load(use_cache=False)
+        self.cfg["site"]["base_url"] = "https://example.test"
+        self.cfg["ssiptv"]["max_items_per_playlist"] = 10
+        self.gen = MovieGenerator(self.cfg, self.root)
+
+    def _films(self, n):
+        return [movie(id=f"m{i}", title=f"{chr(65 + i % 26)}film {i:03d}",
+                      genre=["Drama"], rating=7.0) for i in range(n)]
+
+    def test_small_bucket_stays_a_single_leaf(self):
+        self.gen.build(self._films(8))
+        self.assertTrue((self.root / "movies" / "drama.m3u").exists())
+        self.assertFalse((self.root / "movies" / "drama").exists())
+
+    def test_oversized_bucket_keeps_every_title(self):
+        films = self._films(35)
+        self.gen.build(films)
+        pages = sorted((self.root / "movies" / "drama").glob("*.m3u"))
+        self.assertGreater(len(pages), 1)
+        total = sum(p.read_text(encoding="utf-8").count("#EXTINF") for p in pages)
+        self.assertEqual(total, 35, "pagination must not lose a single film")
+
+    def test_no_page_exceeds_the_budget(self):
+        self.gen.build(self._films(35))
+        for p in (self.root / "movies" / "drama").glob("*.m3u"):
+            self.assertLessEqual(p.read_text(encoding="utf-8").count("#EXTINF"), 10)
+
+    def test_parent_becomes_an_index_of_playlists(self):
+        self.gen.build(self._films(35))
+        text = (self.root / "movies" / "drama.m3u").read_text(encoding="utf-8")
+        extinfs = [l for l in text.splitlines() if l.startswith("#EXTINF")]
+        self.assertTrue(extinfs)
+        for line in extinfs:
+            self.assertIn('type="playlist"', line)
+
+    def test_page_labels_describe_their_range(self):
+        self.gen.build(self._films(35))
+        text = (self.root / "movies" / "drama.m3u").read_text(encoding="utf-8")
+        self.assertRegex(text, r"[A-Z]-[A-Z]|\([0-9]+\)")
