@@ -139,7 +139,11 @@ jobs:
           [ -f playlists/movies/movies.m3u ]      && cp playlists/movies/movies.m3u      _site/iptv/movies.m3u || true
           [ -f epg/epg.xml ]                      && cp epg/epg.xml                      _site/iptv/epg.xml || true
 
+      # enablement: true turns Pages on via the API if it is not already on,
+      # which removes the manual Settings step entirely.
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site

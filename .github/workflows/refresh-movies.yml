@@ -1,0 +1,78 @@
+name: Refresh Movies
+
+# Movie metadata refreshes daily (spec section 21), separately from the live-TV
+# pipeline: the two have different cadences and different failure modes, and a
+# movie-source outage must not hold up live-channel validation.
+
+on:
+  schedule:
+    - cron: '30 3 * * *'
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: 'Import at most N titles (0 = configured maximum)'
+        type: string
+        default: '0'
+      dry_run:
+        description: 'Report what would be imported, write nothing'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-movies
+  cancel-in-progress: false
+
+jobs:
+  movies:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Unit tests
+        run: python3 -m unittest discover -s tests
+
+      - name: Fetch movie metadata
+        run: |
+          python3 scripts/fetch_movies.py \
+            --limit "${{ github.event.inputs.limit || 0 }}" \
+            ${{ github.event.inputs.dry_run == 'true' && '--dry-run' || '' }}
+
+      - name: Verify playback URLs
+        if: github.event.inputs.dry_run != 'true'
+        run: python3 scripts/pipeline.py check-vod
+
+      - name: Rebuild playlists
+        if: github.event.inputs.dry_run != 'true'
+        run: python3 scripts/pipeline.py build
+
+      - name: Validate playlists
+        if: always()
+        run: python3 scripts/pipeline.py verify --verbose
+
+      - name: Validation report
+        if: always()
+        run: python3 scripts/pipeline.py report
+
+      - name: Job summary
+        if: always()
+        run: python3 scripts/summarise.py
+
+      - name: Commit
+        if: github.event.inputs.dry_run != 'true'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A playlists data validation-report.json
+          if git diff --cached --quiet; then
+            echo "no content change"
+          else
+            git commit -m "chore: refresh movie catalogue [skip ci]"
+            git push
+          fi

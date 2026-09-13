@@ -30,6 +30,8 @@ from src.validators.stream_validator import StreamValidator  # noqa: E402
 from src.validators.m3u_validator import M3UValidator      # noqa: E402
 from src.validators.health import assess                    # noqa: E402
 from src.generators.live import LiveGenerator, build_master  # noqa: E402
+from src.generators.movies import MovieGenerator             # noqa: E402
+from src.validators.vod_validator import VodValidator        # noqa: E402
 from src.report import build_report                        # noqa: E402
 
 CHANNELS_DIR = REPO / "data" / "channels"
@@ -285,6 +287,48 @@ def _append_history(cfg, when: str, counts, verdict) -> None:
     write_json(STATUS_DIR / "history.json", history)
 
 
+def cmd_check_vod(args) -> int:
+    """Prove each catalogued playback URL before any of them is called PLAYABLE."""
+    cfg = config.load()
+    payload = read_json(MOVIES_DIR / "movies.json", {}) or {}
+    movies = [Movie.from_dict(m) for m in payload.get("movies", [])]
+    if not movies:
+        print("no movies in the catalogue; nothing to check")
+        return 0
+
+    # Only spend requests on titles that could ever be published.
+    candidates = [m for m in movies
+                  if m.playback_url and m.rights_status == "CLEARED"
+                  and m.playback_status != "EXCLUDED"]
+    if args.limit:
+        candidates = candidates[: args.limit]
+    print(f"checking {len(candidates)} rights-cleared playback urls "
+          f"of {len(movies)} catalogued")
+
+    results = VodValidator(cfg).validate_all(candidates)
+    by_id = {r.movie_id: r for r in results}
+
+    for m in movies:
+        r = by_id.get(m.id)
+        if r is None:
+            continue
+        m.playback_status = "PLAYABLE" if r.status == "PLAYABLE" else (
+            "DISCOVERABLE" if r.status in ("UNREACHABLE", "INVALID") else "PLAYABLE")
+        if r.status == "DEGRADED":
+            m.notes = (m.notes + "; " if m.notes else "") + "no Range support: seeking unavailable"
+        m.last_verified = r.checked_at
+
+    write_json(MOVIES_DIR / "movies.json",
+               {"count": len(movies), "movies": [m.to_dict() for m in movies]})
+    write_json(STATUS_DIR / "vod-status.json",
+               {"checked": len(results), "results": [r.to_dict() for r in results]})
+
+    from collections import Counter
+    counts = Counter(r.status for r in results)
+    print("vod check: " + ", ".join(f"{k}={v}" for k, v in counts.most_common()))
+    return 0
+
+
 def cmd_build(args) -> int:
     cfg = config.load()
 
@@ -307,6 +351,15 @@ def cmd_build(args) -> int:
         print("Refusing to write a playlist tree with no channels in it.", file=sys.stderr)
         return 3
 
+    movies = [Movie.from_dict(m) for m in
+              (read_json(MOVIES_DIR / "movies.json", {}) or {}).get("movies", [])]
+    movie_gen = MovieGenerator(cfg, PLAYLISTS)
+    movie_result = movie_gen.build(movies)
+    if movies:
+        print(f"movies: {len(movie_result.published)} publishable of {len(movies)}")
+        for reason, items in sorted(movie_result.withheld.items()):
+            print(f"  withheld {len(items):4}  {reason}")
+
     have_bd = (PLAYLISTS / "live" / "bangladesh.m3u").exists()
     have_intl = (PLAYLISTS / "live" / "international.m3u").exists()
     have_movies = (PLAYLISTS / "movies" / "movies.m3u").exists()
@@ -317,12 +370,16 @@ def cmd_build(args) -> int:
                         have_movies=have_movies,
                         seed_note=SEED_NOTE if args.seed else "")
     files = dict(result.files)
+    files.update(movie_result.files)
     files["master.m3u"] = size
     write_json(STATUS_DIR / "build.json", {
         "seed": args.seed,
         "files": files,
         "published": len(result.published),
         "withheld": {k: len(v) for k, v in result.withheld.items()},
+        "movies_published": len(movie_result.published),
+        "movies_withheld": {k: len(v) for k, v in movie_result.withheld.items()},
+        "movie_buckets": movie_result.buckets,
     })
     print(f"built {len(files)} playlists, {len(result.published)} channels published")
     for reason, items in sorted(result.withheld.items()):
@@ -387,6 +444,8 @@ def main() -> int:
         sp.add_argument("--force", action="store_true",
                         help="rebuild even if the last check tripped the health gate"); \
         sp.set_defaults(fn=cmd_build)
+    sp = sub.add_parser("check-vod"); sp.add_argument("--limit", type=int, default=0); \
+        sp.set_defaults(fn=cmd_check_vod)
     sp = sub.add_parser("verify"); sp.add_argument("--verbose", action="store_true"); \
         sp.set_defaults(fn=cmd_verify)
     sp = sub.add_parser("report"); sp.add_argument("--seed", action="store_true"); \

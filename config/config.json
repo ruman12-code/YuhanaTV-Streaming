@@ -19,7 +19,8 @@
     "subsplit_threshold": 40,
     "never_subsplit": [
       "bangladesh"
-    ]
+    ],
+    "collection_size": 24
   },
   "validation": {
     "timeout_connect_seconds": 8,
@@ -81,5 +82,12 @@
     "publish_unverified_rights_live": true,
     "publish_unverified_rights_vod": false,
     "vod_requires_playable_and_rights": true
+  },
+  "movies": {
+    "$comment": "Movie library tuning. min_rating_top_rated gates the Top Rated collection; min_playable_bytes rejects a 'movie' that is really an error page or a trailer.",
+    "min_rating_top_rated": 7.0,
+    "min_playable_bytes": 2000000,
+    "max_titles_per_source": 300,
+    "min_year": 1920
   }
 }

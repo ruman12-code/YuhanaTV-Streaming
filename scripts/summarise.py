@@ -29,6 +29,14 @@ lines = [
     "",
 ]
 
+mv = report.get("movies", {})
+if mv.get("catalogue_total"):
+    lines += ["### Movie catalogue", "", "| | |", "|---|---:|",
+              f"| Catalogued | {mv['catalogue_total']} |",
+              f"| Playable | {mv['playable']} |",
+              f"| Discoverable | {mv['discoverable']} |",
+              f"| Published as VOD | {mv['published_as_vod']} |", ""]
+
 probe = report.get("last_probe", {})
 if probe.get("counts"):
     lines += ["### What this run actually measured", "",

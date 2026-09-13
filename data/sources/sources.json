@@ -19,7 +19,8 @@
       "status": "IMPORTED",
       "notes": "Snapshot provided by the repository owner and stored verbatim at data/sources/imported-channel-list.m3u. Imported as-is for their own personal playback. Per-host trust tiers are recorded in host-trust.json; no entry is asserted to be licensed for redistribution.",
       "enabled": true,
-      "path": "data/sources/imported-channel-list.m3u"
+      "path": "data/sources/imported-channel-list.m3u",
+      "kind": "live"
     },
     {
       "id": "src-streamimdb",
@@ -31,8 +32,56 @@
       "trust_tier": "unknown",
       "last_checked": "",
       "status": "NOT_IMPLEMENTED",
-      "notes": "Phase 6. Metadata-only adapter. Every imported title defaults to playback_status=DISCOVERABLE; nothing from this source may enter a VOD playlist unless a direct playback URL is independently authorised.",
-      "enabled": false
+      "notes": "Phase 6. Metadata-only adapter, not implemented. Every imported title defaults to playback_status DISCOVERABLE; nothing from this source may enter a VOD playlist unless a direct playback URL is independently authorised. Kept disabled until then.",
+      "enabled": false,
+      "kind": "movies",
+      "adapter": "streamimdb"
+    },
+    {
+      "id": "src-archive-org",
+      "kind": "movies",
+      "adapter": "archive_org",
+      "name": "Internet Archive — public-domain and openly-licensed films",
+      "url": "https://archive.org/",
+      "type": "api",
+      "enabled": true,
+      "authorization_status": "UNVERIFIED",
+      "redistribution_allowed": false,
+      "trust_tier": "broadcaster_official",
+      "last_checked": "",
+      "status": "ACTIVE",
+      "notes": "Per-item rights are read from the item's own licenceurl/rights metadata or curated public-domain collection membership. Items without such a statement are imported as rights_status UNVERIFIED and can never enter a VOD playlist.",
+      "queries": [
+        {
+          "label": "public-domain feature films",
+          "q": "collection:(feature_films) AND mediatype:(movies) AND format:(MPEG4)",
+          "rows": 60
+        },
+        {
+          "label": "classic animation",
+          "q": "collection:(animationandcartoons) AND mediatype:(movies) AND format:(MPEG4)",
+          "rows": 40,
+          "genre": "animation"
+        },
+        {
+          "label": "documentaries (Prelinger)",
+          "q": "collection:(prelinger) AND mediatype:(movies) AND format:(MPEG4)",
+          "rows": 30,
+          "genre": "documentary"
+        },
+        {
+          "label": "film noir",
+          "q": "collection:(film_noir) AND mediatype:(movies) AND format:(MPEG4)",
+          "rows": 25,
+          "genre": "crime"
+        },
+        {
+          "label": "sci-fi and horror",
+          "q": "collection:(SciFi_Horror) AND mediatype:(movies) AND format:(MPEG4)",
+          "rows": 25,
+          "genre": "scifi"
+        }
+      ]
     }
   ]
 }
