@@ -274,3 +274,38 @@ class TestCollectionQuality(unittest.TestCase):
         # Trending is ordered by rating, Recently Added by recency.
         self.assertEqual(buckets["trending"][0].id, "m8")     # 9.6, the best rated
         self.assertEqual(buckets["recently-added"][0].id, "m9")  # the newest
+
+
+class TestMetadataParsing(unittest.TestCase):
+    """Bugs found in the first real import, pinned so they cannot return."""
+
+    def test_two_part_runtime_is_minutes_and_seconds(self):
+        from src.sources.archive_org.adapter import _parse_runtime
+        # "6:12" is six minutes twelve seconds, not six hours twelve minutes.
+        self.assertEqual(_parse_runtime("6:12"), 6)
+        self.assertEqual(_parse_runtime("12:00"), 12)
+
+    def test_three_part_runtime_is_hours_minutes_seconds(self):
+        from src.sources.archive_org.adapter import _parse_runtime
+        self.assertEqual(_parse_runtime("1:23:45"), 84)
+        self.assertEqual(_parse_runtime("2:05:00"), 125)
+
+    def test_bare_seconds_and_empty_runtime(self):
+        from src.sources.archive_org.adapter import _parse_runtime
+        self.assertEqual(_parse_runtime("5400"), 90)
+        self.assertIsNone(_parse_runtime(""))
+        self.assertIsNone(_parse_runtime("not a time"))
+
+    def test_no_duplicate_tiles_when_genres_alias_together(self):
+        """'Crime' and 'Film-Noir' both map to crime; the film belongs once."""
+        gen = MovieGenerator(config.load(use_cache=False), Path(tempfile.mkdtemp()))
+        films = [movie(id="m1", title="C-Man", genre=["Crime", "Film-Noir", "Mystery"])]
+        buckets = gen._buckets(films)
+        self.assertEqual(len(buckets["crime"]), 1)
+        self.assertEqual([m.id for m in buckets["crime"]], ["m1"])
+
+    def test_a_film_still_reaches_every_distinct_bucket(self):
+        gen = MovieGenerator(config.load(use_cache=False), Path(tempfile.mkdtemp()))
+        buckets = gen._buckets([movie(id="m1", genre=["Crime", "Horror"], language="english")])
+        for b in ("crime", "horror", "english"):
+            self.assertEqual(len(buckets[b]), 1, b)

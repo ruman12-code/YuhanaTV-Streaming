@@ -47,6 +47,28 @@ _FORMAT_PREFERENCE = (
 _VIDEO_EXT = (".mp4", ".m4v", ".webm", ".ogv")
 
 _YEAR_RE = re.compile(r"(1[89]\d{2}|20\d{2})")
+_CLOCK_RE = re.compile(r"^(?:(\d+):)?(\d{1,2}):(\d{2})(?:\.\d+)?$")
+
+
+def _parse_runtime(raw: str) -> int | None:
+    """Minutes from an Archive `runtime` value.
+
+    The field is a clock, and a two-part value is MM:SS, not HH:MM. Reading
+    "6:12" as six hours twelve minutes turned a six-minute clip into 372
+    minutes, which then appeared on the tile.
+    """
+    raw = raw.strip()
+    if not raw:
+        return None
+    m = _CLOCK_RE.match(raw)
+    if m:
+        hours = int(m.group(1)) if m.group(1) else 0
+        minutes, seconds = int(m.group(2)), int(m.group(3))
+        total = hours * 60 + minutes + (1 if seconds >= 30 else 0)
+        return total or None
+    if raw.isdigit():                       # bare seconds
+        return (int(raw) + 30) // 60 or None
+    return None
 
 
 @dataclass
@@ -151,8 +173,11 @@ class ArchiveOrgAdapter:
         rights = classify_rights(meta)
 
         title = str(meta.get("title") or identifier).strip()
+        # `publicdate` is when the file was uploaded to the Archive, not when the
+        # film was made: using it dates 1940s footage to whenever someone scanned
+        # it. Only fields that describe the work itself are consulted.
         year = None
-        for candidate in (meta.get("year"), meta.get("date"), meta.get("publicdate")):
+        for candidate in (meta.get("year"), meta.get("date")):
             m = _YEAR_RE.search(str(candidate or ""))
             if m:
                 year = int(m.group(1))
@@ -174,13 +199,7 @@ class ArchiveOrgAdapter:
         if not verdict.ok:
             return None, f"playback url rejected: {verdict.reason}"
 
-        runtime = None
-        raw_runtime = str(meta.get("runtime") or "")
-        rm = re.match(r"^(\d+):(\d{2})", raw_runtime)
-        if rm:
-            runtime = int(rm.group(1)) * 60 + int(rm.group(2))
-        elif raw_runtime.isdigit():
-            runtime = int(raw_runtime) // 60 or None
+        runtime = _parse_runtime(str(meta.get("runtime") or ""))
 
         synopsis = re.sub(r"<[^>]+>", " ", str(meta.get("description") or ""))
         synopsis = " ".join(synopsis.split())

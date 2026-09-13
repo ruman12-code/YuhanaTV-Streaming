@@ -142,14 +142,26 @@ class MovieGenerator:
     def _buckets(self, movies: list[Movie]) -> dict[str, list[Movie]]:
         buckets: dict[str, list[Movie]] = {}
 
+        # Track membership by id: several of a film's genres can alias to the
+        # same bucket ("Crime" and "Film-Noir" both -> crime), which would
+        # otherwise put the same film on the same screen twice.
+        seen: dict[str, set[str]] = {}
+
+        def place(bucket: str, m: Movie) -> None:
+            members = seen.setdefault(bucket, set())
+            if m.id in members:
+                return
+            members.add(m.id)
+            buckets.setdefault(bucket, []).append(m)
+
         for m in movies:
             lang = language_bucket(m)
             if lang:
-                buckets.setdefault(lang, []).append(m)
+                place(lang, m)
             for raw in m.genre:
                 g = normalise_genre(raw)
                 if g:
-                    buckets.setdefault(g, []).append(m)
+                    place(g, m)
 
         # Collections are views over the same films, not extra copies.
         rated = [m for m in movies if m.rating is not None]
