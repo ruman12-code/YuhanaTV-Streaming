@@ -60,6 +60,9 @@ jobs:
       - name: Check streams
         run: python3 scripts/pipeline.py check --limit "${{ github.event.inputs.limit || 0 }}"
 
+      - name: Canonical tvg-ids and EPG
+        run: python3 scripts/build_epg.py
+
       - name: Generate playlists
         run: |
           if [ "${{ github.event.inputs.seed }}" = "true" ]; then

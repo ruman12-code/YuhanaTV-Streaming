@@ -420,7 +420,8 @@ def cmd_report(args) -> int:
     report = build_report(
         channels=channels, movies=movies, playlist_result=playlist_result,
         build_files=build_state.get("files", {}), withheld=withheld,
-        ingest_stats=ingest_stats, epg=None, seed_build=args.seed,
+        ingest_stats=ingest_stats, seed_build=args.seed,
+        epg=read_json(STATUS_DIR / "epg.json", None),
         health=read_json(STATUS_DIR / "health.json", None),
         history=read_json(STATUS_DIR / "history.json", None),
         probe_results=(read_json(STATUS_DIR / "stream-status.json", {}) or {}).get("results"),
