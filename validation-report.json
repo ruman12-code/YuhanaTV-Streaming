@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-09-13T15:36:42+00:00",
+  "generated_at": "2026-09-13T15:40:30+00:00",
   "build_kind": "validated",
   "warning": "",
   "live_channels": {
     "total": 171,
-    "active": 134,
-    "degraded": 6,
+    "active": 130,
+    "degraded": 10,
     "offline": 29,
     "invalid": 2,
     "unverified": 0,
@@ -54,24 +54,25 @@
   },
   "run_health": {
     "ok": true,
-    "reason": "0% of 125 baseline channels regressed; within limits",
+    "reason": "2% of 134 baseline channels regressed; within limits",
     "checked": 171,
-    "newly_failing": 3,
-    "baseline_active": 125,
-    "failure_fraction": 0.0211,
-    "regression_fraction": 0.0
+    "newly_failing": 6,
+    "baseline_active": 134,
+    "failure_fraction": 0.0429,
+    "regression_fraction": 0.0224
   },
   "last_probe": {
     "$comment": "What the most recent run actually measured, before the 3-strike demotion rule is applied. `live_channels` above reports stored status, which lags deliberately.",
     "counts": {
-      "ACTIVE": 134,
-      "OFFLINE": 30,
+      "ACTIVE": 130,
+      "OFFLINE": 34,
       "DEGRADED": 5,
       "INVALID": 2
     },
     "failing_stage": {
-      "OFFLINE:http": 29,
-      "DEGRADED:variant": 4,
+      "OFFLINE:http": 33,
+      "DEGRADED:variant": 2,
+      "DEGRADED:segment": 2,
       "INVALID:manifest": 2,
       "OFFLINE:dns": 1,
       "DEGRADED:none": 1
@@ -79,75 +80,75 @@
   },
   "reliability": {
     "channels_with_history": 171,
-    "mean_reliability": 0.7963,
-    "fully_reliable": 123,
+    "mean_reliability": 0.7953,
+    "fully_reliable": 122,
     "never_once_up": 29,
     "flapping": [
       {
         "id": "ch-a0f0b63e98",
         "name": "Desh TV",
-        "reliability": 0.5,
-        "checks": 6
+        "reliability": 0.429,
+        "checks": 7
       },
       {
         "id": "ch-d429a5c212",
         "name": "Global TV",
-        "reliability": 0.5,
-        "checks": 6
+        "reliability": 0.429,
+        "checks": 7
       },
       {
         "id": "ch-c6ce2c281c",
         "name": "Sananda Tv",
-        "reliability": 0.5,
-        "checks": 6
+        "reliability": 0.429,
+        "checks": 7
       },
       {
         "id": "ch-7ccfcd9b22",
         "name": "Sony Max",
-        "reliability": 0.5,
-        "checks": 6
+        "reliability": 0.429,
+        "checks": 7
       },
       {
         "id": "ch-7304184149",
         "name": "Nick Bangla",
-        "reliability": 0.5,
-        "checks": 6
-      },
-      {
-        "id": "ch-00d7c1cd76",
-        "name": "Green TV",
-        "reliability": 0.667,
-        "checks": 6
-      },
-      {
-        "id": "ch-5944383b7d",
-        "name": "Jalsha Movies HD",
-        "reliability": 0.667,
-        "checks": 6
-      },
-      {
-        "id": "ch-e4a67cae8c",
-        "name": "Star Jalsha HD",
-        "reliability": 0.667,
-        "checks": 6
+        "reliability": 0.571,
+        "checks": 7
       },
       {
         "id": "ch-3b587c8865",
         "name": "FilmBox",
-        "reliability": 0.667,
-        "checks": 6
+        "reliability": 0.571,
+        "checks": 7
       },
       {
         "id": "ch-b55bcca7df",
         "name": "Islamic TV",
-        "reliability": 0.667,
-        "checks": 6
+        "reliability": 0.571,
+        "checks": 7
+      },
+      {
+        "id": "ch-00d7c1cd76",
+        "name": "Green TV",
+        "reliability": 0.714,
+        "checks": 7
+      },
+      {
+        "id": "ch-5944383b7d",
+        "name": "Jalsha Movies HD",
+        "reliability": 0.714,
+        "checks": 7
+      },
+      {
+        "id": "ch-e4a67cae8c",
+        "name": "Star Jalsha HD",
+        "reliability": 0.714,
+        "checks": 7
       },
       {
         "id": "ch-ae793780a7",
         "name": "Medina Live",
-        "reliability": 0.667,
-        "checks": 6
+        "reliability": 0.714,
+        "checks": 7
       }
     ],
     "note": "reliability is checks_ok/checks_total across validation runs; a channel with checks_total == 0 has never been measured."
@@ -230,6 +231,19 @@
       "health_reason": "0% of 125 baseline channels regressed; within limits",
       "failure_fraction": 0.0211,
       "regression_fraction": 0.0
+    },
+    {
+      "at": "2026-09-13T15:37:27+00:00",
+      "counts": {
+        "ACTIVE": 130,
+        "OFFLINE": 34,
+        "DEGRADED": 5,
+        "INVALID": 2
+      },
+      "health_ok": true,
+      "health_reason": "2% of 134 baseline channels regressed; within limits",
+      "failure_fraction": 0.0429,
+      "regression_fraction": 0.0224
     }
   ],
   "epg": {
@@ -255,16 +269,32 @@
     ],
     "status_degraded": [
       {
-        "id": "ch-787284cc9b",
-        "name": "Ekhon"
+        "id": "ch-5cc55e1ac4",
+        "name": "Channel S"
       },
       {
-        "id": "ch-8fd784bf92",
-        "name": "Ekushe TV"
+        "id": "ch-a0f0b63e98",
+        "name": "Desh TV"
       },
       {
-        "id": "ch-d429a5c212",
-        "name": "Global TV"
+        "id": "ch-00d7c1cd76",
+        "name": "Green TV"
+      },
+      {
+        "id": "ch-f110db1460",
+        "name": "R TV"
+      },
+      {
+        "id": "ch-b5cca1e8a4",
+        "name": "Ananda TV"
+      },
+      {
+        "id": "ch-5944383b7d",
+        "name": "Jalsha Movies HD"
+      },
+      {
+        "id": "ch-7ccfcd9b22",
+        "name": "Sony Max"
       },
       {
         "id": "ch-3b587c8865",
@@ -275,8 +305,8 @@
         "name": "Islamic TV"
       },
       {
-        "id": "ch-ae793780a7",
-        "name": "Medina Live"
+        "id": "ch-2526a07356",
+        "name": "Willow"
       }
     ],
     "status_invalid": [
@@ -293,6 +323,10 @@
       {
         "id": "ch-5bf6b8149f",
         "name": "BTV News"
+      },
+      {
+        "id": "ch-d429a5c212",
+        "name": "Global TV"
       },
       {
         "id": "ch-8090d498ec",
@@ -379,10 +413,6 @@
         "name": "DreamWorks Channel Asia"
       },
       {
-        "id": "ch-7304184149",
-        "name": "Nick Bangla"
-      },
-      {
         "id": "ch-5117886f2d",
         "name": "Star Movies HD"
       },
@@ -410,7 +440,7 @@
   },
   "withheld_counts": {
     "requires_custom_http_headers": 3,
-    "status_degraded": 6,
+    "status_degraded": 10,
     "status_invalid": 2,
     "status_offline": 29
   },
@@ -420,6 +450,13 @@
       "name": "BTV News",
       "status": "OFFLINE",
       "host": "tvsen6.aynaott.com",
+      "note": ""
+    },
+    {
+      "id": "ch-d429a5c212",
+      "name": "Global TV",
+      "status": "OFFLINE",
+      "host": "app24.jagobd.com.bd",
       "note": ""
     },
     {
@@ -584,13 +621,6 @@
       "note": "source claimed quality '1080p' (unverified)"
     },
     {
-      "id": "ch-7304184149",
-      "name": "Nick Bangla",
-      "status": "OFFLINE",
-      "host": "live.balajibroadband.com:3500",
-      "note": ""
-    },
-    {
       "id": "ch-5117886f2d",
       "name": "Star Movies HD",
       "status": "OFFLINE",
@@ -672,16 +702,16 @@
   },
   "playlists": {
     "files": {
-      "live/bangladesh.m3u": 6025,
+      "live/bangladesh.m3u": 5415,
       "live/documentary.m3u": 4290,
-      "live/entertainment.m3u": 8386,
-      "live/kids.m3u": 1963,
+      "live/entertainment.m3u": 7572,
+      "live/kids.m3u": 2155,
       "live/lifestyle.m3u": 2873,
       "live/movies.m3u": 970,
       "live/music.m3u": 2913,
       "live/news.m3u": 1872,
-      "live/religious.m3u": 1420,
-      "live/sports.m3u": 1854,
+      "live/religious.m3u": 1746,
+      "live/sports.m3u": 1661,
       "live/international.m3u": 1679,
       "live/live-tv.m3u": 1860,
       "movies/comedy.m3u": 7054,
@@ -704,7 +734,7 @@
       "movies/movies.m3u": 3142,
       "master.m3u": 835
     },
-    "total_bytes": 151939,
+    "total_bytes": 150840,
     "structure_ok": true,
     "structure_errors": 0,
     "structure_warnings": 1,
