@@ -1,15 +1,15 @@
 # Roadmap
 
-Phases 1 and 2 are complete. Each later phase ends with generated output and a report,
+Phases 1, 2 and 3 are complete. Each later phase ends with generated output and a report,
 and waits for approval before the next begins.
 
 | Phase | Scope | State |
 |---|---|---|
 | **1** | `master.m3u`, `live-tv.m3u`, `bangladesh.m3u`; data model; generators; structural validator; 55 tests | **done — unvalidated seed** |
 | **2** | Registry-driven multi-source ingest, run-health gate, reliability tracking, real validation on GitHub-hosted runners, `ACTIVE`-only publishing | **done** |
-| 3 | Nested movie library skeleton: `movies.m3u` + genre/language children | |
-| 4 | VOD playback proving-ground: `type="video"`, seek/pause behaviour against a known-authorised direct URL | |
-| 5 | Movie metadata ingestion, full-text search index for the future web layer | |
+| **3** | Nested movie library: 208 rights-cleared, byte-verified titles across 15 genre and collection playlists; VOD validator; Internet Archive adapter | **done** |
+| 4 | Confirm `type="video"` seek/pause behaviour on the actual TV | next |
+| 5 | Ratings and richer metadata (needs a TMDB or OMDb key in repo secrets), full-text search index | |
 | 6 | StreamIMDB adapter — metadata only, `DISCOVERABLE` by default | |
 | 7 | XMLTV generation, `x-tvg-url`, CORS/size/no-gzip constraints, external-network test | |
 | 8 | Scheduling hardening, failure thresholds, alerting on mass-offline | |
@@ -51,3 +51,29 @@ moved 13 channels — 10 of them Bangladeshi — from DEGRADED to ACTIVE.
    navigation can be tested on the actual TV before the movie library is layered
    on top of it. Phase 3 is a bigger tree on the same mechanism — worth proving
    the mechanism first.
+
+
+## Phase 3 measured outcome
+
+213 titles imported, 208 after removing five films that exist as two separate
+Archive uploads each. All 208 cleared on rights and all 208 verified playable by
+fetching bytes.
+
+Reading the first generated leaf found four faults the tests had not covered,
+each of which would have been visible on the TV:
+
+| fault | symptom | fix |
+|---|---|---|
+| genres aliasing to one bucket | every noir film listed twice in `crime.m3u` | bucket membership tracked by id |
+| `MM:SS` read as `HH:MM` | a six-minute clip labelled "372 min" | clock parser that knows two-part values are minutes and seconds |
+| `publicdate` used as year | 1940s footage dated 2011 | only fields describing the work are consulted |
+| Trending derived from an unrated catalogue | the same 24 films shown twice under two names | Trending emitted only when ratings make it differ |
+
+Known imperfections, not yet addressed:
+
+* **No ratings.** The Archive carries none, so Top Rated is absent and the "IMDb
+  6+" filter cannot be applied. Phase 5, and it needs a TMDB or OMDb API key.
+* **Language buckets are thin** — 27 titles in English, none elsewhere, because
+  most items declare no language.
+* **Some genre assignments are loose.** A Prelinger city film sits in Crime
+  because the film-noir subject query matched it.

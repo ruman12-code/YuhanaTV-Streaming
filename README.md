@@ -8,42 +8,43 @@ Target player: **SS IPTV** on a **VIDAA** TV.
 
 ---
 
-## Status: Phase 2 complete — validated
+## Status: Phase 3 complete — live and validated
 
-Real validation, run on GitHub-hosted runners.
+**The site is deployed:** https://ruman12-code.github.io/YuhanaTV-Streaming/
 
+### Live TV
 | | |
 |---|---|
-| Channels in registry | **171** (177 source entries, 6 duplicates dropped) |
+| Channels in registry | **171** |
 | **ACTIVE (verified reachable)** | **131** |
-| DEGRADED / OFFLINE / INVALID | 11 / 28 / 1 |
-| 🇧🇩 Bangladesh | **23–26 of 31 ACTIVE**, varying by run |
+| 🇧🇩 Bangladesh | **23–26 of 31**, varying by run |
 | Measured 1080p / 720p / 576p / 480p | 54 / 47 / 4 / 5 |
-| **Channels published** | **128** (3 ACTIVE withheld: need HTTP headers SS IPTV cannot send) |
-| Playlists generated | 13, largest 34 items / 8.3 KB |
-| Structural errors | **0**, no circular references |
-| Mean reliability over 3 runs | **0.81**; 134 channels usable in every run, 29 never once up |
-| Tests | **77 passing** |
+| Published | **128** (3 withheld: need headers SS IPTV cannot send) |
 
-Every published channel has been fetched end to end — manifest, variant playlist,
-and a real media segment — from a GitHub runner. Resolutions are measured from
-`EXT-X-STREAM-INF`, never from a channel name.
+### Movie Library
+| | |
+|---|---|
+| Catalogued | **208** |
+| **Rights CLEARED** | **208** (170 by per-item licence, 38 by curated public-domain collection) |
+| **PLAYABLE (bytes verified, Range-capable)** | **208** |
+| Published as VOD | **208** across 15 genre and collection playlists |
+| Source | Internet Archive public-domain and openly-licensed films |
 
-The Bangladesh figure moves between runs because six channels on one origin have
-an unstable TLS chain. That variance is the point of the reliability counters: a
-channel is judged on its record, not on one run.
+### Tree
+```
+ 30 playlists · 330 movie entries + 128 channel tiles · largest file 43 items / 12 KB
+  0 structural errors · 0 circular references · 0 duplicate tiles
+114 tests passing
+```
 
-Live results: [`validation-report.json`](validation-report.json) ·
-per-channel detail: [`data/status/stream-status.json`](data/status/stream-status.json)
+Every published channel was fetched end to end (manifest → variant → media
+segment). Every published film had its first bytes fetched and its `Range`
+support confirmed. Resolutions come from `EXT-X-STREAM-INF`, never from a name.
 
 ## Use it
 
-**One manual step is outstanding:** enable Pages at *Settings → Pages → Build and
-deployment → Source: **GitHub Actions***. It cannot be done through the API. Until
-then the deploy job is skipped (non-fatally) and the published URL below 404s.
-
-Once enabled, in SS IPTV go to *Settings → Content → External playlists → Add* and
-enter:
+Pages is enabled and deploying. In SS IPTV go to *Settings → Content →
+External playlists → Add* and enter:
 
 ```
 https://ruman12-code.github.io/YuhanaTV-Streaming/iptv/master.m3u
@@ -51,9 +52,9 @@ https://ruman12-code.github.io/YuhanaTV-Streaming/iptv/master.m3u
 
 That URL never changes. Everything behind it refreshes every 8 hours.
 
-**Want it working before enabling Pages?** This repository is public, so the same
-tree is already served from `raw.githubusercontent.com` — see
-[docs/HOSTING.md](docs/HOSTING.md) for the one config value to change.
+If Pages ever needs reconfiguring, [docs/SETUP-PAGES.md](docs/SETUP-PAGES.md)
+names the exact fields — in particular the **Custom domain** box, which takes a
+domain you own and must be left empty otherwise.
 
 ## Run it locally
 
@@ -80,6 +81,7 @@ No third-party packages. Python 3.11+, standard library only.
 | [SSIPTV-COMPATIBILITY.md](docs/SSIPTV-COMPATIBILITY.md) | which SS IPTV features are used, and the one documented ambiguity |
 | [NAVIGATION.md](docs/NAVIGATION.md) | exactly what the TV does at each hop |
 | [HOSTING.md](docs/HOSTING.md) | URLs, Pages setup, alternatives |
+| [SETUP-PAGES.md](docs/SETUP-PAGES.md) | which Pages field is which |
 | [LIMITATIONS.md](docs/LIMITATIONS.md) | every known constraint and its mitigation |
 | [ROADMAP.md](docs/ROADMAP.md) | phases 2–10 |
 
