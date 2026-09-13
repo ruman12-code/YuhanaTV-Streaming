@@ -245,6 +245,8 @@ def cmd_check(args) -> int:
             ch.stream_type = "hls"
         elif r.manifest_kind == "dash":
             ch.stream_type = "dash"
+        elif r.manifest_kind == "ts":
+            ch.stream_type = "ts"
 
     save_channels(CHANNELS_DIR, all_channels)
     write_json(STATUS_DIR / "stream-status.json",

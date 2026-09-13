@@ -48,6 +48,24 @@ def _now_iso() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
 
 
+# An MPEG-TS packet is 188 bytes and starts with the sync byte 0x47.
+_TS_PACKET = 188
+_TS_SYNC = 0x47
+
+
+def looks_like_mpegts(body: bytes) -> bool:
+    """True if the bytes are a raw MPEG transport stream rather than a playlist.
+
+    Several channels are served as a continuous HTTP TS stream with no manifest at
+    all. SS IPTV plays those, so reporting them INVALID because they are not HLS
+    would be the validator's mistake. Three consecutive sync bytes at the packet
+    stride is the standard test and is not plausibly a coincidence.
+    """
+    if len(body) < _TS_PACKET * 3:
+        return False
+    return all(body[i * _TS_PACKET] == _TS_SYNC for i in range(3))
+
+
 def resolution_label(width: int, height: int) -> str:
     """Marketing label derived ONLY from measured pixels (spec sections 7 and 9)."""
     if height >= 2000 or width >= 3600:
@@ -83,7 +101,8 @@ class ValidationResult:
     redirects: int = 0
     latency_ms: float = 0.0
     content_type: str = ""
-    manifest_kind: str = ""          # master | media | dash | none
+    manifest_kind: str = ""          # master | media | dash | ts | none
+    stream_kind_note: str = ""
     variant_count: int = 0
     width: int = 0
     height: int = 0
@@ -335,9 +354,24 @@ class StreamValidator:
             result.stages = [asdict(s) for s in stages]
             return result
 
+        # A direct transport stream, not a playlist. Detected before the size
+        # check, because an endless TS stream is exactly what overruns it.
+        if looks_like_mpegts(body) or "mp2t" in result.content_type.lower():
+            result.manifest_kind = "ts"
+            result.stream_kind_note = "direct MPEG-TS stream (no manifest)"
+            stages.append(StageResult("manifest", True,
+                                      f"MPEG-TS, {len(body)} bytes read"))
+            result.status = ("DEGRADED" if result.latency_ms > self.degraded_ms
+                             else "ACTIVE")
+            if result.status == "DEGRADED":
+                result.error = f"slow origin ({result.latency_ms:.0f} ms)"
+            result.stages = [asdict(s) for s in stages]
+            return result
+
         if len(body) > self.max_manifest_bytes:
             result.status = "INVALID"
-            result.error = "manifest exceeds the configured size limit"
+            result.error = ("response exceeds the manifest size limit and is not a "
+                            "transport stream either")
             stages.append(StageResult("manifest", False, result.error))
             result.stages = [asdict(s) for s in stages]
             return result

@@ -8,36 +8,48 @@ Target player: **SS IPTV** on a **VIDAA** TV.
 
 ---
 
-## Status: Phase 1 complete — pre-validation seed build
+## Status: Phase 2 complete — validated
+
+Real validation, run on GitHub-hosted runners.
 
 | | |
 |---|---|
-| Channels in registry | **171** (from the supplied playlist; 177 entries, 6 duplicates dropped) |
-| Channels published | **168** (3 withheld: need HTTP headers SS IPTV cannot send) |
-| Playlists generated | **18**, largest 31 items / 7.3 KB |
-| Structural errors | **0** (2 duplicate-title warnings) |
-| Tests | **55 passing** |
-| **Streams reachability-tested** | **0 — see below** |
+| Channels in registry | **171** (177 source entries, 6 duplicates dropped) |
+| **ACTIVE (verified reachable)** | **131** |
+| DEGRADED | 40 |
+| OFFLINE / INVALID | 0 stored (see `last_probe` for the raw run) |
+| 🇧🇩 Bangladesh | **26 of 31 ACTIVE** |
+| Measured 1080p / 720p / 576p / 480p | 54 / 47 / 4 / 5 |
+| Channels published | 131 (3 withheld: need HTTP headers SS IPTV cannot send) |
+| Playlists generated | 13, largest 31 items / 7.6 KB |
+| Structural errors | **0**, no circular references |
+| Tests | **77 passing** |
 
-> **No stream in this repository has been verified to play.** The authoring
-> environment blocks outbound HTTPS to every stream host, so validation has not
-> run. Every channel is `status: UNVERIFIED` and every generated file carries a
-> `PRE-VALIDATION SEED BUILD` comment. Run the `Update IPTV` workflow to produce
-> the first real results. Details in [docs/LIMITATIONS.md](docs/LIMITATIONS.md).
+Every published channel has been fetched end to end — manifest, variant playlist,
+and a real media segment — from a GitHub runner. Resolutions are measured from
+`EXT-X-STREAM-INF`, never from a channel name.
 
----
+Live results: [`validation-report.json`](validation-report.json) ·
+per-channel detail: [`data/status/stream-status.json`](data/status/stream-status.json)
 
 ## Use it
 
-1. Enable Pages: *Settings → Pages → Source: GitHub Actions*.
-2. Run *Actions → Update IPTV → Run workflow* (tick **seed** for the first run).
-3. In SS IPTV: *Settings → Content → External playlists → Add*, and enter:
+**One manual step is outstanding:** enable Pages at *Settings → Pages → Build and
+deployment → Source: **GitHub Actions***. It cannot be done through the API. Until
+then the deploy job is skipped (non-fatally) and the published URL below 404s.
 
-   ```
-   https://ruman12-code.github.io/YuhanaTV-Streaming/iptv/master.m3u
-   ```
+Once enabled, in SS IPTV go to *Settings → Content → External playlists → Add* and
+enter:
+
+```
+https://ruman12-code.github.io/YuhanaTV-Streaming/iptv/master.m3u
+```
 
 That URL never changes. Everything behind it refreshes every 8 hours.
+
+**Want it working before enabling Pages?** This repository is public, so the same
+tree is already served from `raw.githubusercontent.com` — see
+[docs/HOSTING.md](docs/HOSTING.md) for the one config value to change.
 
 ## Run it locally
 

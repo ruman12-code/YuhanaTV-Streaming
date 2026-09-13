@@ -194,3 +194,76 @@ class TestSlidingWindow(unittest.TestCase):
         self.assertEqual(self.v._probe_segment_url(live, base), "https://h/live/c.ts")
         self.assertEqual(self.v._probe_segment_url(vod, base), "https://h/live/a.ts")
         self.assertEqual(self.v._probe_segment_url("#EXTM3U\n", base), "")
+
+
+class TestDirectTransportStream(unittest.TestCase):
+    """Some channels are a continuous HTTP TS stream with no manifest at all.
+
+    SS IPTV plays those. Reporting them INVALID for not being HLS was our bug:
+    four channels hit it, including two the owner specifically wants.
+    """
+
+    class _H(http.server.BaseHTTPRequestHandler):
+        protocol_version = "HTTP/1.0"
+        def log_message(self, *a): pass
+        def do_GET(self):
+            p = self.path.split("?")[0]
+            if p == "/live.ts":
+                # 6000 well-formed 188-byte TS packets
+                body = b"".join(b"\x47" + bytes(187) for _ in range(6000))
+                ctype = "video/mp2t"
+            elif p == "/untyped.ts":
+                body = b"".join(b"\x47" + bytes(187) for _ in range(6000))
+                ctype = "application/octet-stream"
+            elif p == "/garbage":
+                body = b"\x00" * (3 * 1024 * 1024)   # big, and not a TS
+                ctype = "application/octet-stream"
+            else:
+                self.send_response(404); self.send_header("Content-Length", "0")
+                self.end_headers(); return
+            self.send_response(200); self.send_header("Content-Type", ctype)
+            self.send_header("Content-Length", str(len(body))); self.end_headers()
+            self.wfile.write(body)
+
+    @classmethod
+    def setUpClass(cls):
+        socketserver.TCPServer.allow_reuse_address = True
+        cls.srv = socketserver.ThreadingTCPServer(("127.0.0.1", 0), cls._H)
+        cls.port = cls.srv.server_address[1]
+        threading.Thread(target=cls.srv.serve_forever, daemon=True).start()
+        time.sleep(0.2)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.srv.shutdown(); cls.srv.server_close()
+
+    def setUp(self):
+        cfg = config.load(use_cache=False)
+        cfg["security"]["block_private_ip_targets"] = False
+        cfg["validation"].update({"retries": 0, "per_host_delay_seconds": 0})
+        self.v = StreamValidator(cfg)
+
+    def _check(self, path):
+        return self.v.validate(Channel(id="t", name="t",
+                                       stream_url=f"http://127.0.0.1:{self.port}{path}"))
+
+    def test_ts_stream_is_active(self):
+        r = self._check("/live.ts")
+        self.assertEqual(r.status, "ACTIVE")
+        self.assertEqual(r.manifest_kind, "ts")
+
+    def test_ts_detected_without_a_helpful_content_type(self):
+        r = self._check("/untyped.ts")
+        self.assertEqual(r.status, "ACTIVE")
+        self.assertEqual(r.manifest_kind, "ts")
+
+    def test_large_non_stream_body_is_still_invalid(self):
+        r = self._check("/garbage")
+        self.assertEqual(r.status, "INVALID")
+
+    def test_sync_byte_detection(self):
+        from src.validators.stream_validator import looks_like_mpegts
+        self.assertTrue(looks_like_mpegts(b"".join(b"\x47" + bytes(187) for _ in range(3))))
+        self.assertFalse(looks_like_mpegts(b"\x47" + b"\x00" * 600))
+        self.assertFalse(looks_like_mpegts(b"#EXTM3U\n"))
+        self.assertFalse(looks_like_mpegts(b""))
