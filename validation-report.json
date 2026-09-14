@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-09-13T18:42:44+00:00",
+  "generated_at": "2026-09-14T04:13:30+00:00",
   "build_kind": "validated",
   "warning": "",
   "live_channels": {
     "total": 171,
-    "active": 127,
-    "degraded": 13,
-    "offline": 30,
+    "active": 128,
+    "degraded": 10,
+    "offline": 32,
     "invalid": 1,
     "unverified": 0,
     "by_category": {
@@ -29,8 +29,8 @@
   },
   "resolution": {
     "measured_4k": 0,
-    "measured_1080p": 55,
-    "measured_720p": 46,
+    "measured_1080p": 54,
+    "measured_720p": 47,
     "measured_576p": 4,
     "measured_480p": 5,
     "unmeasured": 59,
@@ -56,97 +56,127 @@
   },
   "run_health": {
     "ok": true,
-    "reason": "2% of 128 baseline channels regressed; within limits",
+    "reason": "0% of 127 baseline channels regressed; within limits",
     "checked": 171,
-    "newly_failing": 14,
-    "baseline_active": 128,
-    "failure_fraction": 0.0993,
-    "regression_fraction": 0.0156
+    "newly_failing": 12,
+    "baseline_active": 127,
+    "failure_fraction": 0.0857,
+    "regression_fraction": 0.0
   },
   "last_probe": {
     "$comment": "What the most recent run actually measured, before the 3-strike demotion rule is applied. `live_channels` above reports stored status, which lags deliberately.",
     "counts": {
-      "ACTIVE": 127,
+      "ACTIVE": 128,
       "OFFLINE": 42,
-      "INVALID": 2
+      "INVALID": 1
     },
     "failing_stage": {
       "OFFLINE:http": 41,
-      "INVALID:manifest": 2,
-      "OFFLINE:dns": 1
+      "OFFLINE:dns": 1,
+      "INVALID:manifest": 1
     }
   },
   "reliability": {
     "channels_with_history": 171,
-    "mean_reliability": 0.7901,
+    "mean_reliability": 0.786,
     "fully_reliable": 121,
     "never_once_up": 29,
     "flapping": [
       {
         "id": "ch-d429a5c212",
         "name": "Global TV",
-        "reliability": 0.333,
-        "checks": 9
+        "reliability": 0.3,
+        "checks": 10
       },
       {
         "id": "ch-a0f0b63e98",
         "name": "Desh TV",
-        "reliability": 0.444,
-        "checks": 9
+        "reliability": 0.4,
+        "checks": 10
       },
       {
         "id": "ch-7ccfcd9b22",
         "name": "Sony Max",
-        "reliability": 0.444,
-        "checks": 9
+        "reliability": 0.4,
+        "checks": 10
       },
       {
         "id": "ch-3b587c8865",
         "name": "FilmBox",
-        "reliability": 0.444,
-        "checks": 9
-      },
-      {
-        "id": "ch-c6ce2c281c",
-        "name": "Sananda Tv",
-        "reliability": 0.556,
-        "checks": 9
+        "reliability": 0.4,
+        "checks": 10
       },
       {
         "id": "ch-b55bcca7df",
         "name": "Islamic TV",
-        "reliability": 0.556,
-        "checks": 9
+        "reliability": 0.5,
+        "checks": 10
       },
       {
         "id": "ch-787284cc9b",
         "name": "Ekhon",
-        "reliability": 0.667,
-        "checks": 9
+        "reliability": 0.6,
+        "checks": 10
       },
       {
         "id": "ch-00d7c1cd76",
         "name": "Green TV",
-        "reliability": 0.667,
-        "checks": 9
+        "reliability": 0.6,
+        "checks": 10
       },
       {
         "id": "ch-a718b81488",
         "name": "My TV",
-        "reliability": 0.667,
-        "checks": 9
+        "reliability": 0.6,
+        "checks": 10
       },
       {
-        "id": "ch-7304184149",
-        "name": "Nick Bangla",
-        "reliability": 0.667,
-        "checks": 9
+        "id": "ch-c6ce2c281c",
+        "name": "Sananda Tv",
+        "reliability": 0.6,
+        "checks": 10
       },
       {
         "id": "ch-ae793780a7",
         "name": "Medina Live",
-        "reliability": 0.667,
-        "checks": 9
+        "reliability": 0.6,
+        "checks": 10
+      },
+      {
+        "id": "ch-5cc55e1ac4",
+        "name": "Channel S",
+        "reliability": 0.7,
+        "checks": 10
+      },
+      {
+        "id": "ch-8fd784bf92",
+        "name": "Ekushe TV",
+        "reliability": 0.7,
+        "checks": 10
+      },
+      {
+        "id": "ch-f110db1460",
+        "name": "R TV",
+        "reliability": 0.7,
+        "checks": 10
+      },
+      {
+        "id": "ch-b5cca1e8a4",
+        "name": "Ananda TV",
+        "reliability": 0.7,
+        "checks": 10
+      },
+      {
+        "id": "ch-7304184149",
+        "name": "Nick Bangla",
+        "reliability": 0.7,
+        "checks": 10
+      },
+      {
+        "id": "ch-f47172f491",
+        "name": "Makkah Live",
+        "reliability": 0.7,
+        "checks": 10
       }
     ],
     "note": "reliability is checks_ok/checks_total across validation runs; a channel with checks_total == 0 has never been measured."
@@ -267,12 +297,24 @@
       "health_reason": "2% of 128 baseline channels regressed; within limits",
       "failure_fraction": 0.0993,
       "regression_fraction": 0.0156
+    },
+    {
+      "at": "2026-09-14T04:09:22+00:00",
+      "counts": {
+        "ACTIVE": 128,
+        "OFFLINE": 42,
+        "INVALID": 1
+      },
+      "health_ok": true,
+      "health_reason": "0% of 127 baseline channels regressed; within limits",
+      "failure_fraction": 0.0857,
+      "regression_fraction": 0.0
     }
   ],
   "epg": {
-    "channels_in_epg": 75,
+    "channels_in_epg": 76,
     "channels_with_programmes": 0,
-    "channels_without_programmes": 75,
+    "channels_without_programmes": 76,
     "programmes": 0,
     "dropped": 0,
     "coverage_percent": 0.0,
@@ -280,7 +322,7 @@
     "guide_sources_available": 73,
     "channels_total": 171,
     "channels_with_canonical_id": 104,
-    "bytes": 12809,
+    "bytes": 12965,
     "guide_coverage": {
       "9XJalwa.in": [
         {
@@ -3165,20 +3207,12 @@
         "name": "Desh TV"
       },
       {
-        "id": "ch-787284cc9b",
-        "name": "Ekhon"
-      },
-      {
         "id": "ch-8fd784bf92",
         "name": "Ekushe TV"
       },
       {
         "id": "ch-00d7c1cd76",
         "name": "Green TV"
-      },
-      {
-        "id": "ch-a718b81488",
-        "name": "My TV"
       },
       {
         "id": "ch-f110db1460",
@@ -3191,10 +3225,6 @@
       {
         "id": "ch-7ccfcd9b22",
         "name": "Sony Max"
-      },
-      {
-        "id": "ch-6359a66294",
-        "name": "Fashion&LifeStyle"
       },
       {
         "id": "ch-b55bcca7df",
@@ -3221,8 +3251,16 @@
         "name": "BTV News"
       },
       {
+        "id": "ch-787284cc9b",
+        "name": "Ekhon"
+      },
+      {
         "id": "ch-d429a5c212",
         "name": "Global TV"
+      },
+      {
+        "id": "ch-a718b81488",
+        "name": "My TV"
       },
       {
         "id": "ch-8090d498ec",
@@ -3340,9 +3378,9 @@
   },
   "withheld_counts": {
     "requires_custom_http_headers": 3,
-    "status_degraded": 13,
+    "status_degraded": 10,
     "status_invalid": 1,
-    "status_offline": 30
+    "status_offline": 32
   },
   "broken_urls": [
     {
@@ -3353,8 +3391,22 @@
       "note": ""
     },
     {
+      "id": "ch-787284cc9b",
+      "name": "Ekhon",
+      "status": "OFFLINE",
+      "host": "app24.jagobd.com.bd",
+      "note": ""
+    },
+    {
       "id": "ch-d429a5c212",
       "name": "Global TV",
+      "status": "OFFLINE",
+      "host": "app24.jagobd.com.bd",
+      "note": ""
+    },
+    {
+      "id": "ch-a718b81488",
+      "name": "My TV",
       "status": "OFFLINE",
       "host": "app24.jagobd.com.bd",
       "note": ""
@@ -3604,9 +3656,9 @@
     "files": {
       "live/bangladesh.m3u": 4623,
       "live/documentary.m3u": 4581,
-      "live/entertainment.m3u": 8608,
+      "live/entertainment.m3u": 8607,
       "live/kids.m3u": 2247,
-      "live/lifestyle.m3u": 2838,
+      "live/lifestyle.m3u": 3043,
       "live/movies.m3u": 1030,
       "live/music.m3u": 3099,
       "live/news.m3u": 1947,
@@ -3640,7 +3692,7 @@
       "movies/movies.m3u": 3520,
       "master.m3u": 835
     },
-    "total_bytes": 348912,
+    "total_bytes": 349116,
     "structure_ok": true,
     "structure_errors": 0,
     "structure_warnings": 3,
