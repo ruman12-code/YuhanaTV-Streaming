@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-09-19T12:25:11+00:00",
+  "generated_at": "2026-09-19T18:33:54+00:00",
   "build_kind": "validated",
   "warning": "",
   "live_channels": {
     "total": 171,
-    "active": 128,
-    "degraded": 9,
+    "active": 125,
+    "degraded": 12,
     "offline": 33,
     "invalid": 1,
     "unverified": 0,
@@ -56,159 +56,144 @@
   },
   "run_health": {
     "ok": true,
-    "reason": "2% of 126 baseline channels regressed; within limits",
+    "reason": "3% of 128 baseline channels regressed; within limits",
     "checked": 171,
-    "newly_failing": 4,
-    "baseline_active": 126,
-    "failure_fraction": 0.0294,
-    "regression_fraction": 0.0159
+    "newly_failing": 13,
+    "baseline_active": 128,
+    "failure_fraction": 0.0949,
+    "regression_fraction": 0.0312
   },
   "last_probe": {
     "$comment": "What the most recent run actually measured, before the 3-strike demotion rule is applied. `live_channels` above reports stored status, which lags deliberately.",
     "counts": {
-      "ACTIVE": 128,
-      "OFFLINE": 37,
-      "DEGRADED": 5,
+      "ACTIVE": 125,
+      "OFFLINE": 45,
       "INVALID": 1
     },
     "failing_stage": {
-      "OFFLINE:http": 36,
-      "DEGRADED:segment": 4,
-      "DEGRADED:variant": 1,
+      "OFFLINE:http": 44,
       "OFFLINE:dns": 1,
       "INVALID:manifest": 1
     }
   },
   "reliability": {
     "channels_with_history": 171,
-    "mean_reliability": 0.7785,
-    "fully_reliable": 112,
+    "mean_reliability": 0.7767,
+    "fully_reliable": 111,
     "never_once_up": 27,
     "flapping": [
       {
         "id": "ch-5cc55e1ac4",
         "name": "Channel S",
-        "reliability": 0.269,
-        "checks": 26
+        "reliability": 0.259,
+        "checks": 27
       },
       {
         "id": "ch-7ccfcd9b22",
         "name": "Sony Max",
-        "reliability": 0.346,
-        "checks": 26
+        "reliability": 0.333,
+        "checks": 27
       },
       {
         "id": "ch-d429a5c212",
         "name": "Global TV",
-        "reliability": 0.423,
-        "checks": 26
+        "reliability": 0.407,
+        "checks": 27
       },
       {
         "id": "ch-7304184149",
         "name": "Nick Bangla",
-        "reliability": 0.462,
-        "checks": 26
+        "reliability": 0.444,
+        "checks": 27
       },
       {
         "id": "ch-a0f0b63e98",
         "name": "Desh TV",
-        "reliability": 0.5,
-        "checks": 26
+        "reliability": 0.481,
+        "checks": 27
       },
       {
         "id": "ch-787284cc9b",
         "name": "Ekhon",
-        "reliability": 0.538,
-        "checks": 26
+        "reliability": 0.519,
+        "checks": 27
       },
       {
         "id": "ch-2526a07356",
         "name": "Willow",
-        "reliability": 0.538,
-        "checks": 26
+        "reliability": 0.519,
+        "checks": 27
       },
       {
         "id": "ch-b55bcca7df",
         "name": "Islamic TV",
-        "reliability": 0.577,
-        "checks": 26
+        "reliability": 0.556,
+        "checks": 27
       },
       {
         "id": "ch-ae793780a7",
         "name": "Medina Live",
-        "reliability": 0.577,
-        "checks": 26
+        "reliability": 0.556,
+        "checks": 27
       },
       {
         "id": "ch-0d7f702e48",
         "name": "Fox Sports 2",
-        "reliability": 0.577,
-        "checks": 26
+        "reliability": 0.556,
+        "checks": 27
       },
       {
         "id": "ch-8fd784bf92",
         "name": "Ekushe TV",
-        "reliability": 0.615,
-        "checks": 26
-      },
-      {
-        "id": "ch-8090d498ec",
-        "name": "News 21 Bangla TV",
-        "reliability": 0.615,
-        "checks": 26
+        "reliability": 0.593,
+        "checks": 27
       },
       {
         "id": "ch-a718b81488",
         "name": "My TV",
-        "reliability": 0.654,
-        "checks": 26
+        "reliability": 0.63,
+        "checks": 27
+      },
+      {
+        "id": "ch-8090d498ec",
+        "name": "News 21 Bangla TV",
+        "reliability": 0.63,
+        "checks": 27
       },
       {
         "id": "ch-b5cca1e8a4",
         "name": "Ananda TV",
-        "reliability": 0.654,
-        "checks": 26
+        "reliability": 0.63,
+        "checks": 27
       },
       {
         "id": "ch-00d7c1cd76",
         "name": "Green TV",
-        "reliability": 0.692,
-        "checks": 26
+        "reliability": 0.667,
+        "checks": 27
       },
       {
         "id": "ch-f110db1460",
         "name": "R TV",
-        "reliability": 0.692,
-        "checks": 26
+        "reliability": 0.667,
+        "checks": 27
       },
       {
         "id": "ch-f47172f491",
         "name": "Makkah Live",
-        "reliability": 0.692,
-        "checks": 26
+        "reliability": 0.667,
+        "checks": 27
       },
       {
         "id": "ch-37e9ee2459",
         "name": "T Sports HD",
-        "reliability": 0.731,
-        "checks": 26
+        "reliability": 0.741,
+        "checks": 27
       }
     ],
     "note": "reliability is checks_ok/checks_total across validation runs; a channel with checks_total == 0 has never been measured."
   },
   "history": [
-    {
-      "at": "2026-09-16T13:16:59+00:00",
-      "counts": {
-        "ACTIVE": 126,
-        "OFFLINE": 44,
-        "INVALID": 1
-      },
-      "health_ok": true,
-      "health_reason": "4% of 129 baseline channels regressed; within limits",
-      "failure_fraction": 0.1064,
-      "regression_fraction": 0.0388
-    },
     {
       "at": "2026-09-16T19:27:00+00:00",
       "counts": {
@@ -324,12 +309,24 @@
       "health_reason": "2% of 126 baseline channels regressed; within limits",
       "failure_fraction": 0.0294,
       "regression_fraction": 0.0159
+    },
+    {
+      "at": "2026-09-19T18:29:53+00:00",
+      "counts": {
+        "ACTIVE": 125,
+        "OFFLINE": 45,
+        "INVALID": 1
+      },
+      "health_ok": true,
+      "health_reason": "3% of 128 baseline channels regressed; within limits",
+      "failure_fraction": 0.0949,
+      "regression_fraction": 0.0312
     }
   ],
   "epg": {
-    "channels_in_epg": 78,
+    "channels_in_epg": 75,
     "channels_with_programmes": 0,
-    "channels_without_programmes": 78,
+    "channels_without_programmes": 75,
     "programmes": 0,
     "dropped": 0,
     "coverage_percent": 0.0,
@@ -337,7 +334,7 @@
     "guide_sources_available": 73,
     "channels_total": 171,
     "channels_with_canonical_id": 104,
-    "bytes": 13282,
+    "bytes": 12815,
     "guide_coverage": {
       "9XJalwa.in": [
         {
@@ -3226,12 +3223,16 @@
         "name": "Ekushe TV"
       },
       {
-        "id": "ch-d429a5c212",
-        "name": "Global TV"
-      },
-      {
         "id": "ch-00d7c1cd76",
         "name": "Green TV"
+      },
+      {
+        "id": "ch-a718b81488",
+        "name": "My TV"
+      },
+      {
+        "id": "ch-f110db1460",
+        "name": "R TV"
       },
       {
         "id": "ch-b5cca1e8a4",
@@ -3242,12 +3243,20 @@
         "name": "Sony Max"
       },
       {
+        "id": "ch-ce6e44d4cc",
+        "name": "ZB Cinema"
+      },
+      {
         "id": "ch-b55bcca7df",
         "name": "Islamic TV"
       },
       {
         "id": "ch-f47172f491",
         "name": "Makkah Live"
+      },
+      {
+        "id": "ch-ae793780a7",
+        "name": "Medina Live"
       }
     ],
     "status_invalid": [
@@ -3264,6 +3273,10 @@
       {
         "id": "ch-5cc55e1ac4",
         "name": "Channel S"
+      },
+      {
+        "id": "ch-d429a5c212",
+        "name": "Global TV"
       },
       {
         "id": "ch-6066453b6f",
@@ -3382,10 +3395,6 @@
         "name": "Star Sports 2"
       },
       {
-        "id": "ch-37e9ee2459",
-        "name": "T Sports HD"
-      },
-      {
         "id": "ch-2526a07356",
         "name": "Willow"
       }
@@ -3393,7 +3402,7 @@
   },
   "withheld_counts": {
     "requires_custom_http_headers": 3,
-    "status_degraded": 9,
+    "status_degraded": 12,
     "status_invalid": 1,
     "status_offline": 33
   },
@@ -3408,6 +3417,13 @@
     {
       "id": "ch-5cc55e1ac4",
       "name": "Channel S",
+      "status": "OFFLINE",
+      "host": "app24.jagobd.com.bd",
+      "note": ""
+    },
+    {
+      "id": "ch-d429a5c212",
+      "name": "Global TV",
       "status": "OFFLINE",
       "host": "app24.jagobd.com.bd",
       "note": ""
@@ -3623,13 +3639,6 @@
       "note": ""
     },
     {
-      "id": "ch-37e9ee2459",
-      "name": "T Sports HD",
-      "status": "OFFLINE",
-      "host": "tvsen5.aynaott.com",
-      "note": ""
-    },
-    {
       "id": "ch-2526a07356",
       "name": "Willow",
       "status": "OFFLINE",
@@ -3676,16 +3685,16 @@
   },
   "playlists": {
     "files": {
-      "live/bangladesh.m3u": 5505,
+      "live/bangladesh.m3u": 4867,
       "live/documentary.m3u": 4581,
-      "live/entertainment.m3u": 8607,
+      "live/entertainment.m3u": 8392,
       "live/kids.m3u": 2055,
       "live/lifestyle.m3u": 3043,
       "live/movies.m3u": 1030,
       "live/music.m3u": 3099,
       "live/news.m3u": 1947,
-      "live/religious.m3u": 1496,
-      "live/sports.m3u": 1313,
+      "live/religious.m3u": 1147,
+      "live/sports.m3u": 1504,
       "live/international.m3u": 1679,
       "live/live-tv.m3u": 1860,
       "movies/crime.m3u": 23148,
@@ -3714,7 +3723,7 @@
       "movies/movies.m3u": 3520,
       "master.m3u": 835
     },
-    "total_bytes": 351483,
+    "total_bytes": 350472,
     "structure_ok": true,
     "structure_errors": 0,
     "structure_warnings": 3,
