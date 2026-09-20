@@ -206,3 +206,47 @@ class TestEmptyBuildSafety(unittest.TestCase):
         )
         self.assertTrue(result.published)
         self.assertFalse(stale.exists(), "a category with no channels must not linger")
+
+
+class TestLivePagination(unittest.TestCase):
+    """A live screen must stay inside the Smart-TV budget too.
+
+    Sub-splitting a category once is not enough: the Movies category alone
+    produced a 207-channel screen, well over the cap.
+    """
+
+    def setUp(self):
+        self.root = Path(tempfile.mkdtemp())
+        self.cfg = config.load(use_cache=False)
+        self.cfg["site"]["base_url"] = "https://example.test"
+        self.cfg["ssiptv"]["max_items_per_playlist"] = 10
+        self.gen = LiveGenerator(self.cfg, self.root)
+
+    def _channels(self, n, category="news"):
+        return [Channel(id=f"c{i}", name=f"{chr(65 + i % 26)}ch {i:03d}",
+                        category=category, status="ACTIVE",
+                        stream_url=f"https://h/{i}.m3u8") for i in range(n)]
+
+    def test_small_category_is_a_single_leaf(self):
+        self.gen.build(self._channels(6))
+        self.assertTrue((self.root / "live" / "news.m3u").exists())
+        self.assertFalse((self.root / "live" / "news").exists())
+
+    def test_oversized_category_paginates_and_keeps_every_channel(self):
+        self.gen.build(self._channels(34))
+        pages = sorted((self.root / "live" / "news").glob("*.m3u"))
+        self.assertGreater(len(pages), 1)
+        total = sum(p.read_text(encoding="utf-8").count("#EXTINF") for p in pages)
+        self.assertEqual(total, 34)
+
+    def test_no_live_screen_exceeds_the_budget(self):
+        self.gen.build(self._channels(34))
+        for p in (self.root / "live").rglob("*.m3u"):
+            self.assertLessEqual(p.read_text(encoding="utf-8").count("#EXTINF"), 10, p.name)
+
+    def test_paginated_parent_is_an_index(self):
+        self.gen.build(self._channels(34))
+        text = (self.root / "live" / "news.m3u").read_text(encoding="utf-8")
+        for line in text.splitlines():
+            if line.startswith("#EXTINF"):
+                self.assertIn('type="playlist"', line)

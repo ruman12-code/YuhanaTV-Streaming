@@ -123,6 +123,54 @@ class LiveGenerator:
             )
         return b
 
+    @staticmethod
+    def _page_label(chunk: list[Channel]) -> str:
+        def initial(c: Channel) -> str:
+            for ch in c.name.strip():
+                if ch.isalnum():
+                    return ch.upper()
+            return "#"
+        first, last = initial(chunk[0]), initial(chunk[-1])
+        return first if first == last else f"{first}-{last}"
+
+    def _write_leaf(self, items: list[Channel], *, title: str, seed_note: str,
+                    rel: str, files: dict[str, int], bg: str = "#444444") -> None:
+        """Write one screen of channels, paginating when there are too many.
+
+        The movie tree gained this when a bucket silently truncated; the live
+        tree needed it too. A sub-group can exceed the budget on its own - the
+        Movies category alone produced a 207-channel screen - and splitting the
+        category once is not enough.
+        """
+        ordered = sorted(items, key=lambda c: c.name.lower())
+        target = self.root / rel
+
+        if len(ordered) <= self.max_items:
+            files[rel] = self._channel_playlist(
+                ordered, title=title, seed_note=seed_note).write(target)
+            return
+
+        pages = (len(ordered) + self.max_items - 1) // self.max_items
+        per = (len(ordered) + pages - 1) // pages
+        chunks = [ordered[i:i + per] for i in range(0, len(ordered), per)]
+        stem = rel[:-4]                      # strip ".m3u"
+
+        index = M3UBuilder(default_size=self.size_cat, default_description=title,
+                           header_comment=seed_note)
+        for n, chunk in enumerate(chunks, start=1):
+            if not chunk:
+                continue
+            page_rel = f"{stem}/{n:02d}.m3u"
+            label = self._page_label(chunk)
+            files[page_rel] = self._channel_playlist(
+                chunk, title=f"{title} {label}", seed_note=seed_note).write(
+                self.root / page_rel)
+            index.add_playlist(f"{title} {label} ({len(chunk)})",
+                               self.cfg.playlist_url(page_rel),
+                               description=f"{len(chunk)} channels",
+                               size=self.size_cat, background=bg)
+        files[rel] = index.write(target)
+
     def build(self, channels: list[Channel], *, allow_unverified: bool = False) -> BuildResult:
         published, withheld = self._partition(channels, allow_unverified)
 
@@ -160,12 +208,15 @@ class LiveGenerator:
             subgroups = self._subgroups(category, items)
             if subgroups:
                 for slug, sub_items in subgroups.items():
-                    builder = self._channel_playlist(
-                        sub_items, title=f"{meta['label']} — {subgroup_meta(slug)['label']}",
+                    sm = subgroup_meta(slug)
+                    self._write_leaf(
+                        sub_items,
+                        title=f"{meta['label']} — {sm['label']}",
                         seed_note=seed_note,
+                        rel=f"live/{category}/{slug}.m3u",
+                        files=files,
+                        bg=sm.get("bg", "#444444"),
                     )
-                    rel = f"live/{category}/{slug}.m3u"
-                    files[rel] = builder.write(self.live_dir / category / f"{slug}.m3u")
                 index = M3UBuilder(
                     default_size=self.size_cat, default_description=meta["label"],
                     header_comment=seed_note,
@@ -182,10 +233,9 @@ class LiveGenerator:
                     )
                 files[f"live/{category}.m3u"] = index.write(self.live_dir / f"{category}.m3u")
             else:
-                builder = self._channel_playlist(
-                    items, title=meta["label"], seed_note=seed_note
-                )
-                files[f"live/{category}.m3u"] = builder.write(self.live_dir / f"{category}.m3u")
+                self._write_leaf(items, title=meta["label"], seed_note=seed_note,
+                                 rel=f"live/{category}.m3u", files=files,
+                                 bg=meta.get("bg", "#444444"))
 
         # 2. international.m3u - every non-Bangladesh channel (spec section 8)
         intl = [c for c in published if c.category != "bangladesh"]
