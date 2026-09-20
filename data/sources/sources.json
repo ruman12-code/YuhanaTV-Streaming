@@ -100,11 +100,6 @@
           "q": "collection:(silent_films) AND mediatype:(movies) AND format:(MPEG4)"
         },
         {
-          "label": "open / Creative Commons films in HD",
-          "rows": 80,
-          "q": "collection:(opensource_movies) AND mediatype:(movies) AND format:(MPEG4) AND licenseurl:(*creativecommons*)"
-        },
-        {
           "label": "Blender open movies",
           "rows": 30,
           "genre": "animation",
@@ -115,8 +110,88 @@
           "rows": 60,
           "genre": "documentary",
           "q": "collection:(nasa) AND mediatype:(movies) AND format:(MPEG4)"
+        },
+        {
+          "label": "feature films (Creative Commons, film collections only)",
+          "rows": 80,
+          "q": "collection:(feature_films) AND mediatype:(movies) AND licenseurl:(*creativecommons*)"
         }
       ]
+    },
+    {
+      "id": "src-iptv-org-movies",
+      "kind": "live",
+      "type": "m3u",
+      "enabled": true,
+      "name": "iptv-org — Movies category",
+      "url": "https://iptv-org.github.io/iptv/categories/movies.m3u",
+      "max_channels": 220,
+      "authorization_status": "UNVERIFIED",
+      "redistribution_allowed": false,
+      "trust_tier": "aggregator",
+      "last_checked": "",
+      "status": "ACTIVE",
+      "notes": "Open, community-curated index of publicly listed channels. Every entry still passes the same validation and publication gates; nothing is published on this source's say-so."
+    },
+    {
+      "id": "src-iptv-org-classic",
+      "kind": "live",
+      "type": "m3u",
+      "enabled": true,
+      "name": "iptv-org — Classic films category",
+      "url": "https://iptv-org.github.io/iptv/categories/classic.m3u",
+      "max_channels": 80,
+      "authorization_status": "UNVERIFIED",
+      "redistribution_allowed": false,
+      "trust_tier": "aggregator",
+      "last_checked": "",
+      "status": "ACTIVE",
+      "notes": ""
+    },
+    {
+      "id": "src-iptv-org-entertainment",
+      "kind": "live",
+      "type": "m3u",
+      "enabled": true,
+      "name": "iptv-org — Entertainment category",
+      "url": "https://iptv-org.github.io/iptv/categories/entertainment.m3u",
+      "max_channels": 160,
+      "authorization_status": "UNVERIFIED",
+      "redistribution_allowed": false,
+      "trust_tier": "aggregator",
+      "last_checked": "",
+      "status": "ACTIVE",
+      "notes": ""
+    },
+    {
+      "id": "src-iptv-org-animation",
+      "kind": "live",
+      "type": "m3u",
+      "enabled": true,
+      "name": "iptv-org — Animation category",
+      "url": "https://iptv-org.github.io/iptv/categories/animation.m3u",
+      "max_channels": 90,
+      "authorization_status": "UNVERIFIED",
+      "redistribution_allowed": false,
+      "trust_tier": "aggregator",
+      "last_checked": "",
+      "status": "ACTIVE",
+      "notes": ""
+    },
+    {
+      "id": "src-iptv-org-documentary",
+      "kind": "live",
+      "type": "m3u",
+      "enabled": true,
+      "name": "iptv-org — Documentary category",
+      "url": "https://iptv-org.github.io/iptv/categories/documentary.m3u",
+      "max_channels": 90,
+      "authorization_status": "UNVERIFIED",
+      "redistribution_allowed": false,
+      "trust_tier": "aggregator",
+      "last_checked": "",
+      "status": "ACTIVE",
+      "notes": ""
     }
   ]
 }

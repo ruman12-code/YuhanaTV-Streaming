@@ -27,6 +27,7 @@ LIVE_CATEGORY_META: dict[str, dict] = {
 
 # Genres for the Movie Library root (spec section 13). Phase 3 populates them.
 MOVIE_CATEGORY_META: dict[str, dict] = {
+    "4k":             {"order": 3,  "label": "💎 4K Ultra HD",     "bg": "#3b1c6b"},
     "hd":             {"order": 5,  "label": "🎞️ HD (720p+)",     "bg": "#0e5c8a"},
     "fullhd":         {"order": 6,  "label": "✨ Full HD (1080p+)", "bg": "#123a6b"},
     "trending":       {"order": 10, "label": "🔥 Trending",       "bg": "#c0392b"},

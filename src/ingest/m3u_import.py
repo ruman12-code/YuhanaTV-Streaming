@@ -46,6 +46,18 @@ GROUP_TO_CATEGORY = {
     "religious": "religious",
     "educational": "educational",
     "business": "business",
+    "classic": "movies",
+    "outdoor": "lifestyle",
+    "travel": "lifestyle",
+    "cooking": "lifestyle",
+    "family": "kids",
+    "science": "documentary",
+    "culture": "documentary",
+    "history": "documentary",
+    "weather": "news",
+    "legislative": "news",
+    "auto": "lifestyle",
+    "shop": "other",
 }
 
 # Country/language inference from the group the source playlist already assigned.

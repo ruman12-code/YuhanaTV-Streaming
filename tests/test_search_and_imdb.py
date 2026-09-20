@@ -14,7 +14,8 @@ from src.generators.movies import MovieGenerator
 def movie(**kw):
     base = dict(id="m1", title="A Film", year=1950, genre=["Drama"], language="english",
                 playback_url="https://h/f.mp4", playback_status="PLAYABLE",
-                rights_status="CLEARED", source="src-test")
+                rights_status="CLEARED", source="src-test",
+                runtime_minutes=95)   # a feature: the gate requires one
     base.update(kw)
     return Movie(**base)
 

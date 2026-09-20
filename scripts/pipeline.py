@@ -125,6 +125,12 @@ def cmd_ingest(args) -> int:
             continue
 
         src_channels, src_stats = import_file(local, spec["id"])
+        cap = int(spec.get("max_channels") or 0)
+        if cap and len(src_channels) > cap:
+            # Keep the run bounded: a curated remote list can carry hundreds of
+            # channels and every one of them costs a validation probe.
+            print(f"  capping {len(src_channels)} -> {cap} channels")
+            src_channels = src_channels[:cap]
         # Cross-source de-duplication: the first source to claim a URL keeps it.
         kept = []
         for ch in src_channels:
@@ -361,14 +367,9 @@ def cmd_build(args) -> int:
         for reason, items in sorted(movie_result.withheld.items()):
             print(f"  withheld {len(items):4}  {reason}")
 
-    have_bd = (PLAYLISTS / "live" / "bangladesh.m3u").exists()
-    have_intl = (PLAYLISTS / "live" / "international.m3u").exists()
-    have_movies = (PLAYLISTS / "movies" / "movies.m3u").exists()
     size = build_master(cfg, PLAYLISTS,
-                        have_live=bool(result.files),
-                        have_bangladesh=have_bd,
-                        have_international=have_intl,
-                        have_movies=have_movies,
+                        movies=movie_result.published,
+                        channels=result.published,
                         seed_note=SEED_NOTE if args.seed else "")
     files = dict(result.files)
     files.update(movie_result.files)

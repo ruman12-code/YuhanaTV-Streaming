@@ -13,7 +13,8 @@ from src.validators.vod_validator import VodValidator
 def movie(**kw):
     base = dict(id="m1", title="A Film", year=1950, genre=["Drama"], language="english",
                 playback_url="https://h/f.mp4", playback_status="PLAYABLE",
-                rights_status="CLEARED", source="src-test")
+                rights_status="CLEARED", source="src-test",
+                runtime_minutes=95)   # a feature: the gate requires one
     base.update(kw)
     return Movie(**base)
 
@@ -467,3 +468,113 @@ class TestPagination(unittest.TestCase):
         self.gen.build(self._films(35))
         text = (self.root / "movies" / "drama.m3u").read_text(encoding="utf-8")
         self.assertRegex(text, r"[A-Z]-[A-Z]|\([0-9]+\)")
+
+
+class TestFeatureLengthGate(unittest.TestCase):
+    """A movie library must contain movies.
+
+    The Archive's collections carry ephemeral shorts, conference talks and test
+    footage. Before this gate they outnumbered the actual features roughly three
+    to one, and the owner opened the Movies tile to find clips.
+    """
+
+    def setUp(self):
+        self.cfg = config.load(use_cache=False)
+        self.cfg["movies"]["min_runtime_minutes"] = 60
+        self.cfg["movies"]["require_known_runtime"] = True
+        self.gen = MovieGenerator(self.cfg, Path(tempfile.mkdtemp()))
+
+    def test_feature_publishes(self):
+        pub, _ = self.gen._partition([movie(runtime_minutes=95)])
+        self.assertEqual(len(pub), 1)
+
+    def test_short_is_withheld(self):
+        pub, held = self.gen._partition([movie(runtime_minutes=11)])
+        self.assertEqual(pub, [])
+        self.assertIn("shorter_than_60_min", held)
+
+    def test_unknown_runtime_is_withheld_when_required(self):
+        """Cannot confirm it is a feature, so it does not go in the movie library."""
+        pub, held = self.gen._partition([movie(runtime_minutes=None)])
+        self.assertEqual(pub, [])
+        self.assertIn("runtime_unknown", held)
+
+    def test_unknown_runtime_allowed_when_not_required(self):
+        self.cfg["movies"]["require_known_runtime"] = False
+        gen = MovieGenerator(self.cfg, Path(tempfile.mkdtemp()))
+        pub, _ = gen._partition([movie(runtime_minutes=None)])
+        self.assertEqual(len(pub), 1)
+
+    def test_gate_disabled_by_zero(self):
+        self.cfg["movies"]["min_runtime_minutes"] = 0
+        self.cfg["movies"]["require_known_runtime"] = False
+        gen = MovieGenerator(self.cfg, Path(tempfile.mkdtemp()))
+        pub, _ = gen._partition([movie(runtime_minutes=3)])
+        self.assertEqual(len(pub), 1)
+
+
+class TestUltraHdTier(unittest.TestCase):
+    def setUp(self):
+        self.gen = MovieGenerator(config.load(use_cache=False), Path(tempfile.mkdtemp()))
+
+    def test_4k_bucket_exists_for_ultra_hd_titles(self):
+        films = [movie(id="uhd", title="UHD", width=3840, height=2160),
+                 movie(id="fhd", title="FHD", width=1920, height=1080)]
+        buckets = self.gen._buckets(films)
+        self.assertEqual([m.id for m in buckets["4k"]], ["uhd"])
+        self.assertEqual({m.id for m in buckets["fullhd"]}, {"uhd", "fhd"})
+
+    def test_no_4k_bucket_without_ultra_hd_titles(self):
+        self.assertNotIn("4k", self.gen._buckets([movie(height=1080, width=1920)]))
+
+
+class TestPlayableFormatGate(unittest.TestCase):
+    """High resolution in a codec the TV cannot decode is not an upgrade.
+
+    Ranking purely by height put 160 Ogg Theora files into the library.
+    """
+
+    def test_ogg_theora_is_refused_even_at_higher_resolution(self):
+        from src.sources.archive_org.adapter import _pick_video_file
+        files = [{"name": "hi.ogv", "format": "Ogg Video", "size": "900000000",
+                  "height": "1080"},
+                 {"name": "lo.mp4", "format": "h.264", "size": "300000000",
+                  "height": "480"}]
+        self.assertEqual(_pick_video_file(files)["name"], "lo.mp4")
+
+    def test_refused_containers(self):
+        from src.sources.archive_org.adapter import is_tv_playable
+        for name, fmt in (("a.ogv", "Ogg Video"), ("a.webm", "WebM"),
+                          ("a.avi", "DivX"), ("a.mkv", "Matroska"),
+                          ("a.mpg", "MPEG2"), ("a.wmv", "WMV")):
+            self.assertFalse(is_tv_playable(name, fmt), name)
+
+    def test_accepted_h264_variants(self):
+        from src.sources.archive_org.adapter import is_tv_playable
+        for name, fmt in (("a.mp4", "h.264"), ("a.m4v", "h.264 IA"),
+                          ("a.mp4", "512Kb MPEG4"), ("a.mp4", "MPEG4")):
+            self.assertTrue(is_tv_playable(name, fmt), f"{name} {fmt}")
+
+    def test_exotic_codec_in_an_mp4_container_is_refused(self):
+        from src.sources.archive_org.adapter import is_tv_playable
+        self.assertFalse(is_tv_playable("a.mp4", "Cinepak"))
+
+    def test_item_with_only_unplayable_files_is_rejected(self):
+        from src import config as _c
+        from src.sources.archive_org.adapter import ArchiveOrgAdapter
+        adapter = ArchiveOrgAdapter(_c.load(use_cache=False))
+        payload = {"metadata": {"title": "Old Reel", "year": "1930",
+                                "licenseurl": "https://creativecommons.org/publicdomain/mark/1.0/"},
+                   "files": [{"name": "a.ogv", "format": "Ogg Video",
+                              "size": "500000000", "height": "1080"}]}
+        m, reason = adapter.to_movie("old-reel", payload)
+        self.assertIsNone(m)
+        self.assertIn("TV-playable", reason)
+
+    def test_oversized_file_is_refused(self):
+        from src.sources.archive_org.adapter import _pick_video_file
+        files = [{"name": "huge.mp4", "format": "h.264", "size": str(4 * 1024**3),
+                  "height": "2160"},
+                 {"name": "ok.mp4", "format": "h.264", "size": "800000000",
+                  "height": "1080"}]
+        self.assertEqual(_pick_video_file(files)["name"], "ok.mp4")

@@ -91,6 +91,12 @@ class MovieGenerator:
         # a rating is absence of evidence, not evidence of a bad film, and most
         # public-domain titles are simply not rated.
         self.min_rating_publish = float(cfg.get_path("movies.min_rating_publish", 0) or 0)
+        # A "Movies" library should contain movies. Without this the Archive's
+        # ephemeral shorts, conference talks and test footage outnumbered the
+        # features roughly three to one.
+        self.min_runtime = int(cfg.get_path("movies.min_runtime_minutes", 0) or 0)
+        self.require_known_runtime = bool(
+            cfg.get_path("movies.require_known_runtime", False))
 
     # --- gating --------------------------------------------------------------
 
@@ -113,6 +119,11 @@ class MovieGenerator:
                   and m.rating is not None
                   and m.rating < self.min_rating_publish):
                 hold(f"rating_below_{self.min_rating_publish:g}", m)
+            elif self.require_known_runtime and not m.runtime_minutes:
+                hold("runtime_unknown", m)
+            elif (self.min_runtime and m.runtime_minutes
+                  and m.runtime_minutes < self.min_runtime):
+                hold(f"shorter_than_{self.min_runtime}_min", m)
             else:
                 published.append(m)
         return published, withheld
@@ -203,6 +214,9 @@ class MovieGenerator:
         # Quality tiers, from the height the file actually declares. A film whose
         # dimensions the source never stated is absent from both, rather than
         # optimistically counted as HD.
+        uhd = [m for m in movies if m.height >= 2000 or m.width >= 3600]
+        if uhd:
+            buckets["4k"] = sorted(uhd, key=lambda m: (-(m.rating or 0), m.title.lower()))
         hd = [m for m in movies if m.height >= 700]
         if hd:
             buckets["hd"] = sorted(hd, key=lambda m: (-(m.rating or 0), m.title.lower()))
@@ -235,7 +249,7 @@ class MovieGenerator:
         # A one-title screen is a wasted click; collections are exempt because
         # they are curated views rather than accidental leftovers.
         floor = int(self.cfg.get_path("ssiptv.min_bucket_size", 3))
-        exempt = set(COLLECTIONS) | {"hd", "fullhd"}
+        exempt = set(COLLECTIONS) | {"4k", "hd", "fullhd"}
         return {k: v for k, v in buckets.items()
                 if len(v) >= floor or k in exempt}
 

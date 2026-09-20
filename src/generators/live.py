@@ -251,24 +251,88 @@ class LiveGenerator:
         return b
 
 
-def build_master(cfg, playlists_root: Path, *, have_live: bool, have_bangladesh: bool,
-                 have_international: bool, have_movies: bool, seed_note: str = "") -> int:
-    """The single URL the user configures in SS IPTV (spec section 15)."""
+def _artwork(items, attr: str = "poster", *, used: set[str] | None = None) -> str:
+    """Pick a representative image for a tile background.
+
+    #EXTBG accepts an image URL, not only a colour, which is the one lever SS
+    IPTV gives us for a card-based home screen. Rows are ranked the same way, so
+    the top item repeats across several of them; `used` keeps each tile distinct
+    and only falls back to repeating when nothing else is available.
+    """
+    used = used if used is not None else set()
+    first = ""
+    for item in items:
+        value = getattr(item, attr, "") or ""
+        if not value.startswith("http"):
+            continue
+        first = first or value
+        if value not in used:
+            used.add(value)
+            return value
+    return first
+
+
+def build_master(cfg, playlists_root: Path, *, movies=None, channels=None,
+                 seed_note: str = "") -> int:
+    """The single URL the user configures in SS IPTV (spec sections 15 and 23).
+
+    This is the home screen, so it is curated rather than a bare index: the rows
+    someone actually reaches for first, as large tiles carrying real artwork,
+    with the exhaustive listings one level behind them.
+    """
+    root = Path(playlists_root)
+    movies = list(movies or [])
+    channels = list(channels or [])
+
+    def exists(rel: str) -> bool:
+        return (root / rel).exists()
+
+    by_rating = sorted((m for m in movies if m.rating is not None),
+                       key=lambda m: -(m.rating or 0))
+    uhd = [m for m in movies if m.height >= 2000 or m.width >= 3600]
+    hd = [m for m in movies if m.height >= 700]
+    bd = [c for c in channels if c.category == "bangladesh"]
+
     b = M3UBuilder(
-        default_size=cfg.get_path("ssiptv.tile_size_root", "big"),
+        default_size="big",
         default_description=f"{cfg.get_path('site.brand', 'YuhanaTV')} — personal media library",
         header_comment=seed_note,
     )
-    if have_live:
-        b.add_playlist("📺 Live TV", cfg.playlist_url("live/live-tv.m3u"),
-                       description="All live channels by category", size="big", background="#1f3a93")
-    if have_bangladesh:
-        b.add_playlist("🇧🇩 Bangladesh TV", cfg.playlist_url("live/bangladesh.m3u"),
-                       description="Bangladeshi channels", size="big", background="#006a4e")
-    if have_international:
-        b.add_playlist("🌐 International TV", cfg.playlist_url("live/international.m3u"),
-                       description="Channels from outside Bangladesh", size="big", background="#2c3e75")
-    if have_movies:
-        b.add_playlist("🎬 Movies", cfg.playlist_url("movies/movies.m3u"),
-                       description="Video library", size="big", background="#8e1b1b")
-    return b.write(Path(playlists_root) / "master.m3u")
+
+    # (relative playlist, label, blurb, fallback colour, artwork source)
+    rows = [
+        ("movies/trending.m3u", "🔥 Trending Now",
+         "Best rated of what arrived recently", "#b3121b", by_rating),
+        ("movies/4k.m3u", "💎 4K Ultra HD",
+         f"{len(uhd)} titles in 4K", "#3b1c6b", uhd),
+        ("movies/hd.m3u", "🎞️ HD Movies",
+         f"{len(hd)} titles in 720p or better", "#0e5c8a", hd),
+        ("movies/top-rated.m3u", "⭐ Top Rated",
+         "Highest scoring films in the library", "#8a6a00", by_rating),
+        ("movies/movies.m3u", "🎬 All Movies",
+         "Browse by genre and language", "#8e1b1b", by_rating),
+        ("live/bangladesh.m3u", "🇧🇩 Bangladesh TV",
+         f"{len(bd)} channels", "#006a4e", bd),
+        ("live/live-tv.m3u", "📺 Live TV",
+         "Every channel by category", "#1f3a93", channels),
+        ("live/international.m3u", "🌍 International TV",
+         "Channels from outside Bangladesh", "#2c3e75",
+         [c for c in channels if c.category != "bangladesh"]),
+    ]
+
+    used_art: set[str] = set()
+    for rel, label, blurb, colour, art_items in rows:
+        if not exists(rel):
+            continue
+        attr = "poster" if rel.startswith("movies/") else "logo"
+        b.add_playlist(
+            label,
+            cfg.playlist_url(rel),
+            description=blurb,
+            size="big",
+            # Artwork where we have it, a solid colour where we do not: an empty
+            # tile is worse than a plain one.
+            background=_artwork(art_items, attr, used=used_art) or colour,
+        )
+
+    return b.write(root / "master.m3u")

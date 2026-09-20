@@ -83,6 +83,11 @@ def main() -> int:
                 stats["excluded by IMDb adult flag"] += 1
                 continue
             m.imdb_id = match.tconst
+            # IMDb runtime is authoritative and fills the gaps the Archive left,
+            # which is what makes a feature-length gate possible at all.
+            if match.runtime_minutes:
+                m.runtime_minutes = match.runtime_minutes
+                stats["runtime filled from IMDb"] += 1
             if match.rating is not None:
                 m.rating = match.rating
                 stats["rated"] += 1

@@ -46,16 +46,19 @@ PD_COLLECTIONS = {
 # Creators whose entire output is released under a known open licence.
 PD_CREATORS = {"blender foundation"}
 
-# Formats a TV can open. Ordering here is a tie-break only: the real selection
-# criterion is measured resolution, because an item's "512Kb" derivative is a
-# deliberately low-bitrate encode and preferring it by name was capping the whole
-# catalogue at roughly 480p even where a 720p or 1080p file sat beside it.
-_CONTAINER_PREFERENCE = (".mp4", ".m4v", ".webm", ".ogv")
-_VIDEO_EXT = _CONTAINER_PREFERENCE
+# What a VIDAA television will actually decode. Selecting purely by resolution
+# filled the library with Ogg Theora (.ogv) files that the TV cannot play at all:
+# high resolution is worthless if the codec is unsupported. Playability is now the
+# first gate and resolution decides only among files that pass it.
+_PLAYABLE_EXT = (".mp4", ".m4v")
+_PLAYABLE_FORMAT = re.compile(r"h\.?264|mpeg-?4|mp4|avc", re.IGNORECASE)
+# Formats deliberately refused: Ogg Theora, WebM/VP8/VP9, MPEG-2 programme
+# streams and raw AVI. Support for these across VIDAA builds is absent or erratic.
+_REFUSED_EXT = (".ogv", ".ogg", ".webm", ".avi", ".mpg", ".mpeg", ".mkv", ".flv", ".wmv")
 
-# Above this the file is too large to stream comfortably to a TV over a home
-# connection, and is usually a lossless preservation master rather than a viewing copy.
-_MAX_SENSIBLE_BYTES = 6 * 1024 * 1024 * 1024
+# Above this a file stalls on a TV over a home connection, and is usually a
+# preservation master rather than a viewing copy.
+_MAX_SENSIBLE_BYTES = 2_500 * 1024 * 1024
 
 _YEAR_RE = re.compile(r"(1[89]\d{2}|20\d{2})")
 _CLOCK_RE = re.compile(r"^(?:(\d+):)?(\d{1,2}):(\d{2})(?:\.\d+)?$")
@@ -126,36 +129,39 @@ def _as_int(value) -> int:
         return 0
 
 
-def _pick_video_file(files: list[dict]) -> dict | None:
-    """Choose the derivative a TV should play: the highest resolution available.
+def is_tv_playable(name: str, fmt: str) -> bool:
+    """Whether a TV can be expected to decode this file at all."""
+    low = (name or "").lower()
+    if low.endswith(_REFUSED_EXT):
+        return False
+    if not low.endswith(_PLAYABLE_EXT):
+        return False
+    # An .mp4 container can still hold something exotic; require the format label
+    # to name an h.264/MPEG-4 family codec.
+    return bool(_PLAYABLE_FORMAT.search(fmt or ""))
 
-    Archive file metadata usually carries `height` and `width`. Where it does
-    not, file size stands in as a proxy for quality, which is crude but strictly
-    better than preferring a derivative because of its name.
+
+def _pick_video_file(files: list[dict]) -> dict | None:
+    """Highest resolution *among files the TV can actually play*.
+
+    Two gates in order. Playability first: an Ogg Theora file at 1080p is not a
+    better choice than an h.264 file at 480p, it is an unplayable one, and
+    ranking purely by height put 160 of them into the library. Resolution then
+    decides among the survivors.
     """
     videos = []
     for f in files:
-        name = str(f.get("name", "")).lower()
         size = _as_int(f.get("size"))
-        if not name.endswith(_VIDEO_EXT) or size <= 0:
+        if size <= 0 or size > _MAX_SENSIBLE_BYTES:
             continue
-        if size > _MAX_SENSIBLE_BYTES:
+        if not is_tv_playable(str(f.get("name", "")), str(f.get("format", ""))):
             continue
         videos.append(f)
     if not videos:
         return None
 
-    def rank(f):
-        height = _as_int(f.get("height"))
-        size = _as_int(f.get("size"))
-        ext = next((i for i, e in enumerate(_CONTAINER_PREFERENCE)
-                    if str(f.get("name", "")).lower().endswith(e)),
-                   len(_CONTAINER_PREFERENCE))
-        # Highest resolution first; then size as a proxy where height is absent;
-        # then the most broadly playable container.
-        return (-height, -size, ext)
-
-    videos.sort(key=rank)
+    # Highest resolution, then size as a proxy where height is not declared.
+    videos.sort(key=lambda f: (-_as_int(f.get("height")), -_as_int(f.get("size"))))
     return videos[0]
 
 
@@ -222,7 +228,7 @@ class ArchiveOrgAdapter:
 
         video = _pick_video_file(files)
         if video is None:
-            return None, "no playable video derivative in the item"
+            return None, "no TV-playable (h.264/MP4) derivative in the item"
 
         title = str(meta.get("title") or identifier).strip()
         subjects_raw = meta.get("subject") or []

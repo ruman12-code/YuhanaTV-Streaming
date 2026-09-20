@@ -48,3 +48,40 @@ class TestGenerated(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestHomeScreen(unittest.TestCase):
+    """master.m3u is the first screen, so it is curated rather than a bare index."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.text = (PLAYLISTS / "master.m3u").read_text(encoding="utf-8")
+        cls.extinfs = [l for l in cls.text.splitlines() if l.startswith("#EXTINF")]
+
+    def test_every_tile_navigates_rather_than_playing(self):
+        for line in self.extinfs:
+            self.assertIn('type="playlist"', line)
+
+    def test_tiles_are_large(self):
+        self.assertEqual(self.text.count("#EXTSIZE: big"), len(self.extinfs))
+
+    def test_every_tile_has_a_background(self):
+        self.assertEqual(self.text.count("#EXTBG:"), len(self.extinfs))
+
+    def test_backgrounds_are_images_or_colours(self):
+        import re
+        for line in self.text.splitlines():
+            if line.startswith("#EXTBG:"):
+                value = line.split(":", 1)[1].strip()
+                self.assertTrue(
+                    value.startswith("http") or re.match(r"^#[0-9a-fA-F]{6}$", value),
+                    value)
+
+    def test_artwork_is_not_repeated_across_tiles(self):
+        images = [l.split(":", 1)[1].strip() for l in self.text.splitlines()
+                  if l.startswith("#EXTBG:") and "http" in l]
+        self.assertEqual(len(images), len(set(images)),
+                         "each home tile should carry distinct artwork")
+
+    def test_home_screen_stays_short(self):
+        self.assertLessEqual(len(self.extinfs), 10)
