@@ -40,7 +40,8 @@ class TestGenerated(unittest.TestCase):
 
     def test_master_is_small_and_points_only_at_playlists(self):
         text = (PLAYLISTS / "master.m3u").read_text(encoding="utf-8")
-        self.assertLessEqual(text.count("#EXTINF"), 8)
+        # One screen, no scrolling. Ten is the ceiling both home-screen tests use.
+        self.assertLessEqual(text.count("#EXTINF"), 10)
         for line in text.splitlines():
             if line.startswith("#EXTINF"):
                 self.assertIn('type="playlist"', line)
