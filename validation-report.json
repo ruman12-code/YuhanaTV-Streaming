@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-09-20T18:23:15+00:00",
+  "generated_at": "2026-09-20T23:24:15+00:00",
   "build_kind": "validated",
   "warning": "",
   "live_channels": {
     "total": 1475,
-    "active": 1090,
-    "degraded": 108,
-    "offline": 262,
-    "invalid": 15,
+    "active": 1097,
+    "degraded": 79,
+    "offline": 283,
+    "invalid": 16,
     "unverified": 0,
     "by_category": {
       "movies": 472,
@@ -127,10 +127,10 @@
   "resolution": {
     "measured_4k": 0,
     "measured_1080p": 333,
-    "measured_720p": 198,
+    "measured_720p": 202,
     "measured_576p": 36,
-    "measured_480p": 28,
-    "unmeasured": 859,
+    "measured_480p": 26,
+    "unmeasured": 856,
     "note": "Counts come from #EXT-X-STREAM-INF RESOLUTION only. Source-claimed labels such as '(1080p)' in a channel name are never counted."
   },
   "movies": {
@@ -155,293 +155,280 @@
   },
   "run_health": {
     "ok": true,
-    "reason": "1% of 1091 baseline channels regressed; within limits",
+    "reason": "2% of 1089 baseline channels regressed; within limits",
     "checked": 1475,
-    "newly_failing": 135,
-    "baseline_active": 1091,
-    "failure_fraction": 0.1055,
-    "regression_fraction": 0.0119
+    "newly_failing": 55,
+    "baseline_active": 1089,
+    "failure_fraction": 0.0459,
+    "regression_fraction": 0.0193
   },
   "last_probe": {
     "$comment": "What the most recent run actually measured, before the 3-strike demotion rule is applied. `live_channels` above reports stored status, which lags deliberately.",
     "counts": {
-      "ACTIVE": 1090,
-      "OFFLINE": 299,
-      "DEGRADED": 56,
-      "INVALID": 30
+      "ACTIVE": 1097,
+      "OFFLINE": 303,
+      "DEGRADED": 51,
+      "INVALID": 24
     },
     "failing_stage": {
-      "OFFLINE:http": 286,
-      "DEGRADED:variant": 35,
-      "INVALID:manifest": 30,
-      "DEGRADED:segment": 15,
+      "OFFLINE:http": 290,
+      "DEGRADED:variant": 33,
+      "INVALID:manifest": 24,
       "OFFLINE:dns": 13,
-      "DEGRADED:none": 6
+      "DEGRADED:segment": 10,
+      "DEGRADED:none": 8
     }
   },
   "reliability": {
     "channels_with_history": 1475,
-    "mean_reliability": 0.7769,
-    "fully_reliable": 1090,
-    "never_once_up": 295,
+    "mean_reliability": 0.7775,
+    "fully_reliable": 1082,
+    "never_once_up": 292,
     "flapping": [
+      {
+        "id": "ch-94b448be45",
+        "name": "ATN Music",
+        "reliability": 0.25,
+        "checks": 4
+      },
+      {
+        "id": "ch-e90153538c",
+        "name": "Rupashi Bangla TV",
+        "reliability": 0.25,
+        "checks": 4
+      },
+      {
+        "id": "ch-8b7673f626",
+        "name": "Balapan International",
+        "reliability": 0.25,
+        "checks": 4
+      },
       {
         "id": "ch-7ccfcd9b22",
         "name": "Sony Max",
+        "reliability": 0.324,
+        "checks": 34
+      },
+      {
+        "id": "ch-965fac492f",
+        "name": ".red",
         "reliability": 0.333,
-        "checks": 33
-      },
-      {
-        "id": "ch-5cc55e1ac4",
-        "name": "Channel S",
-        "reliability": 0.364,
-        "checks": 33
-      },
-      {
-        "id": "ch-7304184149",
-        "name": "Nick Bangla",
-        "reliability": 0.364,
-        "checks": 33
+        "checks": 6
       },
       {
         "id": "ch-17a477efe4",
         "name": "All Time Movies",
-        "reliability": 0.4,
-        "checks": 5
+        "reliability": 0.333,
+        "checks": 6
       },
       {
         "id": "ch-1ad5ac9e1d",
         "name": "ETV Cinema",
-        "reliability": 0.4,
-        "checks": 5
+        "reliability": 0.333,
+        "checks": 6
       },
       {
-        "id": "ch-85c1ff7687",
-        "name": "Evrokino HD",
-        "reliability": 0.4,
-        "checks": 5
+        "id": "ch-5cc55e1ac4",
+        "name": "Channel S",
+        "reliability": 0.353,
+        "checks": 34
       },
       {
-        "id": "ch-571d8f3046",
-        "name": "KinoHit",
-        "reliability": 0.4,
-        "checks": 5
-      },
-      {
-        "id": "ch-7ba80413db",
-        "name": "Retro",
-        "reliability": 0.4,
-        "checks": 5
+        "id": "ch-7304184149",
+        "name": "Nick Bangla",
+        "reliability": 0.353,
+        "checks": 34
       },
       {
         "id": "ch-2526a07356",
         "name": "Willow",
-        "reliability": 0.424,
-        "checks": 33
+        "reliability": 0.412,
+        "checks": 34
       },
       {
         "id": "ch-0d7f702e48",
         "name": "Fox Sports 2",
-        "reliability": 0.455,
-        "checks": 33
+        "reliability": 0.441,
+        "checks": 34
       },
       {
         "id": "ch-d429a5c212",
         "name": "Global TV",
-        "reliability": 0.485,
-        "checks": 33
-      },
-      {
-        "id": "ch-97844498e0",
-        "name": "Disney Channel Latin America",
-        "reliability": 0.5,
-        "checks": 6
-      },
-      {
-        "id": "ch-a0f0b63e98",
-        "name": "Desh TV",
-        "reliability": 0.545,
-        "checks": 33
-      },
-      {
-        "id": "ch-787284cc9b",
-        "name": "Ekhon",
-        "reliability": 0.576,
-        "checks": 33
-      },
-      {
-        "id": "ch-b55bcca7df",
-        "name": "Islamic TV",
-        "reliability": 0.576,
-        "checks": 33
+        "reliability": 0.471,
+        "checks": 34
       },
       {
         "id": "ch-25df410ee2",
         "name": "4ever Theater",
-        "reliability": 0.6,
-        "checks": 5
-      },
-      {
-        "id": "ch-d5d020f44a",
-        "name": "Acasa Gold",
-        "reliability": 0.6,
-        "checks": 5
-      },
-      {
-        "id": "ch-d9ae2970fb",
-        "name": "Acasa HD",
-        "reliability": 0.6,
-        "checks": 5
-      },
-      {
-        "id": "ch-4c13139aca",
-        "name": "Antares Television",
-        "reliability": 0.6,
-        "checks": 5
-      },
-      {
-        "id": "ch-855283c074",
-        "name": "AXN White Portugal",
-        "reliability": 0.6,
-        "checks": 5
-      },
-      {
-        "id": "ch-9fa4274ece",
-        "name": "4ever Cinema",
-        "reliability": 0.6,
-        "checks": 5
-      },
-      {
-        "id": "ch-0c8b0c404f",
-        "name": "Armenia Premium",
-        "reliability": 0.6,
-        "checks": 5
-      },
-      {
-        "id": "ch-abb6d197dc",
-        "name": "Blokbaster HD",
-        "reliability": 0.6,
-        "checks": 5
-      },
-      {
-        "id": "ch-c44390cd69",
-        "name": "Dom kino",
-        "reliability": 0.6,
-        "checks": 5
-      },
-      {
-        "id": "ch-218fef1d65",
-        "name": "Dom kino Premium HD",
-        "reliability": 0.6,
-        "checks": 5
+        "reliability": 0.5,
+        "checks": 6
       },
       {
         "id": "ch-92a191b0cf",
         "name": "Enter-Film",
-        "reliability": 0.6,
-        "checks": 5
+        "reliability": 0.5,
+        "checks": 6
       },
       {
-        "id": "ch-c94277736c",
-        "name": "Kino 1 (Ukraine)",
-        "reliability": 0.6,
-        "checks": 5
+        "id": "ch-85c1ff7687",
+        "name": "Evrokino HD",
+        "reliability": 0.5,
+        "checks": 6
       },
       {
-        "id": "ch-1547a4ecf3",
-        "name": "Kino 2",
-        "reliability": 0.6,
-        "checks": 5
-      },
-      {
-        "id": "ch-ea99680bd5",
-        "name": "Kinosemja",
-        "reliability": 0.6,
-        "checks": 5
-      },
-      {
-        "id": "ch-e57682633d",
-        "name": "Kinouzhas",
-        "reliability": 0.6,
-        "checks": 5
+        "id": "ch-571d8f3046",
+        "name": "KinoHit",
+        "reliability": 0.5,
+        "checks": 6
       },
       {
         "id": "ch-980e90d4d4",
         "name": "Nashe Lubimoe Kino Ukraine",
-        "reliability": 0.6,
-        "checks": 5
+        "reliability": 0.5,
+        "checks": 6
+      },
+      {
+        "id": "ch-7ba80413db",
+        "name": "Retro",
+        "reliability": 0.5,
+        "checks": 6
+      },
+      {
+        "id": "ch-832247caac",
+        "name": "ABP Majha",
+        "reliability": 0.5,
+        "checks": 4
+      },
+      {
+        "id": "ch-c4c9803c6f",
+        "name": "Al Jazeera English HD",
+        "reliability": 0.5,
+        "checks": 4
+      },
+      {
+        "id": "ch-a998c3896b",
+        "name": "5 minut tishiny",
+        "reliability": 0.5,
+        "checks": 4
+      },
+      {
+        "id": "ch-c05246e382",
+        "name": "Dynamo Kyiv TV",
+        "reliability": 0.5,
+        "checks": 4
+      },
+      {
+        "id": "ch-4164593686",
+        "name": "LRT Plius",
+        "reliability": 0.5,
+        "checks": 4
+      },
+      {
+        "id": "ch-a0f0b63e98",
+        "name": "Desh TV",
+        "reliability": 0.529,
+        "checks": 34
+      },
+      {
+        "id": "ch-787284cc9b",
+        "name": "Ekhon",
+        "reliability": 0.559,
+        "checks": 34
+      },
+      {
+        "id": "ch-b55bcca7df",
+        "name": "Islamic TV",
+        "reliability": 0.559,
+        "checks": 34
+      },
+      {
+        "id": "ch-97844498e0",
+        "name": "Disney Channel Latin America",
+        "reliability": 0.571,
+        "checks": 7
       },
       {
         "id": "ch-a718b81488",
         "name": "My TV",
-        "reliability": 0.606,
-        "checks": 33
+        "reliability": 0.588,
+        "checks": 34
       },
       {
         "id": "ch-ae793780a7",
         "name": "Medina Live",
-        "reliability": 0.606,
-        "checks": 33
+        "reliability": 0.588,
+        "checks": 34
       },
       {
         "id": "ch-8fd784bf92",
         "name": "Ekushe TV",
-        "reliability": 0.636,
-        "checks": 33
+        "reliability": 0.618,
+        "checks": 34
       },
       {
         "id": "ch-00d7c1cd76",
         "name": "Green TV",
-        "reliability": 0.636,
-        "checks": 33
+        "reliability": 0.618,
+        "checks": 34
       },
       {
         "id": "ch-f110db1460",
         "name": "R TV",
-        "reliability": 0.667,
-        "checks": 33
-      },
-      {
-        "id": "ch-15055bf00d",
-        "name": "Amedia Hit",
-        "reliability": 0.667,
-        "checks": 6
-      },
-      {
-        "id": "ch-fcdc221d24",
-        "name": "BRIDGE Classic",
-        "reliability": 0.667,
-        "checks": 6
+        "reliability": 0.647,
+        "checks": 34
       },
       {
         "id": "ch-b5cca1e8a4",
         "name": "Ananda TV",
-        "reliability": 0.667,
-        "checks": 33
+        "reliability": 0.647,
+        "checks": 34
       },
       {
         "id": "ch-f47172f491",
         "name": "Makkah Live",
+        "reliability": 0.647,
+        "checks": 34
+      },
+      {
+        "id": "ch-d5d020f44a",
+        "name": "Acasa Gold",
         "reliability": 0.667,
-        "checks": 33
+        "checks": 6
+      },
+      {
+        "id": "ch-d9ae2970fb",
+        "name": "Acasa HD",
+        "reliability": 0.667,
+        "checks": 6
+      },
+      {
+        "id": "ch-4c13139aca",
+        "name": "Antares Television",
+        "reliability": 0.667,
+        "checks": 6
+      },
+      {
+        "id": "ch-855283c074",
+        "name": "AXN White Portugal",
+        "reliability": 0.667,
+        "checks": 6
+      },
+      {
+        "id": "ch-9fa4274ece",
+        "name": "4ever Cinema",
+        "reliability": 0.667,
+        "checks": 6
+      },
+      {
+        "id": "ch-0c8b0c404f",
+        "name": "Armenia Premium",
+        "reliability": 0.667,
+        "checks": 6
       }
     ],
     "note": "reliability is checks_ok/checks_total across validation runs; a channel with checks_total == 0 has never been measured."
   },
   "history": [
-    {
-      "at": "2026-09-18T18:56:43+00:00",
-      "counts": {
-        "ACTIVE": 125,
-        "OFFLINE": 39,
-        "DEGRADED": 6,
-        "INVALID": 1
-      },
-      "health_ok": true,
-      "health_reason": "3% of 124 baseline channels regressed; within limits",
-      "failure_fraction": 0.0368,
-      "regression_fraction": 0.0323
-    },
     {
       "at": "2026-09-19T03:54:35+00:00",
       "counts": {
@@ -556,12 +543,25 @@
       "health_reason": "1% of 1091 baseline channels regressed; within limits",
       "failure_fraction": 0.1055,
       "regression_fraction": 0.0119
+    },
+    {
+      "at": "2026-09-20T23:02:46+00:00",
+      "counts": {
+        "ACTIVE": 1097,
+        "OFFLINE": 303,
+        "INVALID": 24,
+        "DEGRADED": 51
+      },
+      "health_ok": true,
+      "health_reason": "2% of 1089 baseline channels regressed; within limits",
+      "failure_fraction": 0.0459,
+      "regression_fraction": 0.0193
     }
   ],
   "epg": {
-    "channels_in_epg": 878,
+    "channels_in_epg": 884,
     "channels_with_programmes": 0,
-    "channels_without_programmes": 878,
+    "channels_without_programmes": 884,
     "programmes": 0,
     "dropped": 0,
     "coverage_percent": 0.0,
@@ -569,7 +569,7 @@
     "guide_sources_available": 627,
     "channels_total": 1475,
     "channels_with_canonical_id": 1408,
-    "bytes": 148628,
+    "bytes": 149457,
     "guide_coverage": {
       "9XJalwa.in": [
         {
@@ -18607,6 +18607,18 @@
     ],
     "status_degraded": [
       {
+        "id": "ch-5cc55e1ac4",
+        "name": "Channel S"
+      },
+      {
+        "id": "ch-a0f0b63e98",
+        "name": "Desh TV"
+      },
+      {
+        "id": "ch-787284cc9b",
+        "name": "Ekhon"
+      },
+      {
         "id": "ch-8fd784bf92",
         "name": "Ekushe TV"
       },
@@ -18619,16 +18631,16 @@
         "name": "Green TV"
       },
       {
+        "id": "ch-a718b81488",
+        "name": "My TV"
+      },
+      {
         "id": "ch-f110db1460",
         "name": "R TV"
       },
       {
         "id": "ch-e90153538c",
         "name": "Rupashi Bangla TV"
-      },
-      {
-        "id": "ch-5be40cb268",
-        "name": "Channel S (United Kingdom)"
       },
       {
         "id": "ch-2ade37a728",
@@ -18639,80 +18651,44 @@
         "name": "13E"
       },
       {
-        "id": "ch-1c881b9fd5",
-        "name": "Canal 14 Codazzi"
+        "id": "ch-33376393b1",
+        "name": "AbejalesTV"
+      },
+      {
+        "id": "ch-f969db424d",
+        "name": "Alegre TV RD"
       },
       {
         "id": "ch-c543cdc108",
         "name": "Canal Nets"
       },
       {
-        "id": "ch-644fc36299",
-        "name": "Canal Pulpo TV"
-      },
-      {
         "id": "ch-fca83f2c07",
         "name": "Cartoon Classics"
-      },
-      {
-        "id": "ch-4814ff361b",
-        "name": "Chithiram"
       },
       {
         "id": "ch-ef867f4ae0",
         "name": "Clan Internacional"
       },
       {
-        "id": "ch-b773ffffe9",
-        "name": "NickOnline Bob Esponja"
-      },
-      {
-        "id": "ch-17a477efe4",
-        "name": "All Time Movies"
-      },
-      {
-        "id": "ch-693c643a4d",
-        "name": "AlternaTV"
-      },
-      {
-        "id": "ch-f154cdba6f",
-        "name": "City Eden KinoSemya"
-      },
-      {
-        "id": "ch-a6604adefb",
-        "name": "Detskoe kino"
+        "id": "ch-1bb5a21e35",
+        "name": "LAMIL35 TV"
       },
       {
         "id": "ch-1ad5ac9e1d",
         "name": "ETV Cinema"
       },
       {
-        "id": "ch-d3c450de4c",
-        "name": "Ghost TV"
-      },
-      {
         "id": "ch-0b315f4840",
         "name": "Golden Premier"
       },
       {
-        "id": "ch-9fcb18165a",
-        "name": "Klasik"
+        "id": "ch-976a881e50",
+        "name": "Hero"
       },
       {
         "id": "ch-d8f8e2b523",
         "name": "NEW K.MOVIES"
-      },
-      {
-        "id": "ch-3c5b9d9460",
-        "name": "Oscar Movies Bhojpuri"
-      },
-      {
-        "id": "ch-7a8f77c5f1",
-        "name": "Pantalla Clasica EC"
-      },
-      {
-        "id": "ch-0a76ff700f",
-        "name": "Retrox TV"
       },
       {
         "id": "ch-470aba2a6c",
@@ -18721,10 +18697,6 @@
       {
         "id": "ch-10c20c99d4",
         "name": "The Carol Burnett Show"
-      },
-      {
-        "id": "ch-b0dfed3e12",
-        "name": "Zee Cine Classic"
       },
       {
         "id": "ch-adc2aa57c3",
@@ -18747,16 +18719,8 @@
         "name": "3AW"
       },
       {
-        "id": "ch-16e6a9fc9f",
-        "name": "4Dmas Noticias TV"
-      },
-      {
         "id": "ch-f23b2c288c",
         "name": "6PR"
-      },
-      {
-        "id": "ch-834f1f737c",
-        "name": "7 Info"
       },
       {
         "id": "ch-a7d0f94bf4",
@@ -18799,6 +18763,22 @@
         "name": "ABC News Live 9"
       },
       {
+        "id": "ch-b5cca1e8a4",
+        "name": "Ananda TV"
+      },
+      {
+        "id": "ch-f47172f491",
+        "name": "Makkah Live"
+      },
+      {
+        "id": "ch-ae793780a7",
+        "name": "Medina Live"
+      },
+      {
+        "id": "ch-b55bcca7df",
+        "name": "Islamic TV"
+      },
+      {
         "id": "ch-a998c3896b",
         "name": "5 minut tishiny"
       },
@@ -18807,32 +18787,8 @@
         "name": "Balabol"
       },
       {
-        "id": "ch-fb1b0ff166",
-        "name": "30A Golf Kingdom"
-      },
-      {
-        "id": "ch-89a0c522bb",
-        "name": "Alfa Sport"
-      },
-      {
-        "id": "ch-2085c114f5",
-        "name": "Awapa Sports TV"
-      },
-      {
         "id": "ch-759e106e4c",
         "name": "Belarus-5 Internet"
-      },
-      {
-        "id": "ch-69b068c7df",
-        "name": "Canal do Inter"
-      },
-      {
-        "id": "ch-9dfbc318ec",
-        "name": "CazeTV"
-      },
-      {
-        "id": "ch-43d7f377fa",
-        "name": "CDN Deportes"
       },
       {
         "id": "ch-c57919d0ac",
@@ -18841,6 +18797,10 @@
       {
         "id": "ch-11ba7585ee",
         "name": "Game+"
+      },
+      {
+        "id": "ch-c08d141550",
+        "name": "KTV Sport Plus"
       }
     ],
     "status_invalid": [
@@ -18853,6 +18813,10 @@
         "name": "World Channel"
       },
       {
+        "id": "ch-b773ffffe9",
+        "name": "NickOnline Bob Esponja"
+      },
+      {
         "id": "ch-92c1eaea04",
         "name": "NickOnline HD"
       },
@@ -18862,10 +18826,6 @@
       }
     ],
     "status_offline": [
-      {
-        "id": "ch-94b448be45",
-        "name": "ATN Music"
-      },
       {
         "id": "ch-5bf6b8149f",
         "name": "BTV News"
@@ -18943,10 +18903,6 @@
         "name": "Asia TV"
       },
       {
-        "id": "ch-4beb7120f3",
-        "name": "Belarus-2 HD"
-      },
-      {
         "id": "ch-aa3e6beeb7",
         "name": "bitMe"
       },
@@ -18965,6 +18921,10 @@
       {
         "id": "ch-ad3f6d19c6",
         "name": "Canal 10 Mar del Plata"
+      },
+      {
+        "id": "ch-1c881b9fd5",
+        "name": "Canal 14 Codazzi"
       },
       {
         "id": "ch-467d43405b",
@@ -18993,10 +18953,6 @@
       {
         "id": "ch-474083eebb",
         "name": "BabyTV Latin America"
-      },
-      {
-        "id": "ch-8b7673f626",
-        "name": "Balapan International"
       },
       {
         "id": "ch-0457fe6db7",
@@ -19043,8 +18999,16 @@
         "name": "Afghan Nobel Movies"
       },
       {
+        "id": "ch-17a477efe4",
+        "name": "All Time Movies"
+      },
+      {
         "id": "ch-dd436f008c",
         "name": "alpha Cinema"
+      },
+      {
+        "id": "ch-693c643a4d",
+        "name": "AlternaTV"
       },
       {
         "id": "ch-786286dc80",
@@ -19067,8 +19031,16 @@
         "name": "Cinevault 80s"
       },
       {
+        "id": "ch-f154cdba6f",
+        "name": "City Eden KinoSemya"
+      },
+      {
         "id": "ch-a9cc460591",
         "name": "CTB Perth Movies Channel"
+      },
+      {
+        "id": "ch-a6604adefb",
+        "name": "Detskoe kino"
       },
       {
         "id": "ch-0b15d52065",
@@ -19119,6 +19091,10 @@
         "name": "GEM TV +"
       },
       {
+        "id": "ch-d3c450de4c",
+        "name": "Ghost TV"
+      },
+      {
         "id": "ch-c2ab6d1293",
         "name": "iFilm 2"
       },
@@ -19143,6 +19119,10 @@
         "name": "Jilin Movie Channel"
       },
       {
+        "id": "ch-9fcb18165a",
+        "name": "Klasik"
+      },
+      {
         "id": "ch-c3accb50d5",
         "name": "Magnificent Movies Network"
       },
@@ -19163,8 +19143,16 @@
         "name": "Orbita Chile TV"
       },
       {
+        "id": "ch-7a8f77c5f1",
+        "name": "Pantalla Clasica EC"
+      },
+      {
         "id": "ch-804d823557",
         "name": "Persiana Latino"
+      },
+      {
+        "id": "ch-0a76ff700f",
+        "name": "Retrox TV"
       },
       {
         "id": "ch-a3c0364153",
@@ -19179,12 +19167,20 @@
         "name": "Velvet. Sovetskoe Kino"
       },
       {
+        "id": "ch-b0dfed3e12",
+        "name": "Zee Cine Classic"
+      },
+      {
         "id": "ch-6e0f867635",
         "name": "Music India"
       },
       {
         "id": "ch-a6517d6adb",
         "name": "Sangeet Bhojpuri"
+      },
+      {
+        "id": "ch-16e6a9fc9f",
+        "name": "4Dmas Noticias TV"
       },
       {
         "id": "ch-0f8690b1d6",
@@ -19239,8 +19235,16 @@
         "name": "Al Iraqia Sport"
       },
       {
+        "id": "ch-89a0c522bb",
+        "name": "Alfa Sport"
+      },
+      {
         "id": "ch-7dad3afce7",
         "name": "Alkass Three"
+      },
+      {
+        "id": "ch-2085c114f5",
+        "name": "Awapa Sports TV"
       },
       {
         "id": "ch-e2d95e1780",
@@ -19251,8 +19255,20 @@
         "name": "Barca TV"
       },
       {
+        "id": "ch-69b068c7df",
+        "name": "Canal do Inter"
+      },
+      {
+        "id": "ch-9dfbc318ec",
+        "name": "CazeTV"
+      },
+      {
         "id": "ch-537297b360",
         "name": "CCTV-5+"
+      },
+      {
+        "id": "ch-43d7f377fa",
+        "name": "CDN Deportes"
       },
       {
         "id": "ch-fe1464371d",
@@ -19289,20 +19305,20 @@
     ],
     "unreliable": [
       {
-        "id": "ch-5cc55e1ac4",
-        "name": "Channel S"
+        "id": "ch-94b448be45",
+        "name": "ATN Music"
       },
       {
-        "id": "ch-a0f0b63e98",
-        "name": "Desh TV"
+        "id": "ch-4beb7120f3",
+        "name": "Belarus-2 HD"
       },
       {
-        "id": "ch-787284cc9b",
-        "name": "Ekhon"
+        "id": "ch-8b7673f626",
+        "name": "Balapan International"
       },
       {
-        "id": "ch-b55bcca7df",
-        "name": "Islamic TV"
+        "id": "ch-832247caac",
+        "name": "ABP Majha"
       }
     ]
   },
@@ -19310,9 +19326,9 @@
     "denied_host": 314,
     "plain_http": 333,
     "requires_custom_http_headers": 127,
-    "status_degraded": 59,
-    "status_invalid": 4,
-    "status_offline": 106,
+    "status_degraded": 49,
+    "status_invalid": 5,
+    "status_offline": 119,
     "unreliable": 4
   },
   "broken_urls": [
@@ -19322,13 +19338,6 @@
       "status": "OFFLINE",
       "host": "103.99.249.139",
       "note": "source claimed quality '480p' (unverified)"
-    },
-    {
-      "id": "ch-94b448be45",
-      "name": "ATN Music",
-      "status": "OFFLINE",
-      "host": "app.ncare.live",
-      "note": "source claimed quality '360p' (unverified)"
     },
     {
       "id": "ch-5bf6b8149f",
@@ -19492,6 +19501,13 @@
       "note": ""
     },
     {
+      "id": "ch-a5bfc5c334",
+      "name": "Istoriya",
+      "status": "OFFLINE",
+      "host": "hls127.freeott.top:8080",
+      "note": "source claimed quality '576p' (unverified)"
+    },
+    {
       "id": "ch-0439e2385e",
       "name": "National Geographic HD",
       "status": "OFFLINE",
@@ -19560,6 +19576,13 @@
       "status": "OFFLINE",
       "host": "ml-pull-dvc-myco.io:2096",
       "note": "source claimed quality '1080p' (unverified)"
+    },
+    {
+      "id": "ch-911d78a4a9",
+      "name": "Aathavan TV",
+      "status": "OFFLINE",
+      "host": "45.77.66.224:1935",
+      "note": "source marks the channel as not 24/7"
     },
     {
       "id": "ch-2d9fde98ce",
@@ -19653,13 +19676,6 @@
       "note": "source claimed quality '576p' (unverified)"
     },
     {
-      "id": "ch-4beb7120f3",
-      "name": "Belarus-2 HD",
-      "status": "OFFLINE",
-      "host": "ngtrk.dc.beltelecom.by",
-      "note": "source claimed quality '1080p' (unverified)"
-    },
-    {
       "id": "ch-aa3e6beeb7",
       "name": "bitMe",
       "status": "OFFLINE",
@@ -19702,6 +19718,13 @@
       "note": ""
     },
     {
+      "id": "ch-1c881b9fd5",
+      "name": "Canal 14 Codazzi",
+      "status": "OFFLINE",
+      "host": "eu1.servers10.com:8081",
+      "note": "source marks the channel as not 24/7"
+    },
+    {
       "id": "ch-467d43405b",
       "name": "Canal Chilote",
       "status": "OFFLINE",
@@ -19735,6 +19758,13 @@
       "status": "OFFLINE",
       "host": "mumbai-edge.smartplaytv.in",
       "note": "source claimed quality '576p' (unverified)"
+    },
+    {
+      "id": "ch-018684810e",
+      "name": "Carac 1",
+      "status": "OFFLINE",
+      "host": "145.239.5.177",
+      "note": "source claimed quality '1080p' (unverified)"
     },
     {
       "id": "ch-f67a0e7931",
@@ -19779,13 +19809,6 @@
       "note": "source claimed quality '1080p' (unverified)"
     },
     {
-      "id": "ch-8b7673f626",
-      "name": "Balapan International",
-      "status": "OFFLINE",
-      "host": "live-3.otcnet.ru",
-      "note": "source claimed quality '1080p' (unverified)"
-    },
-    {
       "id": "ch-5aebebb52e",
       "name": "BBC Four/CBeebies",
       "status": "OFFLINE",
@@ -19805,6 +19828,13 @@
       "status": "OFFLINE",
       "host": "193.46.58.239:8080",
       "note": "source claimed quality '720p' (unverified)"
+    },
+    {
+      "id": "ch-34dc827c15",
+      "name": "Bilim Ilim",
+      "status": "OFFLINE",
+      "host": "gohoski.fvds.ru:3000",
+      "note": "source marks the channel as not 24/7"
     },
     {
       "id": "ch-6396bf68e4",
@@ -19954,6 +19984,13 @@
       "note": ""
     },
     {
+      "id": "ch-b773ffffe9",
+      "name": "NickOnline Bob Esponja",
+      "status": "INVALID",
+      "host": "bob.x1colegal.com",
+      "note": "source marks the channel as not 24/7"
+    },
+    {
       "id": "ch-92c1eaea04",
       "name": "NickOnline HD",
       "status": "INVALID",
@@ -20003,11 +20040,25 @@
       "note": "source claimed quality '720p' (unverified)"
     },
     {
+      "id": "ch-17a477efe4",
+      "name": "All Time Movies",
+      "status": "OFFLINE",
+      "host": "tvsen6.aynaott.com",
+      "note": "source claimed quality '576p' (unverified)"
+    },
+    {
       "id": "ch-dd436f008c",
       "name": "alpha Cinema",
       "status": "OFFLINE",
       "host": "live.15plusmg.ru",
       "note": "source claimed quality '1080p' (unverified)"
+    },
+    {
+      "id": "ch-693c643a4d",
+      "name": "AlternaTV",
+      "status": "OFFLINE",
+      "host": "tv.alterna.ar",
+      "note": "source marks the channel as not 24/7"
     },
     {
       "id": "ch-d3abd78544",
@@ -20108,6 +20159,13 @@
       "note": "source required custom HTTP headers"
     },
     {
+      "id": "ch-0e32b702e0",
+      "name": "Celestial Movies",
+      "status": "OFFLINE",
+      "host": "103.58.160.157:8278",
+      "note": ""
+    },
+    {
       "id": "ch-2f69cdf52a",
       "name": "CHC Action",
       "status": "OFFLINE",
@@ -20157,6 +20215,13 @@
       "note": "source claimed quality '720p' (unverified)"
     },
     {
+      "id": "ch-f154cdba6f",
+      "name": "City Eden KinoSemya",
+      "status": "OFFLINE",
+      "host": "v2.catcast.tv",
+      "note": "source marks the channel as not 24/7"
+    },
+    {
       "id": "ch-40f29c70cd",
       "name": "CND Film Discovery Channel",
       "status": "OFFLINE",
@@ -20192,6 +20257,13 @@
       "note": "source claimed quality '1080p' (unverified)"
     },
     {
+      "id": "ch-a6604adefb",
+      "name": "Detskoe kino",
+      "status": "OFFLINE",
+      "host": "autopilot.catcast.tv",
+      "note": "source marks the channel as not 24/7"
+    },
+    {
       "id": "ch-a8d35e0973",
       "name": "Diema",
       "status": "OFFLINE",
@@ -20213,11 +20285,11 @@
       "note": ""
     },
     {
-      "id": "ch-85c1ff7687",
-      "name": "Evrokino HD",
+      "id": "ch-92a191b0cf",
+      "name": "Enter-Film",
       "status": "INVALID",
       "host": "stream.mcquack.net",
-      "note": "source claimed quality '1080p' (unverified)"
+      "note": "source claimed quality '1080p' (unverified); source required custom HTTP headers"
     },
     {
       "id": "ch-5a71fa1d9b",
@@ -20267,13 +20339,6 @@
       "status": "OFFLINE",
       "host": "103.250.28.74:8000",
       "note": "source claimed quality '576p' (unverified)"
-    },
-    {
-      "id": "ch-3b587c8865",
-      "name": "FilmBox",
-      "status": "OFFLINE",
-      "host": "46.149.191.219:9100",
-      "note": ""
     },
     {
       "id": "ch-746191e22f",
@@ -20372,6 +20437,13 @@
       "status": "OFFLINE",
       "host": "ca-rt.onetv.app",
       "note": ""
+    },
+    {
+      "id": "ch-d3c450de4c",
+      "name": "Ghost TV",
+      "status": "OFFLINE",
+      "host": "stmv.video.expressolider.com.br",
+      "note": "source marks the channel as not 24/7"
     },
     {
       "id": "ch-a57d603cc2",
@@ -20507,6 +20579,20 @@
       "note": "source claimed quality '1080p' (unverified)"
     },
     {
+      "id": "ch-9fcb18165a",
+      "name": "Klasik",
+      "status": "OFFLINE",
+      "host": "178.253.194.105",
+      "note": "source marks the channel as not 24/7"
+    },
+    {
+      "id": "ch-362c208bb9",
+      "name": "Komsan TV",
+      "status": "OFFLINE",
+      "host": "tv.cootel.com.kh:8077",
+      "note": "source marks the channel as not 24/7"
+    },
+    {
       "id": "ch-49df500b76",
       "name": "Lifetime Movies",
       "status": "OFFLINE",
@@ -20626,11 +20712,25 @@
       "note": "source claimed quality '1080p' (unverified)"
     },
     {
+      "id": "ch-7a8f77c5f1",
+      "name": "Pantalla Clasica EC",
+      "status": "OFFLINE",
+      "host": "live21.bozztv.com",
+      "note": "source marks the channel as not 24/7"
+    },
+    {
       "id": "ch-804d823557",
       "name": "Persiana Latino",
       "status": "OFFLINE",
       "host": "latinohls.persiana.live",
       "note": ""
+    },
+    {
+      "id": "ch-0a76ff700f",
+      "name": "Retrox TV",
+      "status": "OFFLINE",
+      "host": "lbgo.bozztv.com",
+      "note": "source marks the channel as not 24/7"
     },
     {
       "id": "ch-91b097739d",
@@ -20696,6 +20796,13 @@
       "note": "source claimed quality '1080p' (unverified)"
     },
     {
+      "id": "ch-b0dfed3e12",
+      "name": "Zee Cine Classic",
+      "status": "OFFLINE",
+      "host": "amg00862-amg00862c8-amgplt0173.playout.now3.amagi.tv",
+      "note": "source claimed quality '1080p' (unverified)"
+    },
+    {
       "id": "ch-96f3c1ce82",
       "name": "Enlace",
       "status": "OFFLINE",
@@ -20736,6 +20843,13 @@
       "status": "OFFLINE",
       "host": "185.47.212.25:8080",
       "note": "source claimed quality '1080p' (unverified)"
+    },
+    {
+      "id": "ch-16e6a9fc9f",
+      "name": "4Dmas Noticias TV",
+      "status": "OFFLINE",
+      "host": "rds3.desdeparaguay.net",
+      "note": "source marks the channel as not 24/7"
     },
     {
       "id": "ch-4bdc094987",
@@ -20892,6 +21006,13 @@
       "note": ""
     },
     {
+      "id": "ch-f45a97d2b9",
+      "name": "Homicide Hunter",
+      "status": "OFFLINE",
+      "host": "jmp2.uk",
+      "note": ""
+    },
+    {
       "id": "ch-ac20082f05",
       "name": "5Sport",
       "status": "OFFLINE",
@@ -20913,6 +21034,13 @@
       "note": "source claimed quality '720p' (unverified)"
     },
     {
+      "id": "ch-89a0c522bb",
+      "name": "Alfa Sport",
+      "status": "OFFLINE",
+      "host": "dev.aftermind.xyz",
+      "note": "source marks the channel as not 24/7"
+    },
+    {
       "id": "ch-7dad3afce7",
       "name": "Alkass Three",
       "status": "OFFLINE",
@@ -20925,6 +21053,13 @@
       "status": "OFFLINE",
       "host": "nl1.nghk.ai",
       "note": "source required custom HTTP headers"
+    },
+    {
+      "id": "ch-2085c114f5",
+      "name": "Awapa Sports TV",
+      "status": "OFFLINE",
+      "host": "mgv-awapa.akamaized.net",
+      "note": "source marks the channel as not 24/7"
     },
     {
       "id": "ch-e2d95e1780",
@@ -20990,11 +21125,25 @@
       "note": "source claimed quality '720p' (unverified)"
     },
     {
+      "id": "ch-69b068c7df",
+      "name": "Canal do Inter",
+      "status": "OFFLINE",
+      "host": "video01.soultv.com.br",
+      "note": "source marks the channel as not 24/7"
+    },
+    {
       "id": "ch-4cd94d5b48",
       "name": "Canal+ Sport 360",
       "status": "OFFLINE",
       "host": "futbol9865.ultratv13.workers.dev",
       "note": "source required custom HTTP headers"
+    },
+    {
+      "id": "ch-9dfbc318ec",
+      "name": "CazeTV",
+      "status": "OFFLINE",
+      "host": "dfr80qz435crc.cloudfront.net",
+      "note": ""
     },
     {
       "id": "ch-eaceee3bdc",
@@ -21009,6 +21158,13 @@
       "status": "OFFLINE",
       "host": "myip.pdtvhd.com",
       "note": ""
+    },
+    {
+      "id": "ch-43d7f377fa",
+      "name": "CDN Deportes",
+      "status": "OFFLINE",
+      "host": "hls.tvabierta.net",
+      "note": "source marks the channel as not 24/7"
     },
     {
       "id": "ch-f03ed42896",
@@ -21239,6 +21395,20 @@
       "name": "M-Net Sport",
       "status": "INVALID",
       "host": "ares.mnet.mk",
+      "note": "source claimed quality '720p' (unverified)"
+    },
+    {
+      "id": "ch-e6973c5b9e",
+      "name": "Match! Arena",
+      "status": "OFFLINE",
+      "host": "31.148.48.15",
+      "note": "source claimed quality '720p' (unverified)"
+    },
+    {
+      "id": "ch-e5786b4cc9",
+      "name": "Match! Igra",
+      "status": "OFFLINE",
+      "host": "31.148.48.15",
       "note": "source claimed quality '720p' (unverified)"
     },
     {
@@ -21815,24 +21985,24 @@
   },
   "playlists": {
     "files": {
-      "live/bangladesh.m3u": 7081,
-      "live/documentary/documentary.m3u": 9098,
-      "live/documentary/other.m3u": 1672,
+      "live/bangladesh.m3u": 6750,
+      "live/documentary/documentary.m3u": 9097,
+      "live/documentary/other.m3u": 2018,
       "live/documentary.m3u": 434,
       "live/entertainment/region-us.m3u": 2523,
       "live/entertainment/region-in.m3u": 2303,
-      "live/entertainment/region-do.m3u": 807,
       "live/entertainment/region-pl.m3u": 1126,
-      "live/entertainment/region-other.m3u": 9491,
+      "live/entertainment/region-other.m3u": 9009,
+      "live/entertainment/region-ar.m3u": 905,
       "live/entertainment/region-ch.m3u": 996,
       "live/entertainment.m3u": 1262,
-      "live/kids.m3u": 11484,
+      "live/kids.m3u": 11453,
       "live/lifestyle.m3u": 2242,
-      "live/movies/region-other.m3u": 8311,
+      "live/movies/region-other.m3u": 8136,
       "live/movies/region-us.m3u": 8669,
       "live/movies/region-sa.m3u": 1047,
       "live/movies/region-ir.m3u": 980,
-      "live/movies/region-in.m3u": 6993,
+      "live/movies/region-in.m3u": 7254,
       "live/movies/region-br.m3u": 865,
       "live/movies/region-es.m3u": 974,
       "live/movies/region-fr.m3u": 1914,
@@ -21841,15 +22011,15 @@
       "live/movies/region-uk.m3u": 1402,
       "live/movies.m3u": 2178,
       "live/music.m3u": 3321,
-      "live/news/news.m3u": 13295,
+      "live/news/news.m3u": 13262,
       "live/news/news-public.m3u": 843,
       "live/news/other.m3u": 2160,
       "live/news.m3u": 580,
-      "live/other.m3u": 3292,
+      "live/other.m3u": 2253,
       "live/religious.m3u": 1413,
       "live/series.m3u": 8825,
-      "live/sports.m3u": 15437,
-      "live/live-tv.m3u": 2227,
+      "live/sports.m3u": 15408,
+      "live/live-tv.m3u": 2225,
       "movies/drama.m3u": 28635,
       "movies/romance.m3u": 8124,
       "movies/adventure.m3u": 9546,
@@ -21872,7 +22042,7 @@
       "movies/movies.m3u": 3506,
       "master.m3u": 1519
     },
-    "total_bytes": 292469,
+    "total_bytes": 291051,
     "structure_ok": true,
     "structure_errors": 0,
     "structure_warnings": 4,
@@ -21882,7 +22052,7 @@
       {
         "severity": "warning",
         "file": "live/entertainment.m3u",
-        "line": 14,
+        "line": 18,
         "code": "DUP_TITLE",
         "message": "title '🌐 Other regions (3)' already used on line 10"
       },
