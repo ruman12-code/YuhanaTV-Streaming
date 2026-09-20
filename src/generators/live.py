@@ -379,32 +379,28 @@ def build_master(cfg, playlists_root: Path, *, movies=None, channels=None,
     kids = [c for c in channels if c.category == "kids"]
     movie_ch = [c for c in channels if c.category == "movies"]
 
-    # (relative playlist, label, blurb, art key, fallback colour, artwork source)
+    # Six tiles, no more. The screen before this one had nine and the owner
+    # could not find what he was looking for; every extra tile costs more than
+    # the shortcut it provides. Everything still reachable, one level deeper.
+    #
+    #   (relative playlist, label, blurb, art key, fallback colour)
     rows = [
-        ("live/bangladesh.m3u", "🇧🇩 Bangladesh TV", f"{len(bd)} channels",
-         "bangladesh", "#006a4e", bd),
-        ("live/movies.m3u", "🍿 Movie Channels", f"{len(movie_ch)} channels by region",
-         "movie-channels", "#8e1b1b", movie_ch),
-        ("live/series.m3u", "📺 TV Series", f"{len(series)} channels",
-         "series", "#6a2c70", series),
-        ("live/sports.m3u", "🏆 Sports", f"{len(sports)} channels",
-         "sports", "#0b5d3b", sports),
-        ("movies/hd.m3u", "🎞️ HD Movies", f"{len(hd)} titles in 720p or better",
-         "hd-movies", "#0e5c8a", hd),
-        ("movies/top-rated.m3u", "⭐ Top Rated", "Highest scoring films in the library",
-         "top-rated", "#8a6a00", by_rating),
-        ("movies/movies.m3u", "🎬 Movie Library", "On demand, browse by genre",
-         "movie-library", "#7d1128", by_rating),
-        ("live/kids.m3u", "🧸 Kids", f"{len(kids)} channels",
-         "kids", "#d4820a", kids),
-        ("live/live-tv.m3u", "📡 All Live TV", "Every channel by category",
-         "live-tv", "#1f3a93", channels),
-        ("movies/4k.m3u", "💎 4K Ultra HD", f"{len(uhd)} titles in 4K",
-         "4k", "#3b1c6b", uhd),
+        ("live/live-tv.m3u",     "📡 All Live TV",
+         "Every channel by genre", "live-tv", "#1f3a93"),
+        ("live/bangladesh.m3u",  "🇧🇩 Bangladesh TV",
+         f"{len(bd)} channels", "bangladesh", "#006a4e"),
+        ("live/sports.m3u",      "🏆 Sports",
+         f"{len(sports)} channels worldwide", "sports", "#0b5d3b"),
+        ("live/kids.m3u",        "🧸 Kids",
+         f"{len(kids)} channels worldwide", "kids", "#d4820a"),
+        ("movies/movies.m3u",    "🎬 Movies on Demand",
+         "On demand, browse by genre", "movie-library", "#7d1128"),
+        ("live/series.m3u",      "📺 TV Series",
+         f"{len(series)} channels", "series", "#6a2c70"),
     ]
 
     art_dir = root.parent / "site" / "art"
-    for rel, label, blurb, art_key, colour, art_items in rows:
+    for rel, label, blurb, art_key, colour in rows:
         if not exists(rel):
             continue
         # Purpose-drawn tile art where it exists. The alternative was a frame

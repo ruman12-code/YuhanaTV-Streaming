@@ -16,6 +16,8 @@ from pathlib import Path
 
 from ..models import Channel, slugify, stable_id
 from ..util.urls import check_url, host_of
+from ..classify import (categorise, clean_display_name, is_geo_blocked,
+                        is_not_24_7)
 
 _ATTR_RE = re.compile(r'([A-Za-z0-9_-]+)\s*=\s*"([^"]*)"')
 _EXTINF_RE = re.compile(r"^#EXTINF\s*:\s*(-?\d+(?:\.\d+)?)\s*(.*)$", re.IGNORECASE)
@@ -166,14 +168,21 @@ def entry_to_channel(entry: ParsedEntry, source_id: str) -> tuple[Channel | None
         return None, verdict.reason
 
     raw_name = entry.attrs.get("tvg-name") or entry.title or "Unnamed"
+
+    # iptv-org annotates the display name with facts about the stream. A channel
+    # it marks geo-blocked cannot play from here, however healthy it looks to a
+    # probe run in another country - 26 such channels were reported ACTIVE.
+    if is_geo_blocked(raw_name):
+        return None, "source marks the channel geo-blocked"
+    intermittent = is_not_24_7(raw_name)
+
     quality_claim = ""
     m = _QUALITY_SUFFIX_RE.search(raw_name)
     if m:
         quality_claim = m.group(1).lower()
-        raw_name = _QUALITY_SUFFIX_RE.sub("", raw_name).strip()
+    raw_name = clean_display_name(raw_name)
 
     group_slug = slugify(entry.attrs.get("group-title", ""))
-    category = GROUP_TO_CATEGORY.get(group_slug, "other")
     country, language = GROUP_TO_LOCALE.get(group_slug, ("", ""))
 
     tvg_id = entry.attrs.get("tvg-id", "")
@@ -182,11 +191,22 @@ def entry_to_channel(entry: ParsedEntry, source_id: str) -> tuple[Channel | None
         if m:
             country = m.group(1).lower()
 
+    # Bangladesh is a country bucket, not a genre: the owner wants every
+    # Bangladeshi channel in one place regardless of what it broadcasts.
+    if country == "bd" or GROUP_TO_CATEGORY.get(group_slug) == "bangladesh":
+        category = "bangladesh"
+        country = country or "bd"
+        language = language or "bn"
+    else:
+        category = categorise(raw_name, group_slug)
+
     notes = []
     if quality_claim:
         notes.append(f"source claimed quality '{quality_claim}' (unverified)")
     if entry.vlc_opts:
         notes.append("source required custom HTTP headers")
+    if intermittent:
+        notes.append("source marks the channel as not 24/7")
 
     ch = Channel(
         id=stable_id("ch", raw_name, host_of(entry.url)),
