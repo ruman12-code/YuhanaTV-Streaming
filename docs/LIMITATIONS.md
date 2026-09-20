@@ -85,13 +85,28 @@ external network before being attached (spec section 18). If gzip negotiation tu
 to break it, the EPG moves to a host where the response headers are controllable. The
 playlists already emit `x-tvg-url`, so only the host changes.
 
-## 6. Smart-TV memory
+## 6. Codec support is narrower than the catalogue
+
+A Smart TV decodes far less than a desktop player. Ogg Theora, WebM/VP9, MPEG-2
+programme streams and Matroska are all either unsupported or erratic across VIDAA
+builds, and the Internet Archive serves plenty of each.
+
+**Consequence.** Selecting a derivative on resolution alone produced a library
+where a quarter of the titles could not play at all.
+
+**Mitigation.** Decodability is the first gate, ahead of resolution; see
+[MOVIE-QUALITY.md](MOVIE-QUALITY.md). The residual risk is that a file passes the
+format check and still fails on this particular set, since nothing here can test
+a real decoder. That surfaces as a title that looks right and will not play, and
+the fix is to narrow the accepted formats further.
+
+## 7. Smart-TV memory
 
 Not a limitation so much as a budget that shapes the design: every generated playlist is
 ≤31 items and ≤8 KB, and any category that grows past `subsplit_threshold` is split
 automatically. Posters for Phase 3 must be thumbnail-sized, not full-resolution artwork.
 
-## 7. Favourites, continue-watching and global search
+## 8. Favourites, continue-watching and global search
 
 These are application features. They cannot be expressed in M3U, and faking them would
 make the playlist layer non-deterministic. They belong to the optional web catalogue
