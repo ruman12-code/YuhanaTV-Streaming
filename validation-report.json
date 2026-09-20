@@ -1,39 +1,40 @@
 {
-  "generated_at": "2026-09-20T09:01:25+00:00",
+  "generated_at": "2026-09-20T11:21:06+00:00",
   "build_kind": "validated",
   "warning": "",
   "live_channels": {
-    "total": 171,
-    "active": 129,
-    "degraded": 9,
-    "offline": 32,
+    "total": 787,
+    "active": 569,
+    "degraded": 177,
+    "offline": 40,
     "invalid": 1,
     "unverified": 0,
     "by_category": {
-      "entertainment": 52,
+      "movies": 235,
+      "entertainment": 204,
+      "other": 132,
+      "documentary": 87,
+      "kids": 50,
       "bangladesh": 31,
-      "documentary": 22,
       "music": 16,
-      "kids": 12,
       "lifestyle": 9,
       "sports": 9,
       "news": 7,
-      "religious": 7,
-      "movies": 6
+      "religious": 7
     },
     "by_country": {
-      "unknown": 105,
+      "unknown": 721,
       "in": 35,
       "bd": 31
     }
   },
   "resolution": {
     "measured_4k": 0,
-    "measured_1080p": 55,
-    "measured_720p": 49,
-    "measured_576p": 4,
-    "measured_480p": 6,
-    "unmeasured": 55,
+    "measured_1080p": 149,
+    "measured_720p": 100,
+    "measured_576p": 12,
+    "measured_480p": 19,
+    "unmeasured": 499,
     "note": "Counts come from #EXT-X-STREAM-INF RESOLUTION only. Source-claimed labels such as '(1080p)' in a channel name are never counted."
   },
   "movies": {
@@ -42,10 +43,12 @@
     "discoverable": 13,
     "excluded": 0,
     "unverified": 1,
-    "published_as_vod": 528,
+    "published_as_vod": 84,
     "eligible_on_rights_and_playback": 649,
     "withheld": {
       "rating_below_6": 121,
+      "runtime_unknown": 290,
+      "shorter_than_60_min": 154,
       "playback_discoverable": 13,
       "playback_unverified": 1
     },
@@ -56,157 +59,136 @@
   },
   "run_health": {
     "ok": true,
-    "reason": "1% of 125 baseline channels regressed; within limits",
-    "checked": 171,
-    "newly_failing": 11,
-    "baseline_active": 125,
-    "failure_fraction": 0.0803,
-    "regression_fraction": 0.008
+    "reason": "2% of 129 baseline channels regressed; within limits",
+    "checked": 787,
+    "newly_failing": 168,
+    "baseline_active": 129,
+    "failure_fraction": 0.2228,
+    "regression_fraction": 0.0155
   },
   "last_probe": {
     "$comment": "What the most recent run actually measured, before the 3-strike demotion rule is applied. `live_channels` above reports stored status, which lags deliberately.",
     "counts": {
-      "ACTIVE": 129,
-      "OFFLINE": 41,
-      "INVALID": 1
+      "ACTIVE": 569,
+      "OFFLINE": 184,
+      "INVALID": 17,
+      "DEGRADED": 17
     },
     "failing_stage": {
-      "OFFLINE:http": 40,
-      "OFFLINE:dns": 1,
-      "INVALID:manifest": 1
+      "OFFLINE:http": 172,
+      "INVALID:manifest": 17,
+      "OFFLINE:dns": 12,
+      "DEGRADED:variant": 7,
+      "DEGRADED:segment": 6,
+      "DEGRADED:none": 4
     }
   },
   "reliability": {
-    "channels_with_history": 171,
-    "mean_reliability": 0.7759,
-    "fully_reliable": 111,
-    "never_once_up": 24,
+    "channels_with_history": 787,
+    "mean_reliability": 0.7516,
+    "fully_reliable": 570,
+    "never_once_up": 181,
     "flapping": [
-      {
-        "id": "ch-5cc55e1ac4",
-        "name": "Channel S",
-        "reliability": 0.25,
-        "checks": 28
-      },
       {
         "id": "ch-7ccfcd9b22",
         "name": "Sony Max",
-        "reliability": 0.357,
-        "checks": 28
+        "reliability": 0.345,
+        "checks": 29
       },
       {
         "id": "ch-d429a5c212",
         "name": "Global TV",
-        "reliability": 0.393,
-        "checks": 28
+        "reliability": 0.379,
+        "checks": 29
       },
       {
         "id": "ch-7304184149",
         "name": "Nick Bangla",
-        "reliability": 0.429,
-        "checks": 28
+        "reliability": 0.414,
+        "checks": 29
       },
       {
         "id": "ch-a0f0b63e98",
         "name": "Desh TV",
-        "reliability": 0.464,
-        "checks": 28
+        "reliability": 0.448,
+        "checks": 29
       },
       {
         "id": "ch-787284cc9b",
         "name": "Ekhon",
-        "reliability": 0.5,
-        "checks": 28
+        "reliability": 0.483,
+        "checks": 29
       },
       {
         "id": "ch-2526a07356",
         "name": "Willow",
-        "reliability": 0.5,
-        "checks": 28
+        "reliability": 0.483,
+        "checks": 29
       },
       {
         "id": "ch-b55bcca7df",
         "name": "Islamic TV",
-        "reliability": 0.536,
-        "checks": 28
+        "reliability": 0.517,
+        "checks": 29
       },
       {
         "id": "ch-ae793780a7",
         "name": "Medina Live",
-        "reliability": 0.536,
-        "checks": 28
+        "reliability": 0.517,
+        "checks": 29
       },
       {
         "id": "ch-0d7f702e48",
         "name": "Fox Sports 2",
-        "reliability": 0.536,
-        "checks": 28
+        "reliability": 0.517,
+        "checks": 29
       },
       {
         "id": "ch-8fd784bf92",
         "name": "Ekushe TV",
-        "reliability": 0.571,
-        "checks": 28
+        "reliability": 0.552,
+        "checks": 29
       },
       {
         "id": "ch-a718b81488",
         "name": "My TV",
-        "reliability": 0.607,
-        "checks": 28
+        "reliability": 0.586,
+        "checks": 29
       },
       {
         "id": "ch-b5cca1e8a4",
         "name": "Ananda TV",
-        "reliability": 0.607,
-        "checks": 28
+        "reliability": 0.586,
+        "checks": 29
       },
       {
         "id": "ch-00d7c1cd76",
         "name": "Green TV",
-        "reliability": 0.643,
-        "checks": 28
-      },
-      {
-        "id": "ch-8090d498ec",
-        "name": "News 21 Bangla TV",
-        "reliability": 0.643,
-        "checks": 28
+        "reliability": 0.621,
+        "checks": 29
       },
       {
         "id": "ch-f110db1460",
         "name": "R TV",
-        "reliability": 0.643,
-        "checks": 28
+        "reliability": 0.621,
+        "checks": 29
       },
       {
         "id": "ch-f47172f491",
         "name": "Makkah Live",
-        "reliability": 0.643,
-        "checks": 28
+        "reliability": 0.621,
+        "checks": 29
       },
       {
-        "id": "ch-37e9ee2459",
-        "name": "T Sports HD",
-        "reliability": 0.75,
-        "checks": 28
+        "id": "ch-8090d498ec",
+        "name": "News 21 Bangla TV",
+        "reliability": 0.655,
+        "checks": 29
       }
     ],
     "note": "reliability is checks_ok/checks_total across validation runs; a channel with checks_total == 0 has never been measured."
   },
   "history": [
-    {
-      "at": "2026-09-17T04:12:20+00:00",
-      "counts": {
-        "ACTIVE": 131,
-        "OFFLINE": 33,
-        "DEGRADED": 6,
-        "INVALID": 1
-      },
-      "health_ok": true,
-      "health_reason": "0% of 128 baseline channels regressed; within limits",
-      "failure_fraction": 0.0217,
-      "regression_fraction": 0.0
-    },
     {
       "at": "2026-09-17T13:12:57+00:00",
       "counts": {
@@ -320,20 +302,33 @@
       "health_reason": "1% of 125 baseline channels regressed; within limits",
       "failure_fraction": 0.0803,
       "regression_fraction": 0.008
+    },
+    {
+      "at": "2026-09-20T11:09:36+00:00",
+      "counts": {
+        "ACTIVE": 569,
+        "OFFLINE": 184,
+        "INVALID": 17,
+        "DEGRADED": 17
+      },
+      "health_ok": true,
+      "health_reason": "2% of 129 baseline channels regressed; within limits",
+      "failure_fraction": 0.2228,
+      "regression_fraction": 0.0155
     }
   ],
   "epg": {
-    "channels_in_epg": 78,
+    "channels_in_epg": 515,
     "channels_with_programmes": 0,
-    "channels_without_programmes": 78,
+    "channels_without_programmes": 515,
     "programmes": 0,
     "dropped": 0,
     "coverage_percent": 0.0,
     "note": "A channel with no real programme data carries a <channel> entry and no <programme> elements. Schedules are never fabricated.",
-    "guide_sources_available": 73,
-    "channels_total": 171,
-    "channels_with_canonical_id": 104,
-    "bytes": 13286,
+    "guide_sources_available": 265,
+    "channels_total": 787,
+    "channels_with_canonical_id": 720,
+    "bytes": 92573,
     "guide_coverage": {
       "9XJalwa.in": [
         {
@@ -401,6 +396,57 @@
           "site_id": "0-9-aajtak"
         }
       ],
+      "AakaashAath.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_AAKASH_AATH"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142510"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "129"
+        }
+      ],
+      "AlankarTV.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_ALANKAR"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142630"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "28"
+        }
+      ],
+      "AllTimeMovies.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_ALL_TIME_MOVIES"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "160750"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "1321"
+        }
+      ],
       "AndTV.in": [
         {
           "site": "airtelxstream.in",
@@ -446,6 +492,181 @@
           "site": "zee5.com",
           "lang": "en",
           "site_id": "0-9-channel_1510237423"
+        }
+      ],
+      "Asianet.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_ASIANET_HD"
+        },
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_ASIANET"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142668"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142673"
+        },
+        {
+          "site": "singtel.com",
+          "lang": "en",
+          "site_id": "5638"
+        },
+        {
+          "site": "starhubtvplus.com",
+          "lang": "en",
+          "site_id": "385da56a-d445-4711-a6a0-6a3a80daa9a8"
+        },
+        {
+          "site": "starhubtvplus.com",
+          "lang": "zh",
+          "site_id": "385da56a-d445-4711-a6a0-6a3a80daa9a8"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "289"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "292"
+        }
+      ],
+      "AsianetMovies.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_ASIANET_MOVIES_HD"
+        },
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_ASIANET_MOVIES"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142677"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "158302"
+        },
+        {
+          "site": "singtel.com",
+          "lang": "en",
+          "site_id": "5639"
+        },
+        {
+          "site": "starhubtvplus.com",
+          "lang": "en",
+          "site_id": "aeac111e-e284-41d9-b6b5-ae13f6dbe67b"
+        },
+        {
+          "site": "starhubtvplus.com",
+          "lang": "zh",
+          "site_id": "aeac111e-e284-41d9-b6b5-ae13f6dbe67b"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "293"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "933"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "1173"
+        }
+      ],
+      "B4UBhojpuri.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_B4U_BHOJPURI"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142694"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "729"
+        }
+      ],
+      "B4UKadak.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_B4U_KADAK"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142695"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "730"
+        }
+      ],
+      "B4UMovies.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_B4U_MOVIES"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "140063"
+        },
+        {
+          "site": "mytelly.co.uk",
+          "lang": "en",
+          "site_id": "619/b4u-movies"
+        },
+        {
+          "site": "sky.com",
+          "lang": "en",
+          "site_id": "GB#5703"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "7"
+        },
+        {
+          "site": "tv.sfr.fr",
+          "lang": "fr",
+          "site_id": "952"
+        },
+        {
+          "site": "tvireland.ie",
+          "lang": "en",
+          "site_id": "619/b4u-movies"
+        },
+        {
+          "site": "virgintvgo.virginmedia.com",
+          "lang": "en",
+          "site_id": "430"
         }
       ],
       "BBCNews.uk": [
@@ -850,6 +1071,23 @@
           "site_id": "NL_000116_019005"
         }
       ],
+      "BhojpuriCinema.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_BHOJPURI_CINEMA"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142713"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "181"
+        }
+      ],
       "Colors.in": [
         {
           "site": "airtelxstream.in",
@@ -1011,6 +1249,23 @@
           "site_id": "1927"
         }
       ],
+      "ColorsCineplexBollywood.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_COLORS_CINEPLEX_BOLLYWOOD"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142749"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "1000"
+        }
+      ],
       "ColorsInfinity.in": [
         {
           "site": "airtelxstream.in",
@@ -1100,6 +1355,45 @@
           "site": "tataplay.com",
           "lang": "en",
           "site_id": "1340"
+        }
+      ],
+      "ETVCinema.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_ETV_CINEMA"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "143026"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "128"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "1341"
+        }
+      ],
+      "EpicBhojpuri.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_FILAMCHI_BHOJPURI"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "157803"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "830"
         }
       ],
       "JalshaMovies.in": [
@@ -1872,6 +2166,199 @@
           "site_id": "0-9-zeetvhd"
         }
       ],
+      "6ter.fr": [
+        {
+          "site": "canalplus.com",
+          "lang": "fr",
+          "site_id": "#521"
+        },
+        {
+          "site": "chaines-tv.orange.fr",
+          "lang": "fr",
+          "site_id": "1403"
+        },
+        {
+          "site": "guidetnt.com",
+          "lang": "fr",
+          "site_id": "6ter"
+        },
+        {
+          "site": "programme-tv.net",
+          "lang": "fr",
+          "site_id": "6ter-202"
+        },
+        {
+          "site": "teleboy.ch",
+          "lang": "fr",
+          "site_id": "367"
+        },
+        {
+          "site": "tv-programme.telecablesat.fr",
+          "lang": "fr",
+          "site_id": "1403"
+        },
+        {
+          "site": "tv.post.lu",
+          "lang": "fr",
+          "site_id": "6640e8b0-2904-11eb-953f-eb0eedf1f375"
+        },
+        {
+          "site": "tv.sfr.fr",
+          "lang": "fr",
+          "site_id": "1403"
+        },
+        {
+          "site": "tvcesoir.fr",
+          "lang": "fr",
+          "site_id": "54846982/6ter"
+        }
+      ],
+      "AB1.fr": [
+        {
+          "site": "canalplus.com",
+          "lang": "fr",
+          "site_id": "#611"
+        },
+        {
+          "site": "chaines-tv.orange.fr",
+          "lang": "fr",
+          "site_id": "5"
+        },
+        {
+          "site": "guidetnt.com",
+          "lang": "fr",
+          "site_id": "ab1"
+        },
+        {
+          "site": "programme-tv.net",
+          "lang": "fr",
+          "site_id": "ab-1-31"
+        },
+        {
+          "site": "tv-programme.telecablesat.fr",
+          "lang": "fr",
+          "site_id": "5"
+        },
+        {
+          "site": "tv.blue.ch",
+          "lang": "fr",
+          "site_id": "11"
+        },
+        {
+          "site": "tv.post.lu",
+          "lang": "fr",
+          "site_id": "0a69cb80-77f1-11e9-b5ca-f345a2ed0fbe"
+        },
+        {
+          "site": "tv.sfr.fr",
+          "lang": "fr",
+          "site_id": "5"
+        },
+        {
+          "site": "tvcesoir.fr",
+          "lang": "fr",
+          "site_id": "82485357/ab1"
+        }
+      ],
+      "CinePlusEmotion.fr": [
+        {
+          "site": "canalplus.com",
+          "lang": "fr",
+          "site_id": "#396"
+        },
+        {
+          "site": "chaines-tv.orange.fr",
+          "lang": "fr",
+          "site_id": "283"
+        },
+        {
+          "site": "guidetnt.com",
+          "lang": "fr",
+          "site_id": "cineplus-emotion"
+        },
+        {
+          "site": "programme-tv.net",
+          "lang": "fr",
+          "site_id": "cineplus-emotion-45"
+        },
+        {
+          "site": "tv-programme.telecablesat.fr",
+          "lang": "fr",
+          "site_id": "283"
+        },
+        {
+          "site": "tv.blue.ch",
+          "lang": "fr",
+          "site_id": "62"
+        },
+        {
+          "site": "tv.sfr.fr",
+          "lang": "fr",
+          "site_id": "283"
+        },
+        {
+          "site": "tvcesoir.fr",
+          "lang": "fr",
+          "site_id": "82505248/cine-emotion"
+        }
+      ],
+      "CStar.fr": [
+        {
+          "site": "canalplus.com",
+          "lang": "fr",
+          "site_id": "#513"
+        },
+        {
+          "site": "chaines-tv.orange.fr",
+          "lang": "fr",
+          "site_id": "458"
+        },
+        {
+          "site": "guidetnt.com",
+          "lang": "fr",
+          "site_id": "cstar"
+        },
+        {
+          "site": "mon-programme-tv.be",
+          "lang": "fr",
+          "site_id": "1033/programme-television-cstar"
+        },
+        {
+          "site": "programme-tv.net",
+          "lang": "fr",
+          "site_id": "cstar-28"
+        },
+        {
+          "site": "teleboy.ch",
+          "lang": "fr",
+          "site_id": "422"
+        },
+        {
+          "site": "tv-programme.telecablesat.fr",
+          "lang": "fr",
+          "site_id": "458"
+        },
+        {
+          "site": "tv.blue.ch",
+          "lang": "fr",
+          "site_id": "114"
+        },
+        {
+          "site": "tv.post.lu",
+          "lang": "fr",
+          "site_id": "f0373e00-8097-11e9-b5ca-f345a2ed0fbe"
+        },
+        {
+          "site": "tv.sfr.fr",
+          "lang": "fr",
+          "site_id": "458"
+        },
+        {
+          "site": "tvcesoir.fr",
+          "lang": "fr",
+          "site_id": "83495155/cstar"
+        }
+      ],
       "DocuBox.nl": [
         {
           "site": "cgates.lt",
@@ -1937,6 +2424,23 @@
           "site": "tvtv.us",
           "lang": "en",
           "site_id": "78765"
+        }
+      ],
+      "CanalPlusCinemas.fr": [
+        {
+          "site": "chaines-tv.orange.fr",
+          "lang": "fr",
+          "site_id": "33"
+        },
+        {
+          "site": "guidetnt.com",
+          "lang": "fr",
+          "site_id": "canalplus-cinema"
+        },
+        {
+          "site": "tv.blue.ch",
+          "lang": "fr",
+          "site_id": "58"
         }
       ],
       "HistoryAsia.us": [
@@ -2078,6 +2582,131 @@
           "site_id": "999420644834214622"
         }
       ],
+      "beINMoviesStars.tr": [
+        {
+          "site": "digiturk.com.tr",
+          "lang": "tr",
+          "site_id": "272"
+        }
+      ],
+      "beINMoviesTurk.tr": [
+        {
+          "site": "digiturk.com.tr",
+          "lang": "tr",
+          "site_id": "381"
+        },
+        {
+          "site": "tv.sfr.fr",
+          "lang": "fr",
+          "site_id": "2756"
+        },
+        {
+          "site": "web.magentatv.de",
+          "lang": "de",
+          "site_id": "440"
+        }
+      ],
+      "AELatinAmerica.us": [
+        {
+          "site": "directv.com.uy",
+          "lang": "es",
+          "site_id": "222#E!"
+        },
+        {
+          "site": "gatotv.com",
+          "lang": "es",
+          "site_id": "a_y_e_chile"
+        },
+        {
+          "site": "gatotv.com",
+          "lang": "es",
+          "site_id": "a_y_e_mexico"
+        },
+        {
+          "site": "gatotv.com",
+          "lang": "es",
+          "site_id": "a_and_e_panregional"
+        },
+        {
+          "site": "mi.tv",
+          "lang": "es",
+          "site_id": "ar#a-e-mundo"
+        },
+        {
+          "site": "mi.tv",
+          "lang": "pt",
+          "site_id": "br#a-e"
+        },
+        {
+          "site": "siba.com.co",
+          "lang": "es",
+          "site_id": "380"
+        }
+      ],
+      "DisneyChannelLatinAmerica.ar": [
+        {
+          "site": "directv.com.uy",
+          "lang": "es",
+          "site_id": "312#DSNY"
+        },
+        {
+          "site": "gatotv.com",
+          "lang": "es",
+          "site_id": "disney_channel_centro"
+        },
+        {
+          "site": "gatotv.com",
+          "lang": "es",
+          "site_id": "disney_channel_mexico"
+        },
+        {
+          "site": "gatotv.com",
+          "lang": "es",
+          "site_id": "disney_channel_sur"
+        },
+        {
+          "site": "mi.tv",
+          "lang": "es",
+          "site_id": "ar#disney"
+        },
+        {
+          "site": "mi.tv",
+          "lang": "es",
+          "site_id": "hn#disney-multicountry"
+        },
+        {
+          "site": "mi.tv",
+          "lang": "es",
+          "site_id": "mx#disney"
+        },
+        {
+          "site": "siba.com.co",
+          "lang": "es",
+          "site_id": "430"
+        }
+      ],
+      "DisneyJrLatinAmerica.ar": [
+        {
+          "site": "directv.com.uy",
+          "lang": "es",
+          "site_id": "315#DSJR"
+        },
+        {
+          "site": "gatotv.com",
+          "lang": "es",
+          "site_id": "disney_junior_norte"
+        },
+        {
+          "site": "gatotv.com",
+          "lang": "es",
+          "site_id": "disney_junior_sur"
+        },
+        {
+          "site": "reportv.com.ar",
+          "lang": "es",
+          "site_id": "1102"
+        }
+      ],
       "Enlace.cr": [
         {
           "site": "directv.com.uy",
@@ -2098,6 +2727,109 @@
           "site": "tvtv.us",
           "lang": "en",
           "site_id": "20286"
+        }
+      ],
+      "Cinecanal.us": [
+        {
+          "site": "directv.com.uy",
+          "lang": "es",
+          "site_id": "507#CC"
+        },
+        {
+          "site": "gatotv.com",
+          "lang": "es",
+          "site_id": "cinecanal_mexico"
+        },
+        {
+          "site": "gatotv.com",
+          "lang": "es",
+          "site_id": "cinecanal_pacifico"
+        },
+        {
+          "site": "gatotv.com",
+          "lang": "es",
+          "site_id": "cinecanal_sur"
+        },
+        {
+          "site": "mi.tv",
+          "lang": "es",
+          "site_id": "ar#cinecanal"
+        },
+        {
+          "site": "mi.tv",
+          "lang": "es",
+          "site_id": "gt#cinecanal"
+        },
+        {
+          "site": "mi.tv",
+          "lang": "es",
+          "site_id": "hn#cinecanal"
+        },
+        {
+          "site": "siba.com.co",
+          "lang": "es",
+          "site_id": "407"
+        }
+      ],
+      "CineLatino.mx": [
+        {
+          "site": "directv.com.uy",
+          "lang": "es",
+          "site_id": "514#CL"
+        },
+        {
+          "site": "gatotv.com",
+          "lang": "es",
+          "site_id": "cinelatino"
+        },
+        {
+          "site": "mi.tv",
+          "lang": "es",
+          "site_id": "ar#cine-latino"
+        },
+        {
+          "site": "siba.com.co",
+          "lang": "es",
+          "site_id": "408"
+        },
+        {
+          "site": "tvhebdo.com",
+          "lang": "fr",
+          "site_id": "cinl/CINEL"
+        }
+      ],
+      "DePeliculaLatinAmerica.mx": [
+        {
+          "site": "directv.com.uy",
+          "lang": "es",
+          "site_id": "516#DPEL"
+        },
+        {
+          "site": "gatotv.com",
+          "lang": "es",
+          "site_id": "de_pelicula"
+        },
+        {
+          "site": "mi.tv",
+          "lang": "es",
+          "site_id": "ar#de-pelicula"
+        },
+        {
+          "site": "mi.tv",
+          "lang": "es",
+          "site_id": "mx#de-pelicula-hd"
+        }
+      ],
+      "AmritaTV.in": [
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142632"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "178"
         }
       ],
       "MusicIndia.in": [
@@ -2244,6 +2976,262 @@
           "site_id": "989293714931712087"
         }
       ],
+      "1KZNTV.za": [
+        {
+          "site": "dstv.com",
+          "lang": "en",
+          "site_id": "zaf#261"
+        }
+      ],
+      "4everCinema.ua": [
+        {
+          "site": "epg.iptvx.one",
+          "lang": "ru",
+          "site_id": "4ever-cinema"
+        }
+      ],
+      "4everTheater.ua": [
+        {
+          "site": "epg.iptvx.one",
+          "lang": "ru",
+          "site_id": "4ever-theater"
+        }
+      ],
+      "312Kino.kg": [
+        {
+          "site": "epg.iptvx.one",
+          "lang": "ru",
+          "site_id": "312-kino"
+        }
+      ],
+      "312TV.kg": [
+        {
+          "site": "epg.iptvx.one",
+          "lang": "ru",
+          "site_id": "312-serial"
+        }
+      ],
+      "365daysTV.ru": [
+        {
+          "site": "epg.iptvx.one",
+          "lang": "ru",
+          "site_id": "365-dnej"
+        },
+        {
+          "site": "tv.mail.ru",
+          "lang": "ru",
+          "site_id": "2871"
+        },
+        {
+          "site": "tv.mail.ru",
+          "lang": "ru",
+          "site_id": "975"
+        }
+      ],
+      "Arsenal.ru": [
+        {
+          "site": "epg.iptvx.one",
+          "lang": "ru",
+          "site_id": "arsenaltv"
+        },
+        {
+          "site": "tv.mail.ru",
+          "lang": "ru",
+          "site_id": "3111"
+        }
+      ],
+      "Blokbaster.ru": [
+        {
+          "site": "epg.iptvx.one",
+          "lang": "ru",
+          "site_id": "blokbaster"
+        },
+        {
+          "site": "tv.mail.ru",
+          "lang": "ru",
+          "site_id": "3138"
+        },
+        {
+          "site": "tv.mail.ru",
+          "lang": "ru",
+          "site_id": "3157"
+        }
+      ],
+      "CinePlus.ua": [
+        {
+          "site": "epg.iptvx.one",
+          "lang": "ru",
+          "site_id": "cine-plus"
+        }
+      ],
+      "CinePlusHit.ua": [
+        {
+          "site": "epg.iptvx.one",
+          "lang": "ru",
+          "site_id": "cine-plus-hit-hd"
+        }
+      ],
+      "CT2.cz": [
+        {
+          "site": "epg.iptvx.one",
+          "lang": "ru",
+          "site_id": "ct2-cz"
+        },
+        {
+          "site": "horizon.tv",
+          "lang": "cs",
+          "site_id": "10019"
+        },
+        {
+          "site": "m.tv.sms.cz",
+          "lang": "cs",
+          "site_id": "%C8T2"
+        },
+        {
+          "site": "mujtvprogram.cz",
+          "lang": "cs",
+          "site_id": "2"
+        },
+        {
+          "site": "programtv.onet.pl",
+          "lang": "cs",
+          "site_id": "ct-2-243"
+        }
+      ],
+      "Domkino.ru": [
+        {
+          "site": "epg.iptvx.one",
+          "lang": "ru",
+          "site_id": "domkino"
+        },
+        {
+          "site": "horizon.tv",
+          "lang": "sk",
+          "site_id": "10174"
+        },
+        {
+          "site": "m.tv.sms.cz",
+          "lang": "cs",
+          "site_id": "Dom+Kino"
+        },
+        {
+          "site": "magticom.ge",
+          "lang": "ru",
+          "site_id": "185"
+        },
+        {
+          "site": "tv.mail.ru",
+          "lang": "ru",
+          "site_id": "2874"
+        },
+        {
+          "site": "tv.mail.ru",
+          "lang": "ru",
+          "site_id": "1201"
+        },
+        {
+          "site": "tv2go.t-2.net",
+          "lang": "sl",
+          "site_id": "1000274"
+        }
+      ],
+      "DomkinoPremium.ru": [
+        {
+          "site": "epg.iptvx.one",
+          "lang": "ru",
+          "site_id": "domkino-premium"
+        },
+        {
+          "site": "horizon.tv",
+          "lang": "sk",
+          "site_id": "10173"
+        },
+        {
+          "site": "m.tv.sms.cz",
+          "lang": "cs",
+          "site_id": "Dom+Kino+Premium"
+        },
+        {
+          "site": "magticom.ge",
+          "lang": "ru",
+          "site_id": "269"
+        },
+        {
+          "site": "tv.mail.ru",
+          "lang": "ru",
+          "site_id": "2873"
+        },
+        {
+          "site": "tv.mail.ru",
+          "lang": "ru",
+          "site_id": "1991"
+        }
+      ],
+      "Dorama.ru": [
+        {
+          "site": "epg.iptvx.one",
+          "lang": "ru",
+          "site_id": "dorama"
+        },
+        {
+          "site": "tv.mail.ru",
+          "lang": "ru",
+          "site_id": "2300"
+        },
+        {
+          "site": "tv.mail.ru",
+          "lang": "ru",
+          "site_id": "2726"
+        }
+      ],
+      "Evrokino.ru": [
+        {
+          "site": "epg.iptvx.one",
+          "lang": "ru",
+          "site_id": "evrokino"
+        },
+        {
+          "site": "magticom.ge",
+          "lang": "ru",
+          "site_id": "19"
+        },
+        {
+          "site": "tv.mail.ru",
+          "lang": "ru",
+          "site_id": "2751"
+        },
+        {
+          "site": "tv.mail.ru",
+          "lang": "ru",
+          "site_id": "1669"
+        }
+      ],
+      "Pingviins.lv": [
+        {
+          "site": "epg.iptvx.one",
+          "lang": "ru",
+          "site_id": "lolo-tv-lv"
+        }
+      ],
+      "MovifyKino.lv": [
+        {
+          "site": "epg.iptvx.one",
+          "lang": "ru",
+          "site_id": "movify-kino"
+        }
+      ],
+      "Retro.ru": [
+        {
+          "site": "epg.iptvx.one",
+          "lang": "ru",
+          "site_id": "retro-tv"
+        },
+        {
+          "site": "tv.mail.ru",
+          "lang": "ru",
+          "site_id": "889"
+        }
+      ],
       "GBNews.uk": [
         {
           "site": "freeview.co.uk",
@@ -2383,6 +3371,268 @@
           "site_id": "150#99991628"
         }
       ],
+      "AXNLatinAmerica.us": [
+        {
+          "site": "gatotv.com",
+          "lang": "es",
+          "site_id": "axn_andes"
+        },
+        {
+          "site": "gatotv.com",
+          "lang": "es",
+          "site_id": "axn_mexico"
+        },
+        {
+          "site": "gatotv.com",
+          "lang": "es",
+          "site_id": "axn_sur"
+        },
+        {
+          "site": "mi.tv",
+          "lang": "es",
+          "site_id": "co#axn"
+        },
+        {
+          "site": "siba.com.co",
+          "lang": "es",
+          "site_id": "384"
+        }
+      ],
+      "bitMe.mx": [
+        {
+          "site": "gatotv.com",
+          "lang": "es",
+          "site_id": "bitme"
+        }
+      ],
+      "CineSony.us": [
+        {
+          "site": "gatotv.com",
+          "lang": "es",
+          "site_id": "cine_sony"
+        },
+        {
+          "site": "tv.blue.ch",
+          "lang": "it",
+          "site_id": "1381"
+        },
+        {
+          "site": "tvtv.us",
+          "lang": "en",
+          "site_id": "102978"
+        }
+      ],
+      "DHE.us": [
+        {
+          "site": "gatotv.com",
+          "lang": "es",
+          "site_id": "dhe"
+        },
+        {
+          "site": "mi.tv",
+          "lang": "es",
+          "site_id": "ar#dhe"
+        }
+      ],
+      "History2LatinAmerica.us": [
+        {
+          "site": "gatotv.com",
+          "lang": "es",
+          "site_id": "history_2_mexico"
+        },
+        {
+          "site": "gatotv.com",
+          "lang": "es",
+          "site_id": "history_2_panregional"
+        },
+        {
+          "site": "mi.tv",
+          "lang": "es",
+          "site_id": "ar#h2"
+        },
+        {
+          "site": "mi.tv",
+          "lang": "pt",
+          "site_id": "br#h2"
+        },
+        {
+          "site": "reportv.com.ar",
+          "lang": "es",
+          "site_id": "2824"
+        },
+        {
+          "site": "siba.com.co",
+          "lang": "es",
+          "site_id": "894"
+        }
+      ],
+      "HistoryLatinAmerica.us": [
+        {
+          "site": "gatotv.com",
+          "lang": "es",
+          "site_id": "history_panregional"
+        },
+        {
+          "site": "mi.tv",
+          "lang": "es",
+          "site_id": "ar#history"
+        },
+        {
+          "site": "reportv.com.ar",
+          "lang": "es",
+          "site_id": "445"
+        },
+        {
+          "site": "siba.com.co",
+          "lang": "es",
+          "site_id": "521"
+        }
+      ],
+      "AmarinTV.th": [
+        {
+          "site": "gigatv.3bbtv.co.th",
+          "lang": "th",
+          "site_id": "34"
+        },
+        {
+          "site": "tv.trueid.net",
+          "lang": "th",
+          "site_id": "amarintv-hd"
+        }
+      ],
+      "Canale5.it": [
+        {
+          "site": "guida.tv",
+          "lang": "it",
+          "site_id": "676773/canale-5"
+        },
+        {
+          "site": "guidatv.sky.it",
+          "lang": "it",
+          "site_id": "DTH#10354"
+        },
+        {
+          "site": "mediasetinfinity.mediaset.it",
+          "lang": "it",
+          "site_id": "C5"
+        },
+        {
+          "site": "melita.com",
+          "lang": "it",
+          "site_id": "dcd6ade6-f76c-4ba9-b9c4-588f53645e92"
+        },
+        {
+          "site": "neo.io",
+          "lang": "it",
+          "site_id": "canale-5"
+        },
+        {
+          "site": "sky.com",
+          "lang": "it",
+          "site_id": "IT#5435"
+        },
+        {
+          "site": "sky.com",
+          "lang": "it",
+          "site_id": "IT#9001"
+        },
+        {
+          "site": "sky.com",
+          "lang": "it",
+          "site_id": "IT#9035"
+        },
+        {
+          "site": "superguidatv.it",
+          "lang": "it",
+          "site_id": "canale-5/187"
+        },
+        {
+          "site": "teleboy.ch",
+          "lang": "it",
+          "site_id": "335"
+        },
+        {
+          "site": "tv.blue.ch",
+          "lang": "it",
+          "site_id": "79"
+        },
+        {
+          "site": "tvprofil.com",
+          "lang": "hr",
+          "site_id": "al/programacioni#canale-5"
+        }
+      ],
+      "7Gold.it": [
+        {
+          "site": "guida.tv",
+          "lang": "it",
+          "site_id": "55717668/7-gold"
+        },
+        {
+          "site": "superguidatv.it",
+          "lang": "it",
+          "site_id": "italia-7-gold/310"
+        },
+        {
+          "site": "tv.blue.ch",
+          "lang": "it",
+          "site_id": "1388"
+        }
+      ],
+      "Cine34.it": [
+        {
+          "site": "guida.tv",
+          "lang": "it",
+          "site_id": "67735152/cine34"
+        },
+        {
+          "site": "guidatv.sky.it",
+          "lang": "it",
+          "site_id": "DTH#10893"
+        },
+        {
+          "site": "sky.com",
+          "lang": "it",
+          "site_id": "IT#5481"
+        },
+        {
+          "site": "sky.com",
+          "lang": "it",
+          "site_id": "IT#9067"
+        },
+        {
+          "site": "superguidatv.it",
+          "lang": "it",
+          "site_id": "cine34/574"
+        },
+        {
+          "site": "teleboy.ch",
+          "lang": "it",
+          "site_id": "555"
+        },
+        {
+          "site": "tv.blue.ch",
+          "lang": "it",
+          "site_id": "1665"
+        }
+      ],
+      "Dvojka.sk": [
+        {
+          "site": "horizon.tv",
+          "lang": "sk",
+          "site_id": "10002"
+        },
+        {
+          "site": "m.tv.sms.cz",
+          "lang": "cs",
+          "site_id": "STV2"
+        },
+        {
+          "site": "mujtvprogram.cz",
+          "lang": "sk",
+          "site_id": "180"
+        }
+      ],
       "FilmBox.nl": [
         {
           "site": "horizon.tv",
@@ -2487,6 +3737,312 @@
           "site_id": "2447"
         }
       ],
+      "ABCTVPlus.au": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "au/Adelaide/epg#mjh-abc-tv-plus"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "au/Brisbane/epg#mjh-abc-tv-plus"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "au/Hobart/epg#mjh-abc-tv-plus"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "au/Melbourne/epg#mjh-abc-tv-plus"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "au/Perth/epg#mjh-abc-tv-plus"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "au/Sydney/epg#mjh-abc-tv-plus"
+        }
+      ],
+      "BloombergOriginals.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Flash/epg#quicktake"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/au#697140a85d851f5e69414688-61d73c3ca7b7c7f703418518"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/ca#647f8d22a2fc3fadb4721685-6598b92d3c32e5b40440d6c2"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/gb#64305451fc3be5947773c339-61d73c3ca7b7c7f703418518"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/us#5e20b730f2f8d5003d739db7-68fafe0dae4af1c7478fbeec"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "es",
+          "site_id": "Plex/es#643054b1fc3be59477853717-61d73c3ca7b7c7f703418518"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "es",
+          "site_id": "Plex/mx#608049aefa2b8ae93c2c3a63-61d73c3ca7b7c7f703418518"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "fr",
+          "site_id": "Plex/fr#6430aa45fc3be5947780904e-61d73c3ca7b7c7f703418518"
+        },
+        {
+          "site": "osn.com",
+          "lang": "ar",
+          "site_id": "4512"
+        },
+        {
+          "site": "osn.com",
+          "lang": "en",
+          "site_id": "4512"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "en",
+          "site_id": "6598b92d3c32e5b40440d6c2"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "en",
+          "site_id": "61d73c3ca7b7c7f703418518"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "en",
+          "site_id": "68fafe0dae4af1c7478fbeec"
+        },
+        {
+          "site": "singtel.com",
+          "lang": "en",
+          "site_id": "5172"
+        },
+        {
+          "site": "starhubtvplus.com",
+          "lang": "en",
+          "site_id": "cbce770a-b029-425b-ac2e-7fb9b8d5510f"
+        },
+        {
+          "site": "starhubtvplus.com",
+          "lang": "zh",
+          "site_id": "cbce770a-b029-425b-ac2e-7fb9b8d5510f"
+        },
+        {
+          "site": "watch.whaletvplus.com",
+          "lang": "en",
+          "site_id": "530040610393425513"
+        }
+      ],
+      "50CentAction.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/us#5e20b730f2f8d5003d739db7-6827b9579beea89c38b6df55"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Roku/all#e2422e42301a3176997019f882471d77"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "en",
+          "site_id": "6827b9579beea89c38b6df55"
+        },
+        {
+          "site": "xumo.tv",
+          "lang": "en",
+          "site_id": "100#99951439"
+        }
+      ],
+      "AdventureEarth.de": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/au#697140a85d851f5e69414688-6533e9b1df3ccc650a965646"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/ca#647f8d22a2fc3fadb4721685-6533e27abd43e1c8b1865154"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/gb#64305451fc3be5947773c339-6533e433bd43e1c8b1865156"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "en",
+          "site_id": "6533e9b1df3ccc650a965646"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "en",
+          "site_id": "6533e27abd43e1c8b1865154"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "en",
+          "site_id": "6533e433bd43e1c8b1865156"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "en",
+          "site_id": "6533e7badf3ccc650a965644"
+        },
+        {
+          "site": "watch.whaletvplus.com",
+          "lang": "en",
+          "site_id": "931186243466302969"
+        }
+      ],
+      "AfroLandTV.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/au#697140a85d851f5e69414688-60e737a4ebef9d002c4d0a0c"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/ca#647f8d22a2fc3fadb4721685-60e737a4ebef9d002c4d0a0c"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/gb#64305451fc3be5947773c339-60e737a4ebef9d002c4d0a0c"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/nz#5e20b730f2f8d5003d739db7-60e737a4ebef9d002c4d0a0c"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/us#5e20b730f2f8d5003d739db7-60e737a4ebef9d002c4d0a0c"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "es",
+          "site_id": "Plex/es#643054b1fc3be59477853717-60e737a4ebef9d002c4d0a0c"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "es",
+          "site_id": "Plex/mx#608049aefa2b8ae93c2c3a63-60e737a4ebef9d002c4d0a0c"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "fr",
+          "site_id": "Plex/fr#6430aa45fc3be5947780904e-60e737a4ebef9d002c4d0a0c"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "en",
+          "site_id": "60e737a4ebef9d002c4d0a0c"
+        },
+        {
+          "site": "watch.whaletvplus.com",
+          "lang": "en",
+          "site_id": "942280082834594509"
+        }
+      ],
+      "ALLBLKGems.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/us#5e20b730f2f8d5003d739db7-628bb0eafcb403aa62d2317d"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/us#6793ea255225b515b4ba91a7"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Roku/all#147998bc965e584d9c6cc360b2c7ae4f"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "en",
+          "site_id": "628bb0eafcb403aa62d2317d"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "en",
+          "site_id": "6793ea255225b515b4ba91a7"
+        },
+        {
+          "site": "xumo.tv",
+          "lang": "en",
+          "site_id": "300#99951477"
+        }
+      ],
+      "AMCenEspanol.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/us#5e20b730f2f8d5003d739db7-62d1efa6c33948ea4ceedbcf"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Roku/all#6727481eeb0951dfa692259e25055293"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "es",
+          "site_id": "62d1efa6c33948ea4ceedbcf"
+        }
+      ],
+      "AmericanCrimeChannel.pl": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/au#697140a85d851f5e69414688-671ab65359ad9a223f0a5dc3"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/gb#64305451fc3be5947773c339-671ab65359ad9a223f0a5dc3"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/nz#5e20b730f2f8d5003d739db7-671ab65359ad9a223f0a5dc3"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "en",
+          "site_id": "671ab65359ad9a223f0a5dc3"
+        }
+      ],
       "AngerManagementChannel.us": [
         {
           "site": "i.mjh.nz",
@@ -2519,6 +4075,188 @@
           "site_id": "0#99951192"
         }
       ],
+      "AnimexHIDIVE.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/us#5e20b730f2f8d5003d739db7-63dea56a2a2abb171ff6dadf"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/us#6793eaa4bc03978b9bc63db1"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Roku/all#0b92deed3dd556cf91c911a36e948fde"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "en",
+          "site_id": "63dea56a2a2abb171ff6dadf"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "en",
+          "site_id": "6793eaa4bc03978b9bc63db1"
+        }
+      ],
+      "AsianCrush.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/ca#647f8d22a2fc3fadb4721685-5eea605474085f0040ddc767"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/us#5e20b730f2f8d5003d739db7-5eea605474085f0040ddc767"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "en",
+          "site_id": "5eea605474085f0040ddc767"
+        }
+      ],
+      "AsianDrama.hk": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/au#697140a85d851f5e69414688-685f27cca7111a932d28f1ae"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/ca#647f8d22a2fc3fadb4721685-685f27cca7111a932d28f1ae"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/gb#64305451fc3be5947773c339-685f27cca7111a932d28f1ae"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/nz#5e20b730f2f8d5003d739db7-685f27cca7111a932d28f1ae"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/us#5e20b730f2f8d5003d739db7-685f27cca7111a932d28f1ae"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "es",
+          "site_id": "Plex/es#643054b1fc3be59477853717-685f27cca7111a932d28f1ae"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "fr",
+          "site_id": "Plex/fr#6430aa45fc3be5947780904e-685f27cca7111a932d28f1ae"
+        },
+        {
+          "site": "mytvsuper.com",
+          "lang": "en",
+          "site_id": "CTVS"
+        },
+        {
+          "site": "mytvsuper.com",
+          "lang": "zh",
+          "site_id": "CTVS"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "en",
+          "site_id": "685f27cca7111a932d28f1ae"
+        }
+      ],
+      "AztecaInternacional.mx": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/us#5e20b730f2f8d5003d739db7-646d06c9b09f13b2d8af68d8"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "es",
+          "site_id": "Plex/es#643054b1fc3be59477853717-646d06c9b09f13b2d8af68d8"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "es",
+          "site_id": "Plex/mx#608049aefa2b8ae93c2c3a63-646d06c9b09f13b2d8af68d8"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Roku/all#5e709cfe55d955ec899903cde681a5a4"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "es",
+          "site_id": "646d06c9b09f13b2d8af68d8"
+        },
+        {
+          "site": "watch.whaletvplus.com",
+          "lang": "es",
+          "site_id": "877391518380856035"
+        }
+      ],
+      "Backstage.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/ca#647f8d22a2fc3fadb4721685-608aec5fa09205002da4f28f"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/us#5e20b730f2f8d5003d739db7-608aec5fa09205002da4f28f"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "SamsungTVPlus/us#USBC10000129R"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "en",
+          "site_id": "608aec5fa09205002da4f28f"
+        }
+      ],
+      "BounceXL.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/us#5e20b730f2f8d5003d739db7-623d9b0370560b72147a994a"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/us#6176fd25e83a5f0007a464c9"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Roku/all#7f28cd98ab575aa784d0f80698279e70"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "en",
+          "site_id": "623d9b0370560b72147a994a"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "en",
+          "site_id": "6176fd25e83a5f0007a464c9"
+        },
+        {
+          "site": "xumo.tv",
+          "lang": "en",
+          "site_id": "150#9999613"
+        }
+      ],
       "BritBoxMysteries.us": [
         {
           "site": "i.mjh.nz",
@@ -2549,6 +4287,139 @@
           "site": "xumo.tv",
           "lang": "en",
           "site_id": "100#99951213"
+        }
+      ],
+      "Buzzr.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/us#5e20b730f2f8d5003d739db7-66a2d71b0b91165254efdb40"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/us#5812bfbe4ced4f7b601b12e6"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Roku/all#562baf35c5da56cc91cdea41537b43f9"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "en",
+          "site_id": "66a2d71b0b91165254efdb40"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "en",
+          "site_id": "5812bfbe4ced4f7b601b12e6"
+        },
+        {
+          "site": "tvtv.us",
+          "lang": "en",
+          "site_id": "93430"
+        },
+        {
+          "site": "xumo.tv",
+          "lang": "en",
+          "site_id": "200#99951124"
+        }
+      ],
+      "CineRomantico.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/us#5e20b730f2f8d5003d739db7-67db0a3892cb453db28ab020"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "es",
+          "site_id": "Plex/mx#608049aefa2b8ae93c2c3a63-67db0a3892cb453db28ab020"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Roku/all#79eb3a43680e5a9f9689fee074502a3b"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "SamsungTVPlus/us#USBA3800001E0"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "es",
+          "site_id": "67db0a3892cb453db28ab020"
+        },
+        {
+          "site": "xumo.tv",
+          "lang": "en",
+          "site_id": "250#99991142"
+        }
+      ],
+      "Crime360.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/us#5e20b730f2f8d5003d739db7-5f74cf7effbe690040689f41"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/us#6000a5a9e767980007b497ca"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Roku/all#0455f88e83625b3c8c302db0c30fe01e"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "SamsungTVPlus/us#USAK3508703A"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "en",
+          "site_id": "5f74cf7effbe690040689f41"
+        },
+        {
+          "site": "xumo.tv",
+          "lang": "en",
+          "site_id": "100#99951471"
+        }
+      ],
+      "Dateline247.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/ca#647f8d22a2fc3fadb4721685-5fc70600598c41002da3dd19"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/us#5e20b730f2f8d5003d739db7-5fc70600598c41002da3dd19"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/us#637413d8531e0c0007442d6d"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Roku/all#18c5f5feae8855baba4d1ccfd75be3db"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "en",
+          "site_id": "5fc70600598c41002da3dd19"
+        },
+        {
+          "site": "xumo.tv",
+          "lang": "en",
+          "site_id": "100#99991626"
         }
       ],
       "DealorNoDeal.us": [
@@ -2687,6 +4558,33 @@
           "site_id": "0#99951293"
         }
       ],
+      "FBIFiles.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/ca#647f8d22a2fc3fadb4721685-6582a024a90606db3c841b1b"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/us#5e20b730f2f8d5003d739db7-6582a024a90606db3c841b1b"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/gb#5cb6f6f9a461406ffe4022cf"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "en",
+          "site_id": "6582a024a90606db3c841b1b"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "en",
+          "site_id": "5cb6f6f9a461406ffe4022cf"
+        }
+      ],
       "FearFactor.us": [
         {
           "site": "i.mjh.nz",
@@ -2759,6 +4657,107 @@
           "site": "plex.tv",
           "lang": "en",
           "site_id": "6449369eb3ff17382cae5819"
+        }
+      ],
+      "FilmRiseClassicTV.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/ca#647f8d22a2fc3fadb4721685-65e9d0ad8fe4ef7053c3c874"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/us#5e20b730f2f8d5003d739db7-66ea07049502c5778b828d3f"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Roku/all#e2e10d08139b56aba73a448f5555b6fd"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "en",
+          "site_id": "65e9d0ad8fe4ef7053c3c874"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "en",
+          "site_id": "66ea07049502c5778b828d3f"
+        }
+      ],
+      "ForensicFiles.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/au#697140a85d851f5e69414688-68db6db222efe0c218a90a9d"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/ca#647f8d22a2fc3fadb4721685-6449369f243fbe342a9c0b4d"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/nz#5e20b730f2f8d5003d739db7-68db6db222efe0c218a90a9d"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/us#5e20b730f2f8d5003d739db7-6449369f243fbe342a9c0b4d"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/us#5bb1af6a268cae539bcedb0a"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "SamsungTVPlus/us#USBB3200017MY"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "en",
+          "site_id": "68db6db222efe0c218a90a9d"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "en",
+          "site_id": "6449369f243fbe342a9c0b4d"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "en",
+          "site_id": "5bb1af6a268cae539bcedb0a"
+        },
+        {
+          "site": "xumo.tv",
+          "lang": "en",
+          "site_id": "100#99991367"
+        }
+      ],
+      "Getfactual.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/ca#647f8d22a2fc3fadb4721685-6699937717c9985deeb74e39"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/gb#64305451fc3be5947773c339-6699937717c9985deeb74e39"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/us#5e20b730f2f8d5003d739db7-6699937717c9985deeb74e39"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "en",
+          "site_id": "6699937717c9985deeb74e39"
         }
       ],
       "GravitasMovies.us": [
@@ -2847,6 +4846,132 @@
           "site_id": "5f74cf83ffbe690040689f50"
         }
       ],
+      "MrBeanAnimated.uk": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/au#697140a85d851f5e69414688-66a2e7fe94b6a49cb5054d7b"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/ca#647f8d22a2fc3fadb4721685-66a2e7fe94b6a49cb5054d7b"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/gb#64305451fc3be5947773c339-66a2e7fe94b6a49cb5054d7b"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/us#5e20b730f2f8d5003d739db7-66a2e7fe94b6a49cb5054d7b"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "es",
+          "site_id": "Plex/mx#608049aefa2b8ae93c2c3a63-66a2e90994b6a49cb5054d7d"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "pt",
+          "site_id": "66a9367b99bb0f3a78c0a32b"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "es",
+          "site_id": "66a2e90994b6a49cb5054d7d"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "en",
+          "site_id": "66a2e7fe94b6a49cb5054d7b"
+        }
+      ],
+      "RetroCrush.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/ca#647f8d22a2fc3fadb4721685-5ef4e1b40d9ad000423c442a"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/us#5e20b730f2f8d5003d739db7-5ef4e1b40d9ad000423c442a"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Roku/all#72a54a3c7a3d5381a1baa223a5dc8d23"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "en",
+          "site_id": "5ef4e1b40d9ad000423c442a"
+        }
+      ],
+      "TheCarolBurnettShow.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/au#697140a85d851f5e69414688-60d4edd6b2fdec002c141125"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/ca#647f8d22a2fc3fadb4721685-60d4edd6b2fdec002c141125"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/gb#64305451fc3be5947773c339-60d4edd6b2fdec002c141125"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/nz#5e20b730f2f8d5003d739db7-60d4edd6b2fdec002c141125"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/us#5e20b730f2f8d5003d739db7-60d4edd6b2fdec002c141125"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "es",
+          "site_id": "Plex/es#643054b1fc3be59477853717-60d4edd6b2fdec002c141125"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "es",
+          "site_id": "Plex/mx#608049aefa2b8ae93c2c3a63-60d4edd6b2fdec002c141125"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "fr",
+          "site_id": "Plex/fr#6430aa45fc3be5947780904e-60d4edd6b2fdec002c141125"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Roku/all#e3cd976116d5578ab9be32baa738ade2"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "en",
+          "site_id": "60d4edd6b2fdec002c141125"
+        },
+        {
+          "site": "tvtv.us",
+          "lang": "en",
+          "site_id": "122609"
+        },
+        {
+          "site": "xumo.tv",
+          "lang": "en",
+          "site_id": "300#99951380"
+        }
+      ],
       "Wonder.uk": [
         {
           "site": "i.mjh.nz",
@@ -2911,6 +5036,261 @@
           "site_id": "756082394003932983"
         }
       ],
+      "ArchivosForenses.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "es",
+          "site_id": "Plex/es#643054b1fc3be59477853717-656fbd05cb7e8e6a9bc3f372"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "es",
+          "site_id": "PlutoTV/es#5f984f4a09e92d0007d74647"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "es",
+          "site_id": "656fbd05cb7e8e6a9bc3f372"
+        }
+      ],
+      "CineFriki.es": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "es",
+          "site_id": "Plex/es#643054b1fc3be59477853717-6490e17c18a55242eea95991"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "es",
+          "site_id": "6490e17c18a55242eea95991"
+        },
+        {
+          "site": "watch.whaletvplus.com",
+          "lang": "es",
+          "site_id": "894094224533233593"
+        }
+      ],
+      "CrimenHistoria.es": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "es",
+          "site_id": "Plex/es#643054b1fc3be59477853717-67200026769d5ec4bf51d63e"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "es",
+          "site_id": "67200026769d5ec4bf51d63e"
+        },
+        {
+          "site": "watch.whaletvplus.com",
+          "lang": "es",
+          "site_id": "999420644834214636"
+        }
+      ],
+      "HistoriaYVida.es": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "es",
+          "site_id": "Plex/es#643054b1fc3be59477853717-671ff7a5769d5ec4bf51d63a"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "es",
+          "site_id": "671ff7a5769d5ec4bf51d63a"
+        },
+        {
+          "site": "watch.whaletvplus.com",
+          "lang": "es",
+          "site_id": "999420644834214643"
+        }
+      ],
+      "CineNanar.fr": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "fr",
+          "site_id": "Plex/fr#6430aa45fc3be5947780904e-6490e44818a55242eea95993"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "fr",
+          "site_id": "6490e44818a55242eea95993"
+        },
+        {
+          "site": "watch.whaletvplus.com",
+          "lang": "fr",
+          "site_id": "894095716199695405"
+        }
+      ],
+      "EmotionL.fr": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "fr",
+          "site_id": "Plex/fr#6430aa45fc3be5947780904e-6490e06718a55242eea9598f"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "fr",
+          "site_id": "6490e06718a55242eea9598f"
+        },
+        {
+          "site": "watch.whaletvplus.com",
+          "lang": "fr",
+          "site_id": "894100013540970483"
+        }
+      ],
+      "IntoCrime.fr": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "fr",
+          "site_id": "Plex/fr#6430aa45fc3be5947780904e-67db068f92cb453db28ab017"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "fr",
+          "site_id": "67db068f92cb453db28ab017"
+        },
+        {
+          "site": "watch.whaletvplus.com",
+          "lang": "fr",
+          "site_id": "894115135240080097"
+        }
+      ],
+      "PlutoTVDanskeklassikere.se": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "da",
+          "site_id": "PlutoTV/dk#67d2b814fe36d6e7b1d2318a"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "da",
+          "site_id": "67d2b814fe36d6e7b1d2318a"
+        }
+      ],
+      "PlutoTVAdultAnimation.de": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "de",
+          "site_id": "PlutoTV/de#67f68bd2135aeda9ddf0ef54"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "de",
+          "site_id": "67f68bd2135aeda9ddf0ef54"
+        }
+      ],
+      "Naruto.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "de",
+          "site_id": "PlutoTV/de#65d5fc39a25d5e00082895c4"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/us#5da0c85bd2c9c10009370984"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "pt",
+          "site_id": "PlutoTV/br#5f6df5a173d7340007c559f7"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "pt",
+          "site_id": "5f6df5a173d7340007c559f7"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "de",
+          "site_id": "65d5fc39a25d5e00082895c4"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "en",
+          "site_id": "5da0c85bd2c9c10009370984"
+        },
+        {
+          "site": "teleboy.ch",
+          "lang": "de",
+          "site_id": "611"
+        },
+        {
+          "site": "watch.whaletvplus.com",
+          "lang": "de",
+          "site_id": "879581019945568010"
+        }
+      ],
+      "ClassicTVFamilies.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/ca#62e91af00c43540007f2bb43"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/us#61325d18f5166c00081b84e0"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "en",
+          "site_id": "62e91af00c43540007f2bb43"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "en",
+          "site_id": "61325d18f5166c00081b84e0"
+        }
+      ],
+      "PlutoTVClassicTVVariety.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/ca#68d25c623175a2780d051d3a"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "en",
+          "site_id": "68d25c623175a2780d051d3a"
+        }
+      ],
+      "PlutoTVRetroActionMovies.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/ca#69a9ae4d3bd16a4ed04240d7"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "en",
+          "site_id": "69a9ae4d3bd16a4ed04240d7"
+        }
+      ],
+      "PlutoTVRetroCrimeAction.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/ca#69aee8a1acb7eb0bb68df641"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "en",
+          "site_id": "69aee8a1acb7eb0bb68df641"
+        }
+      ],
+      "PlutoTVRetroCrimeDrama.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/ca#630f1e6073bd1800082107f0"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "en",
+          "site_id": "630f1e6073bd1800082107f0"
+        }
+      ],
       "48Hours.us": [
         {
           "site": "i.mjh.nz",
@@ -2938,6 +5318,180 @@
           "site_id": "6176f39e709f160007ec61c3"
         }
       ],
+      "70sCinema.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/us#5f4d878d3d19b30007d2e782"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "en",
+          "site_id": "5f4d878d3d19b30007d2e782"
+        }
+      ],
+      "80sRewind.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/us#5ca525b650be2571e3943c63"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "en",
+          "site_id": "5ca525b650be2571e3943c63"
+        }
+      ],
+      "90sThrowback.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/us#5f4d86f519358a00072b978e"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "en",
+          "site_id": "5f4d86f519358a00072b978e"
+        }
+      ],
+      "BestofDrPhil.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/us#60f760bbdf090700075d7bfe"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Roku/all#6d4ae9d9d0df5122a0811cff961b24b2"
+        },
+        {
+          "site": "xumo.tv",
+          "lang": "en",
+          "site_id": "350#99951370"
+        }
+      ],
+      "BETClassicsPlutoTV.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/us#60f85644a9493e0007a1f035"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "en",
+          "site_id": "60f85644a9493e0007a1f035"
+        }
+      ],
+      "BeverlyHillbillies.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/us#5f7796e470510900070d4e3d"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "en",
+          "site_id": "5f7796e470510900070d4e3d"
+        }
+      ],
+      "CineAdrenalina.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/us#5d8d164d92e97a5e107638d2"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "es",
+          "site_id": "5d8d164d92e97a5e107638d2"
+        }
+      ],
+      "CineAmor.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/us#5f5136317aedfb0007016f93"
+        }
+      ],
+      "CinePremiere.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/us#5cf968040ab7d8f181e6a68b"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "es",
+          "site_id": "5cf968040ab7d8f181e6a68b"
+        }
+      ],
+      "CineTerror.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/us#5d8d180092e97a5e107638d3"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "es",
+          "site_id": "PlutoTV/ar#5dcddf1ed95e740009fef7ab"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "es",
+          "site_id": "PlutoTV/cl#5dcddf1ed95e740009fef7ab"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "es",
+          "site_id": "PlutoTV/mx#5dcddf1ed95e740009fef7ab"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "pt",
+          "site_id": "PlutoTV/br#5f12111c9e6c2c00078ef3bb"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "pt",
+          "site_id": "5f12111c9e6c2c00078ef3bb"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "es",
+          "site_id": "5dcddf1ed95e740009fef7ab"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "es",
+          "site_id": "5d8d180092e97a5e107638d3"
+        }
+      ],
+      "ClassicMoviesChannel.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/us#561c5b0dada51f8004c4d855"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "en",
+          "site_id": "561c5b0dada51f8004c4d855"
+        }
+      ],
+      "ClassicTVDrama.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/us#5f15e3cccf49290007053c67"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "en",
+          "site_id": "5f15e3cccf49290007053c67"
+        }
+      ],
       "DeadlyWomen.us": [
         {
           "site": "i.mjh.nz",
@@ -2950,6 +5504,371 @@
           "site_id": "5ca1df0d50be2571e393ad31"
         }
       ],
+      "InkMaster.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/us#60807fd5db701400078219c2"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Roku/all#65ae845b7372c0fb85142f6d88a56de7"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "en",
+          "site_id": "60807fd5db701400078219c2"
+        }
+      ],
+      "NickelodeonPlutoTV.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/us#5ca673e0d0bd6c2689c94ce3"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "en",
+          "site_id": "5ca673e0d0bd6c2689c94ce3"
+        }
+      ],
+      "OnePiece.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/us#5f7790b3ed0c88000720b241"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "en",
+          "site_id": "5f7790b3ed0c88000720b241"
+        }
+      ],
+      "PlutoTVAnimation.de": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/gb#612f761008a9e50007984ba0"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "en",
+          "site_id": "612f761008a9e50007984ba0"
+        }
+      ],
+      "PlutoTVAnimeMovies.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/us#67ed8f7e443f0671bc2b2368"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "en",
+          "site_id": "67ed8f7e443f0671bc2b2368"
+        }
+      ],
+      "PlutoTVClassicTV.de": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/gb#5d134a74ca91eedee1630faa"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "en",
+          "site_id": "5d134a74ca91eedee1630faa"
+        }
+      ],
+      "PlutoTVSherlock.de": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/gb#5dc2c00abfed110009d97243"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "en",
+          "site_id": "5dc2c00abfed110009d97243"
+        }
+      ],
+      "PlutoTVTheTwilightZone.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/us#67352ed93a61d4000881f9fa"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "en",
+          "site_id": "67352ed93a61d4000881f9fa"
+        }
+      ],
+      "TheAndyGriffithShow.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/us#60f75178e7f8aa0007e9c259"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "en",
+          "site_id": "60f75178e7f8aa0007e9c259"
+        }
+      ],
+      "TheLoveBoat.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "PlutoTV/us#5f7794a788d29000079d2f07"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "en",
+          "site_id": "5f7794a788d29000079d2f07"
+        }
+      ],
+      "PlutoTVSeriesRetro.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "es",
+          "site_id": "PlutoTV/ar#5de802659167b10009e7deba"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "es",
+          "site_id": "PlutoTV/cl#5de802659167b10009e7deba"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "es",
+          "site_id": "PlutoTV/mx#5de802659167b10009e7deba"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "en",
+          "site_id": "5de802659167b10009e7deba"
+        }
+      ],
+      "CazadordeHomicidas.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "es",
+          "site_id": "PlutoTV/es#60ed5fb9c4716d0007d180c5"
+        }
+      ],
+      "CinedAsiebyPlutoTV.de": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "fr",
+          "site_id": "PlutoTV/fr#62f3e2d000418d00070f7dbc"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "fr",
+          "site_id": "62f3e2d000418d00070f7dbc"
+        }
+      ],
+      "CineCatastrophebyPlutoTV.de": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "fr",
+          "site_id": "PlutoTV/fr#65a69ef53af63d000825e0ee"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "fr",
+          "site_id": "65a69ef53af63d000825e0ee"
+        }
+      ],
+      "CineWesternbyPlutoTV.de": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "fr",
+          "site_id": "PlutoTV/fr#65cca3e2ec452d0008af3a65"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "fr",
+          "site_id": "65cca3e2ec452d0008af3a65"
+        }
+      ],
+      "CineHorreurbyPlutoTV.de": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "fr",
+          "site_id": "PlutoTV/fr#66e1978babec540008ce41ac"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "fr",
+          "site_id": "66e1978babec540008ce41ac"
+        }
+      ],
+      "Cine666byPlutoTV.de": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "fr",
+          "site_id": "PlutoTV/fr#6823648580b2665220d9e69a"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "fr",
+          "site_id": "6823648580b2665220d9e69a"
+        }
+      ],
+      "DossiersFBI.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "fr",
+          "site_id": "PlutoTV/fr#5f8edad922b10b000753bc37"
+        }
+      ],
+      "CineActionbyPlutoTV.de": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "fr",
+          "site_id": "PlutoTV/fr#5f8ed1ff5c39700007e2204a"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "fr",
+          "site_id": "5f8ed1ff5c39700007e2204a"
+        }
+      ],
+      "CinebyPlutoTV.de": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "fr",
+          "site_id": "PlutoTV/fr#5f8ed0f17564a300082b676a"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "fr",
+          "site_id": "5f8ed0f17564a300082b676a"
+        }
+      ],
+      "CineRetrobyPlutoTV.de": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "fr",
+          "site_id": "PlutoTV/fr#5f8ed168f72fcd0007e56269"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "fr",
+          "site_id": "5f8ed168f72fcd0007e56269"
+        }
+      ],
+      "CineRomancebyPlutoTV.de": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "fr",
+          "site_id": "PlutoTV/fr#60812fc8539963000707d1e1"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "fr",
+          "site_id": "60812fc8539963000707d1e1"
+        }
+      ],
+      "CineSciFibyPlutoTV.de": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "fr",
+          "site_id": "PlutoTV/fr#60c34592c911890007f29a73"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "fr",
+          "site_id": "60c34592c911890007f29a73"
+        }
+      ],
+      "CineThrillersbyPlutoTV.de": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "fr",
+          "site_id": "PlutoTV/fr#60c3472a51a2050008dad272"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "fr",
+          "site_id": "60c3472a51a2050008dad272"
+        }
+      ],
+      "PlutoTVDesenhosClassicos.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "pt",
+          "site_id": "PlutoTV/br#655e5c4d2c46f3000877a54b"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "pt",
+          "site_id": "655e5c4d2c46f3000877a54b"
+        }
+      ],
+      "AdrenalinaPuraTV.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "pt",
+          "site_id": "PlutoTV/br#61b790b985706b00072cb797"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "pt",
+          "site_id": "61b790b985706b00072cb797"
+        }
+      ],
+      "PlutoTVAnimeAcao.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "pt",
+          "site_id": "PlutoTV/br#604b79c558393100078faeef"
+        },
+        {
+          "site": "pluto.tv",
+          "lang": "pt",
+          "site_id": "604b79c558393100078faeef"
+        }
+      ],
+      "Crunchyroll.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Roku/all#307b3b9ea321539b9688148fc97a8bfd"
+        },
+        {
+          "site": "xumo.tv",
+          "lang": "en",
+          "site_id": "100#99951332"
+        }
+      ],
+      "DangerTV.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Roku/all#447d63b6da208bb796b69f0383c474a1"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "SamsungTVPlus/us#USAJ3504708A"
+        }
+      ],
+      "Cinevault80s.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Roku/all#c490011275a8562b87366dbf80b62af2"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "SamsungTVPlus/us#USAJ30000148W"
+        }
+      ],
       "DoveChannel.us": [
         {
           "site": "i.mjh.nz",
@@ -2960,6 +5879,101 @@
           "site": "xumo.tv",
           "lang": "en",
           "site_id": "300#99991333"
+        }
+      ],
+      "DUST.us": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "SamsungTVPlus/us#USBC100000630"
+        },
+        {
+          "site": "tvtv.us",
+          "lang": "en",
+          "site_id": "112881"
+        }
+      ],
+      "AnixeHDSerie.de": [
+        {
+          "site": "m.tv.sms.cz",
+          "lang": "de",
+          "site_id": "ANIXE+HD"
+        },
+        {
+          "site": "sky.com",
+          "lang": "de",
+          "site_id": "DE#1100"
+        },
+        {
+          "site": "teleboy.ch",
+          "lang": "de",
+          "site_id": "175"
+        },
+        {
+          "site": "tv.blue.ch",
+          "lang": "de",
+          "site_id": "24"
+        },
+        {
+          "site": "tv2go.t-2.net",
+          "lang": "sl",
+          "site_id": "1000057"
+        },
+        {
+          "site": "web.magentatv.de",
+          "lang": "de",
+          "site_id": "4777"
+        }
+      ],
+      "EnterFilm.ua": [
+        {
+          "site": "m.tv.sms.cz",
+          "lang": "cs",
+          "site_id": "Enter+Film"
+        },
+        {
+          "site": "tv.blue.ch",
+          "lang": "uk",
+          "site_id": "2084"
+        }
+      ],
+      "FilmCafe.hu": [
+        {
+          "site": "m.tv.sms.cz",
+          "lang": "cs",
+          "site_id": "Film+Caf%E9"
+        },
+        {
+          "site": "musor.tv",
+          "lang": "hu",
+          "site_id": "FILMCAFE"
+        },
+        {
+          "site": "programetv.ro",
+          "lang": "ro",
+          "site_id": "film-cafe"
+        },
+        {
+          "site": "tvmusor.hu",
+          "lang": "hu",
+          "site_id": "89"
+        },
+        {
+          "site": "tvprofil.com",
+          "lang": "hr",
+          "site_id": "hu/tvmusor#film-cafe-hu"
+        }
+      ],
+      "HRT3.hr": [
+        {
+          "site": "m.tv.sms.cz",
+          "lang": "cs",
+          "site_id": "HRT+3"
+        },
+        {
+          "site": "neo.io",
+          "lang": "hr",
+          "site_id": "hrt-3"
         }
       ],
       "WildTV.ca": [
@@ -2982,6 +5996,74 @@
           "site": "tvpassport.com",
           "lang": "en",
           "site_id": "wild-tv/2976"
+        }
+      ],
+      "AmediaHit.ru": [
+        {
+          "site": "magticom.ge",
+          "lang": "ru",
+          "site_id": "76"
+        },
+        {
+          "site": "tv.mail.ru",
+          "lang": "ru",
+          "site_id": "2716"
+        },
+        {
+          "site": "tv.mail.ru",
+          "lang": "ru",
+          "site_id": "1926"
+        }
+      ],
+      "AmediaPremium.ru": [
+        {
+          "site": "magticom.ge",
+          "lang": "ru",
+          "site_id": "122"
+        },
+        {
+          "site": "tv.mail.ru",
+          "lang": "ru",
+          "site_id": "1683"
+        },
+        {
+          "site": "tv.mail.ru",
+          "lang": "ru",
+          "site_id": "2717"
+        }
+      ],
+      "AniplusAsia.sg": [
+        {
+          "site": "maxstream.tv",
+          "lang": "id",
+          "site_id": "0_bidjh24z"
+        },
+        {
+          "site": "singtel.com",
+          "lang": "en",
+          "site_id": "5340"
+        }
+      ],
+      "CinemaWorld.my": [
+        {
+          "site": "maxstream.tv",
+          "lang": "id",
+          "site_id": "0_s7gzj2we"
+        },
+        {
+          "site": "mewatch.sg",
+          "lang": "en",
+          "site_id": "382872"
+        },
+        {
+          "site": "playtv.unifi.com.my",
+          "lang": "en",
+          "site_id": "20000080"
+        },
+        {
+          "site": "tivie.id",
+          "lang": "id",
+          "site_id": "cinemaworld"
         }
       ],
       "DreamWorksChannelAsia.us": [
@@ -3026,6 +6108,96 @@
           "site_id": "00000000000000000067"
         }
       ],
+      "AXN.pt": [
+        {
+          "site": "meo.pt",
+          "lang": "pt",
+          "site_id": "AXNHD"
+        },
+        {
+          "site": "nostv.pt",
+          "lang": "pt",
+          "site_id": "161"
+        },
+        {
+          "site": "vodafone.pt",
+          "lang": "pt",
+          "site_id": "2713"
+        }
+      ],
+      "AXN.br": [
+        {
+          "site": "meuguia.tv",
+          "lang": "pt",
+          "site_id": "AXN"
+        },
+        {
+          "site": "mi.tv",
+          "lang": "pt",
+          "site_id": "br#axn"
+        }
+      ],
+      "AMCLatinAmerica.us": [
+        {
+          "site": "meuguia.tv",
+          "lang": "pt",
+          "site_id": "MGM"
+        },
+        {
+          "site": "mi.tv",
+          "lang": "es",
+          "site_id": "ar#amc"
+        },
+        {
+          "site": "mi.tv",
+          "lang": "pt",
+          "site_id": "br#amc-brasil"
+        },
+        {
+          "site": "mi.tv",
+          "lang": "es",
+          "site_id": "cl#amc"
+        },
+        {
+          "site": "mi.tv",
+          "lang": "es",
+          "site_id": "mx#amc"
+        },
+        {
+          "site": "reportv.com.ar",
+          "lang": "es",
+          "site_id": "1362"
+        },
+        {
+          "site": "siba.com.co",
+          "lang": "es",
+          "site_id": "532"
+        }
+      ],
+      "FilmArts.ar": [
+        {
+          "site": "mi.tv",
+          "lang": "es",
+          "site_id": "ar#film-arts"
+        },
+        {
+          "site": "mi.tv",
+          "lang": "pt",
+          "site_id": "br#film-arts"
+        },
+        {
+          "site": "reportv.com.ar",
+          "lang": "es",
+          "site_id": "63"
+        }
+      ],
+      "AzCinema.mx": [
+        {
+          "site": "mi.tv",
+          "lang": "es",
+          "site_id": "cl#az-cinema"
+        }
+      ],
       "ColorsMENA.in": [
         {
           "site": "mytelly.co.uk",
@@ -3058,6 +6230,43 @@
           "site_id": "2058/colors-hd"
         }
       ],
+      "BBCAmerica.us": [
+        {
+          "site": "ontvtonight.com",
+          "lang": "en",
+          "site_id": "us#69044423/bbc-america-east"
+        },
+        {
+          "site": "tvguide.com",
+          "lang": "en",
+          "site_id": "9200014701"
+        },
+        {
+          "site": "tvpassport.com",
+          "lang": "en",
+          "site_id": "bbc-america--east-hd/11121"
+        },
+        {
+          "site": "tvpassport.com",
+          "lang": "en",
+          "site_id": "bbc-america--east/615"
+        },
+        {
+          "site": "tvpassport.com",
+          "lang": "en",
+          "site_id": "bbc-america--west-hd/17061"
+        },
+        {
+          "site": "tvpassport.com",
+          "lang": "en",
+          "site_id": "bbc-america--west/14527"
+        },
+        {
+          "site": "tvtv.us",
+          "lang": "en",
+          "site_id": "18332"
+        }
+      ],
       "ESPNU.us": [
         {
           "site": "ontvtonight.com",
@@ -3085,11 +6294,360 @@
           "site_id": "45654"
         }
       ],
+      "bitMeLatinAmerica.mx": [
+        {
+          "site": "programacion.tcc.com.uy",
+          "lang": "es",
+          "site_id": "266"
+        }
+      ],
+      "Acasa.ro": [
+        {
+          "site": "programetv.ro",
+          "lang": "ro",
+          "site_id": "acasa"
+        }
+      ],
+      "AcasaGold.ro": [
+        {
+          "site": "programetv.ro",
+          "lang": "ro",
+          "site_id": "acasa-gold"
+        }
+      ],
+      "AntenaStars.ro": [
+        {
+          "site": "programetv.ro",
+          "lang": "ro",
+          "site_id": "antena-stars"
+        }
+      ],
+      "BollywoodFilm.ro": [
+        {
+          "site": "programetv.ro",
+          "lang": "ro",
+          "site_id": "bollywood-film"
+        }
+      ],
+      "Aflam.sa": [
+        {
+          "site": "shahid.mbc.net",
+          "lang": "ar",
+          "site_id": "989622"
+        },
+        {
+          "site": "shahid.mbc.net",
+          "lang": "en",
+          "site_id": "989622"
+        },
+        {
+          "site": "shahid.mbc.net",
+          "lang": "fr",
+          "site_id": "989622"
+        }
+      ],
+      "AlArabiyaPrograms.ae": [
+        {
+          "site": "shahid.mbc.net",
+          "lang": "ar",
+          "site_id": "49923733029294"
+        },
+        {
+          "site": "shahid.mbc.net",
+          "lang": "en",
+          "site_id": "49923733029294"
+        },
+        {
+          "site": "shahid.mbc.net",
+          "lang": "fr",
+          "site_id": "49923733029294"
+        }
+      ],
+      "AsharqDiscovery.sa": [
+        {
+          "site": "shahid.mbc.net",
+          "lang": "ar",
+          "site_id": "1001845"
+        },
+        {
+          "site": "shahid.mbc.net",
+          "lang": "en",
+          "site_id": "1001845"
+        },
+        {
+          "site": "shahid.mbc.net",
+          "lang": "fr",
+          "site_id": "1001845"
+        }
+      ],
+      "AsharqDocumentary.sa": [
+        {
+          "site": "shahid.mbc.net",
+          "lang": "ar",
+          "site_id": "997605"
+        },
+        {
+          "site": "shahid.mbc.net",
+          "lang": "en",
+          "site_id": "997605"
+        },
+        {
+          "site": "shahid.mbc.net",
+          "lang": "fr",
+          "site_id": "997605"
+        }
+      ],
+      "AnixePlus.de": [
+        {
+          "site": "sky.com",
+          "lang": "de",
+          "site_id": "DE#764"
+        },
+        {
+          "site": "teleboy.ch",
+          "lang": "de",
+          "site_id": "547"
+        },
+        {
+          "site": "web.magentatv.de",
+          "lang": "de",
+          "site_id": "452"
+        }
+      ],
+      "Dokusat.de": [
+        {
+          "site": "sky.com",
+          "lang": "de",
+          "site_id": "DE#2029"
+        },
+        {
+          "site": "tv.blue.ch",
+          "lang": "de",
+          "site_id": "2130"
+        }
+      ],
       "IqraBangla.uk": [
         {
           "site": "sky.com",
           "lang": "en",
           "site_id": "GB#3914"
+        }
+      ],
+      "AnjanTV.in": [
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "180"
+        }
+      ],
+      "GZT.tr": [
+        {
+          "site": "turksatkablo.com.tr",
+          "lang": "tr",
+          "site_id": "1902"
+        },
+        {
+          "site": "tvplus.com.tr",
+          "lang": "tr",
+          "site_id": "4461"
+        }
+      ],
+      "BBCThreeCBBC.uk": [
+        {
+          "site": "tv.blue.ch",
+          "lang": "en",
+          "site_id": "85"
+        }
+      ],
+      "CCTV6.cn": [
+        {
+          "site": "tv.cctv.com",
+          "lang": "zh",
+          "site_id": "cctv6"
+        }
+      ],
+      "CCTVTheFirstTheater.cn": [
+        {
+          "site": "tv.cctv.com",
+          "lang": "zh",
+          "site_id": "diyijuchang"
+        }
+      ],
+      "CCTVStormTheater.cn": [
+        {
+          "site": "tv.cctv.com",
+          "lang": "zh",
+          "site_id": "fyjc"
+        }
+      ],
+      "CCTVNostalgiaTheater.cn": [
+        {
+          "site": "tv.cctv.com",
+          "lang": "zh",
+          "site_id": "hjjc"
+        }
+      ],
+      "bTVCinema.bg": [
+        {
+          "site": "tv.dir.bg",
+          "lang": "bg",
+          "site_id": "58"
+        },
+        {
+          "site": "tvprofil.com",
+          "lang": "bg",
+          "site_id": "bg/tv-programa#btv-cinema"
+        }
+      ],
+      "Diema.bg": [
+        {
+          "site": "tv.dir.bg",
+          "lang": "bg",
+          "site_id": "63"
+        },
+        {
+          "site": "tvprofil.com",
+          "lang": "bg",
+          "site_id": "bg/tv-programa#diema"
+        }
+      ],
+      "bTVLady.bg": [
+        {
+          "site": "tv.dir.bg",
+          "lang": "bg",
+          "site_id": "74"
+        },
+        {
+          "site": "tvprofil.com",
+          "lang": "bg",
+          "site_id": "bg/tv-programa#btv-lady"
+        }
+      ],
+      "bTVAction.bg": [
+        {
+          "site": "tv.dir.bg",
+          "lang": "bg",
+          "site_id": "95"
+        },
+        {
+          "site": "tvprofil.com",
+          "lang": "bg",
+          "site_id": "bg/tv-programa#btv-action"
+        }
+      ],
+      "78TV.bg": [
+        {
+          "site": "tv.dir.bg",
+          "lang": "bg",
+          "site_id": "98"
+        }
+      ],
+      "BRIDGEClassic.ru": [
+        {
+          "site": "tv.mail.ru",
+          "lang": "ru",
+          "site_id": "1831"
+        }
+      ],
+      "FAN.ru": [
+        {
+          "site": "tv.mail.ru",
+          "lang": "ru",
+          "site_id": "2894"
+        },
+        {
+          "site": "tv.mail.ru",
+          "lang": "ru",
+          "site_id": "2445"
+        }
+      ],
+      "FeniksplusKino.ru": [
+        {
+          "site": "tv.mail.ru",
+          "lang": "ru",
+          "site_id": "1010"
+        }
+      ],
+      "Pro100TV.ru": [
+        {
+          "site": "tv.mail.ru",
+          "lang": "ru",
+          "site_id": "2896"
+        }
+      ],
+      "Gong.fr": [
+        {
+          "site": "tvcesoir.fr",
+          "lang": "fr",
+          "site_id": "70787971/gong"
+        }
+      ],
+      "Film1Action.nl": [
+        {
+          "site": "tvgids.nl",
+          "lang": "nl",
+          "site_id": "film1action"
+        },
+        {
+          "site": "webtv.delta.nl",
+          "lang": "nl",
+          "site_id": "3026"
+        },
+        {
+          "site": "ziggogo.tv",
+          "lang": "nl",
+          "site_id": "NL_000053_019653"
+        }
+      ],
+      "Film1Drama.nl": [
+        {
+          "site": "tvgids.nl",
+          "lang": "nl",
+          "site_id": "film1drama"
+        },
+        {
+          "site": "webtv.delta.nl",
+          "lang": "nl",
+          "site_id": "3029"
+        },
+        {
+          "site": "ziggogo.tv",
+          "lang": "nl",
+          "site_id": "NL_000055_019645"
+        }
+      ],
+      "Film1Family.nl": [
+        {
+          "site": "tvgids.nl",
+          "lang": "nl",
+          "site_id": "film1family"
+        },
+        {
+          "site": "webtv.delta.nl",
+          "lang": "nl",
+          "site_id": "3027"
+        },
+        {
+          "site": "ziggogo.tv",
+          "lang": "nl",
+          "site_id": "NL_000054_019654"
+        }
+      ],
+      "Film1Premiere.nl": [
+        {
+          "site": "tvgids.nl",
+          "lang": "nl",
+          "site_id": "film1premiere"
+        },
+        {
+          "site": "webtv.delta.nl",
+          "lang": "nl",
+          "site_id": "3025"
+        },
+        {
+          "site": "ziggogo.tv",
+          "lang": "nl",
+          "site_id": "NL_000052_019655"
         }
       ],
       "CBS.us": [
@@ -3156,11 +6714,30 @@
           "site_id": "61483"
         }
       ],
+      "Charge.us": [
+        {
+          "site": "tvpassport.com",
+          "lang": "en",
+          "site_id": "charge/15228"
+        },
+        {
+          "site": "tvtv.us",
+          "lang": "en",
+          "site_id": "102148"
+        }
+      ],
       "WorldChannel.us": [
         {
           "site": "tvpassport.com",
           "lang": "en",
           "site_id": "pbs-world/10214"
+        }
+      ],
+      "AXNAdria.us": [
+        {
+          "site": "tvprofil.com",
+          "lang": "hr",
+          "site_id": "ba/tvprogram#axn"
         }
       ],
       "ChannelI.bd": [
@@ -3170,11 +6747,32 @@
           "site_id": "14202"
         }
       ],
+      "DePeliculaUS.us": [
+        {
+          "site": "tvtv.us",
+          "lang": "en",
+          "site_id": "35401"
+        }
+      ],
       "Willow.us": [
         {
           "site": "tvtv.us",
           "lang": "en",
           "site_id": "68605"
+        }
+      ],
+      "Docurama.us": [
+        {
+          "site": "tvtv.us",
+          "lang": "en",
+          "site_id": "110479"
+        }
+      ],
+      "AutenticHistory.de": [
+        {
+          "site": "watch.whaletvplus.com",
+          "lang": "en",
+          "site_id": "931186243466302968"
         }
       ],
       "CNAOriginals.sg": [
@@ -3190,14 +6788,115 @@
           "lang": "en",
           "site_id": "925710235225102102"
         }
+      ],
+      "CapTerre.es": [
+        {
+          "site": "watch.whaletvplus.com",
+          "lang": "fr",
+          "site_id": "999420644834214648"
+        }
+      ],
+      "NickOnline.br": [
+        {
+          "site": "x1co.com.br",
+          "lang": "pt",
+          "site_id": "nickonline.br"
+        }
+      ],
+      "AsianBox.mn": [
+        {
+          "site": "zuragt.mn",
+          "lang": "mn",
+          "site_id": "asianbox"
+        }
       ]
     }
   },
   "withheld_from_playlists": {
     "requires_custom_http_headers": [
       {
+        "id": "ch-ccc87ffa16",
+        "name": "BBC Earth Hungary"
+      },
+      {
+        "id": "ch-213f8a15ee",
+        "name": "BBC Earth Romania"
+      },
+      {
+        "id": "ch-b659bcba44",
+        "name": "BBC Earth Turkiye"
+      },
+      {
+        "id": "ch-cfe24584cc",
+        "name": "Dvojka"
+      },
+      {
+        "id": "ch-079cf33be7",
+        "name": "H2"
+      },
+      {
+        "id": "ch-8bf8e3d194",
+        "name": "H2 HD"
+      },
+      {
+        "id": "ch-b195a3cf24",
+        "name": "History (Bulgaria)"
+      },
+      {
+        "id": "ch-2c86594ccb",
+        "name": "History (Czech Republic)"
+      },
+      {
+        "id": "ch-5f04e92ed4",
+        "name": "History (Hungary)"
+      },
+      {
         "id": "ch-390978bcfc",
         "name": "National Geographic"
+      },
+      {
+        "id": "ch-9941042219",
+        "name": "7/8 TV"
+      },
+      {
+        "id": "ch-082839996c",
+        "name": "ANT1 (1080p) [Geo-blocked]"
+      },
+      {
+        "id": "ch-e239662113",
+        "name": "AsianBox"
+      },
+      {
+        "id": "ch-11e669ad05",
+        "name": "AXN Spin"
+      },
+      {
+        "id": "ch-de98814f55",
+        "name": "AXN Spin Poland"
+      },
+      {
+        "id": "ch-8d3fd7d9cc",
+        "name": "AXN White"
+      },
+      {
+        "id": "ch-b851cfda87",
+        "name": "AXN White CzechRepublic"
+      },
+      {
+        "id": "ch-855283c074",
+        "name": "AXN White Portugal"
+      },
+      {
+        "id": "ch-9462bdd935",
+        "name": "BBC First Romania"
+      },
+      {
+        "id": "ch-52df21befb",
+        "name": "BBC First Turkiye"
+      },
+      {
+        "id": "ch-b2c23533ec",
+        "name": "Canal TRO + (1080p) [Geo-blocked]"
       },
       {
         "id": "ch-baa2030749",
@@ -3206,44 +6905,828 @@
       {
         "id": "ch-4e93d222ab",
         "name": "MTV HD"
+      },
+      {
+        "id": "ch-b866e313e0",
+        "name": "AMC Europe Czech Republic"
+      },
+      {
+        "id": "ch-74637c6ff7",
+        "name": "AMC Europe Hungary"
+      },
+      {
+        "id": "ch-edcccad78b",
+        "name": "AMC Europe Romania"
+      },
+      {
+        "id": "ch-0c8b0c404f",
+        "name": "Armenia Premium"
+      },
+      {
+        "id": "ch-b2e31ad51a",
+        "name": "AXN (Portugal)"
+      },
+      {
+        "id": "ch-2fbd2c3a36",
+        "name": "AXN Adria"
+      },
+      {
+        "id": "ch-e5e5929b61",
+        "name": "AXN Black Czech Republic"
+      },
+      {
+        "id": "ch-e3f6ff3ac2",
+        "name": "AXN Black Romania"
+      },
+      {
+        "id": "ch-5ffaca0d48",
+        "name": "AXN CEE"
+      },
+      {
+        "id": "ch-d2f8ba857d",
+        "name": "AXN CEE Czech Republic"
+      },
+      {
+        "id": "ch-ff98d94660",
+        "name": "AXN CEE Romania"
+      },
+      {
+        "id": "ch-c2e16d0cbc",
+        "name": "AXN Crime"
+      },
+      {
+        "id": "ch-a6cce4351f",
+        "name": "AXN Movies"
+      },
+      {
+        "id": "ch-3ae5aa58a4",
+        "name": "beIN Box Office 1"
+      },
+      {
+        "id": "ch-ad2bd2232a",
+        "name": "beIN Box Office 2"
+      },
+      {
+        "id": "ch-dd7a6fc7a4",
+        "name": "beIN Box Office 3"
+      },
+      {
+        "id": "ch-dcac731300",
+        "name": "beIN Movies Stars"
+      },
+      {
+        "id": "ch-e6b7105618",
+        "name": "beIN Movies Turk"
+      },
+      {
+        "id": "ch-e10fd5a7f3",
+        "name": "bTV Action"
+      },
+      {
+        "id": "ch-73b13d2909",
+        "name": "bTV Cinema"
+      },
+      {
+        "id": "ch-499e206f4e",
+        "name": "bTV Lady"
+      },
+      {
+        "id": "ch-ec08ae08c8",
+        "name": "Cine+"
+      },
+      {
+        "id": "ch-b4f496b0e0",
+        "name": "Cine+ Classic"
+      },
+      {
+        "id": "ch-b53a8cff7c",
+        "name": "Cine+ Frisson"
+      },
+      {
+        "id": "ch-fa75f81485",
+        "name": "Cine+ Hit"
+      },
+      {
+        "id": "ch-4bb4ab7783",
+        "name": "Cine+ Legend"
+      },
+      {
+        "id": "ch-3e1b5ea712",
+        "name": "cine.box"
+      },
+      {
+        "id": "ch-a3aad98436",
+        "name": "Cinema (Mongolia)"
+      },
+      {
+        "id": "ch-a8d35e0973",
+        "name": "Diema"
+      },
+      {
+        "id": "ch-45a5eb6340",
+        "name": "Dorama HD"
+      },
+      {
+        "id": "ch-92a191b0cf",
+        "name": "Enter-Film"
+      },
+      {
+        "id": "ch-ce030264df",
+        "name": "Film Cafe"
+      },
+      {
+        "id": "ch-7a1b42e82b",
+        "name": "Film Cafe Romania"
+      },
+      {
+        "id": "ch-a6cb7356c8",
+        "name": "Film Now"
+      },
+      {
+        "id": "ch-97c0ad5666",
+        "name": "Film+ (Czech Republic)"
+      },
+      {
+        "id": "ch-e0d1ae2ae3",
+        "name": "Film+ (Hungary)"
+      },
+      {
+        "id": "ch-95eb1b0cc1",
+        "name": "Film1 Action"
+      },
+      {
+        "id": "ch-0f788a809d",
+        "name": "Film1 Drama"
+      },
+      {
+        "id": "ch-cf4663361e",
+        "name": "Film1 Family"
+      },
+      {
+        "id": "ch-25f41ccadc",
+        "name": "Film1 Premiere"
+      },
+      {
+        "id": "ch-a89b2bc0df",
+        "name": "Film4"
+      },
+      {
+        "id": "ch-f9f700f4ff",
+        "name": "FILMBOX+ Comedy Czechia"
+      },
+      {
+        "id": "ch-d428b6539c",
+        "name": "FILMBOX+ Comedy Magyar"
+      },
+      {
+        "id": "ch-d9741af2a9",
+        "name": "FILMBOX+ Emotion Adria"
+      },
+      {
+        "id": "ch-746191e22f",
+        "name": "FILMBOX+ Emotion Bulgaria"
+      },
+      {
+        "id": "ch-304947b568",
+        "name": "FILMBOX+ Emotion Czechia"
+      },
+      {
+        "id": "ch-5c3370ed2b",
+        "name": "FILMBOX+ Emotion Hungary"
+      },
+      {
+        "id": "ch-384d043b7a",
+        "name": "FILMBOX+ Emotion Romania"
+      },
+      {
+        "id": "ch-e1d441bfa3",
+        "name": "FILMBOX+ Hits Adria"
+      },
+      {
+        "id": "ch-62bbfcfa06",
+        "name": "FILMBOX+ Hits Czechia"
+      },
+      {
+        "id": "ch-45835d02aa",
+        "name": "FILMBOX+ Hits Hungary"
+      },
+      {
+        "id": "ch-3cfd2c33dd",
+        "name": "FILMBOX+ Love & Crime"
+      },
+      {
+        "id": "ch-c28efd5ac5",
+        "name": "Nostalgia (Bulgaria)"
+      },
+      {
+        "id": "ch-f851cab892",
+        "name": "Rotana Classic (1080p) [Geo-blocked]"
+      },
+      {
+        "id": "ch-6d7ba3343c",
+        "name": "AWTV (1080p) [Geo-blocked]"
+      },
+      {
+        "id": "ch-d18d60f2ac",
+        "name": "Bollywood Classic Romania"
+      },
+      {
+        "id": "ch-f1d2234ed2",
+        "name": "Bolt (Ukraine)"
+      },
+      {
+        "id": "ch-4927641006",
+        "name": "Chemodan TV"
+      },
+      {
+        "id": "ch-d2008d5fbd",
+        "name": "HRT 3"
+      },
+      {
+        "id": "ch-14cedd43fd",
+        "name": "Minimax (Romania)"
+      },
+      {
+        "id": "ch-4e5e1e226a",
+        "name": "Movify Kino"
+      },
+      {
+        "id": "ch-a3df909127",
+        "name": "NickToons Brasil"
       }
     ],
     "status_degraded": [
       {
-        "id": "ch-a0f0b63e98",
-        "name": "Desh TV"
+        "id": "ch-50538f58e5",
+        "name": "Al Jazeera Documentary (1080p) [Geo-blocked]"
       },
       {
-        "id": "ch-787284cc9b",
-        "name": "Ekhon"
+        "id": "ch-9f1f7de261",
+        "name": "BBC Earth Romania HD"
       },
       {
-        "id": "ch-8fd784bf92",
-        "name": "Ekushe TV"
+        "id": "ch-6dca889068",
+        "name": "Cap Terre"
       },
       {
-        "id": "ch-00d7c1cd76",
-        "name": "Green TV"
+        "id": "ch-96302183ac",
+        "name": "Cazador de Homicidas"
       },
       {
-        "id": "ch-a718b81488",
-        "name": "My TV"
+        "id": "ch-40f29c70cd",
+        "name": "CND Film Discovery Channel"
       },
       {
-        "id": "ch-f110db1460",
-        "name": "R TV"
+        "id": "ch-63a742fc54",
+        "name": "Docu."
+      },
+      {
+        "id": "ch-715ae91546",
+        "name": "Docurama"
+      },
+      {
+        "id": "ch-6cf5b7d8f3",
+        "name": "EPlanet TV"
+      },
+      {
+        "id": "ch-2ade37a728",
+        "name": "Francophonie24"
+      },
+      {
+        "id": "ch-7b6dbae660",
+        "name": "GEM Nature"
+      },
+      {
+        "id": "ch-dbe08bc33a",
+        "name": "History (Slovenia)"
+      },
+      {
+        "id": "ch-b928cef2a8",
+        "name": "History (United States)"
+      },
+      {
+        "id": "ch-64032311ae",
+        "name": "History Latin America"
+      },
+      {
+        "id": "ch-9734a1ad31",
+        "name": "History Ukraine"
+      },
+      {
+        "id": "ch-fef9b6a894",
+        "name": "History2 Ukraine"
+      },
+      {
+        "id": "ch-4cf7b27e6f",
+        "name": "ID"
+      },
+      {
+        "id": "ch-9e0b4136d7",
+        "name": ".black"
+      },
+      {
+        "id": "ch-965fac492f",
+        "name": ".red"
+      },
+      {
+        "id": "ch-4185159828",
+        "name": "13E"
+      },
+      {
+        "id": "ch-c84aaf901d",
+        "name": "20 [Geo-blocked]"
+      },
+      {
+        "id": "ch-b4307568e3",
+        "name": "312 TV"
+      },
+      {
+        "id": "ch-25df410ee2",
+        "name": "4ever Theater"
+      },
+      {
+        "id": "ch-92b9fcfa42",
+        "name": "5 Plus"
+      },
+      {
+        "id": "ch-d69ec5ecd0",
+        "name": "6ter"
+      },
+      {
+        "id": "ch-020695e828",
+        "name": "7 Gold"
+      },
+      {
+        "id": "ch-7ccd316325",
+        "name": "8TV"
+      },
+      {
+        "id": "ch-e72bba7286",
+        "name": "9Gem (720p) [Geo-blocked]"
+      },
+      {
+        "id": "ch-ccf3f6529a",
+        "name": "A-Plus TV"
+      },
+      {
+        "id": "ch-eccd614ad5",
+        "name": "Aaj Entertainment"
+      },
+      {
+        "id": "ch-f99f42279a",
+        "name": "Aathavan TV (720p) [Not 24/7]"
+      },
+      {
+        "id": "ch-2d9fde98ce",
+        "name": "AB1"
+      },
+      {
+        "id": "ch-33376393b1",
+        "name": "AbejalesTV"
+      },
+      {
+        "id": "ch-05eb5c9a0d",
+        "name": "Alegre TV RD (720p) [Not 24/7]"
+      },
+      {
+        "id": "ch-f9304d1034",
+        "name": "Alfold TV"
+      },
+      {
+        "id": "ch-fbb8731e52",
+        "name": "Amarin TV"
+      },
+      {
+        "id": "ch-8aeb647904",
+        "name": "AMC en Espanol"
+      },
+      {
+        "id": "ch-36c01967d5",
+        "name": "Ananda TV"
+      },
+      {
+        "id": "ch-ca02ce5ef1",
+        "name": "Anixe +"
+      },
+      {
+        "id": "ch-5cb85a96ff",
+        "name": "Anixe HD Serie"
+      },
+      {
+        "id": "ch-4c13139aca",
+        "name": "Antares Television"
+      },
+      {
+        "id": "ch-98119adcf5",
+        "name": "Antena 21"
+      },
+      {
+        "id": "ch-4dc220d610",
+        "name": "arte (France)"
+      },
+      {
+        "id": "ch-ddbc999ffc",
+        "name": "arte (Germany) (720p) [Geo-blocked]"
+      },
+      {
+        "id": "ch-8506362626",
+        "name": "ATV (Pakistan)"
+      },
+      {
+        "id": "ch-5eba8e5e35",
+        "name": "AVT Khyber"
+      },
+      {
+        "id": "ch-d73eb730c9",
+        "name": "AXN White Bulgaria"
+      },
+      {
+        "id": "ch-4beb7120f3",
+        "name": "Belarus-2 HD"
+      },
+      {
+        "id": "ch-aa3e6beeb7",
+        "name": "bitMe"
+      },
+      {
+        "id": "ch-275421cf6a",
+        "name": "bitMe Latin America"
+      },
+      {
+        "id": "ch-e8d04998db",
+        "name": "Blaze (576p) [Geo-blocked]"
+      },
+      {
+        "id": "ch-dfad731dad",
+        "name": "Blitstv"
+      },
+      {
+        "id": "ch-f16f93fd44",
+        "name": "C Star"
+      },
+      {
+        "id": "ch-64d0370e47",
+        "name": "Cabo Frio TV"
+      },
+      {
+        "id": "ch-ad3f6d19c6",
+        "name": "Canal 10 Mar del Plata"
+      },
+      {
+        "id": "ch-bdcb4d056b",
+        "name": "Canal 14 Codazzi (720p) [Not 24/7]"
+      },
+      {
+        "id": "ch-467d43405b",
+        "name": "Canal Chilote"
+      },
+      {
+        "id": "ch-b8e1c0dc31",
+        "name": "Canal Womtv"
+      },
+      {
+        "id": "ch-1f24f726de",
+        "name": "Canale 5 [Geo-blocked]"
+      },
+      {
+        "id": "ch-4212ce5107",
+        "name": "Canale 5 HD"
+      },
+      {
+        "id": "ch-1465df4425",
+        "name": "Canela TV"
+      },
+      {
+        "id": "ch-3e4fe1f4c7",
+        "name": "Captain"
+      },
+      {
+        "id": "ch-7ccfcd9b22",
+        "name": "Sony Max"
+      },
+      {
+        "id": "ch-ae904e6ceb",
+        "name": "Anime Vision"
+      },
+      {
+        "id": "ch-bb9cbc1299",
+        "name": "Anime Vision Classics"
       },
       {
         "id": "ch-d75f2701f4",
         "name": "Disney Junior"
       },
       {
-        "id": "ch-f47172f491",
-        "name": "Makkah Live"
+        "id": "ch-697c2da9c6",
+        "name": "ETC TV"
       },
       {
-        "id": "ch-ae793780a7",
-        "name": "Medina Live"
+        "id": "ch-71078309d7",
+        "name": "Geekdot"
+      },
+      {
+        "id": "ch-71660af211",
+        "name": "Fashion TV"
+      },
+      {
+        "id": "ch-7425970b8c",
+        "name": "&TV International"
+      },
+      {
+        "id": "ch-e87c686f2a",
+        "name": "&xplor HD (1080p) [Geo-blocked]"
+      },
+      {
+        "id": "ch-dae3c893f9",
+        "name": "13Rec"
+      },
+      {
+        "id": "ch-fcea52f700",
+        "name": "30A TV Classic Movies"
+      },
+      {
+        "id": "ch-73e293f4b5",
+        "name": "312 Kino"
+      },
+      {
+        "id": "ch-9fa4274ece",
+        "name": "4ever Cinema"
+      },
+      {
+        "id": "ch-7fb7af1118",
+        "name": "Afghan Nobel Movies"
+      },
+      {
+        "id": "ch-5154184968",
+        "name": "AMC (United States) East"
+      },
+      {
+        "id": "ch-d3abd78544",
+        "name": "AMC Europe Bulgary"
+      },
+      {
+        "id": "ch-bc6a10cf9c",
+        "name": "AMC Latin America"
+      },
+      {
+        "id": "ch-4213094f33",
+        "name": "AXN Black"
+      },
+      {
+        "id": "ch-65c1330124",
+        "name": "AXN CEE Bulgary"
+      },
+      {
+        "id": "ch-786286dc80",
+        "name": "AXN Latin America Chile"
+      },
+      {
+        "id": "ch-0eaa926e35",
+        "name": "Az Cinema"
+      },
+      {
+        "id": "ch-ccd9c984b1",
+        "name": "Bravo Farsi TV"
+      },
+      {
+        "id": "ch-21201d50ab",
+        "name": "Canal+ Action Europe Czechia"
+      },
+      {
+        "id": "ch-407e8b0cfc",
+        "name": "CCTV-6 [Geo-blocked]"
+      },
+      {
+        "id": "ch-d232a1a90b",
+        "name": "Celestial Movies (576i)"
+      },
+      {
+        "id": "ch-2f69cdf52a",
+        "name": "CHC Action"
+      },
+      {
+        "id": "ch-c36b98de56",
+        "name": "Cine+ Emotion"
+      },
+      {
+        "id": "ch-9b838f137e",
+        "name": "Cine34 [Geo-blocked]"
+      },
+      {
+        "id": "ch-f2ede786dc",
+        "name": "Cine34 HD"
+      },
+      {
+        "id": "ch-5d66ff1dc2",
+        "name": "Cinecanal"
+      },
+      {
+        "id": "ch-0ae8f1dfed",
+        "name": "CineLatino"
+      },
+      {
+        "id": "ch-c23cd9d68e",
+        "name": "CinemaWorld"
+      },
+      {
+        "id": "ch-f37c633b42",
+        "name": "CineStar 1 Bulgaria"
+      },
+      {
+        "id": "ch-239bd58d4b",
+        "name": "Cinevault 80s"
+      },
+      {
+        "id": "ch-cc26b2ebc4",
+        "name": "City Eden KinoSemya [Not 24/7]"
+      },
+      {
+        "id": "ch-1e0dd90040",
+        "name": "CND Film Middle School Channel"
+      },
+      {
+        "id": "ch-a9cc460591",
+        "name": "CTB Perth Movies Channel"
+      },
+      {
+        "id": "ch-716bf2f06e",
+        "name": "De Pelicula Latin America"
+      },
+      {
+        "id": "ch-7baf068de0",
+        "name": "Detskoe kino [Not 24/7]"
+      },
+      {
+        "id": "ch-074113f7ea",
+        "name": "DHE"
+      },
+      {
+        "id": "ch-c44390cd69",
+        "name": "Dom kino"
+      },
+      {
+        "id": "ch-7b98d347ec",
+        "name": "Dom kino Premium"
+      },
+      {
+        "id": "ch-218fef1d65",
+        "name": "Dom kino Premium HD"
+      },
+      {
+        "id": "ch-0b15d52065",
+        "name": "Ekran Movies"
+      },
+      {
+        "id": "ch-1ad5ac9e1d",
+        "name": "ETV Cinema"
+      },
+      {
+        "id": "ch-5a71fa1d9b",
+        "name": "Feniks plus Kino"
+      },
+      {
+        "id": "ch-8af4e615bb",
+        "name": "Film & Arts"
+      },
+      {
+        "id": "ch-b896b58069",
+        "name": "Filmazia"
+      },
+      {
+        "id": "ch-a421451cd5",
+        "name": "GEM Classic"
+      },
+      {
+        "id": "ch-c686f55966",
+        "name": "Nostalgia (Russia)"
+      },
+      {
+        "id": "ch-f2c29f8559",
+        "name": "Retrox TV (720p) [Not 24/7]"
+      },
+      {
+        "id": "ch-10c20c99d4",
+        "name": "The Carol Burnett Show"
+      },
+      {
+        "id": "ch-ad4828415e",
+        "name": "30A Georgia Hollywood Review"
+      },
+      {
+        "id": "ch-5f187a3814",
+        "name": "30A Loomered TV"
+      },
+      {
+        "id": "ch-d1d958eb25",
+        "name": "9Go! (720p) [Geo-blocked]"
+      },
+      {
+        "id": "ch-dd436f008c",
+        "name": "alpha Cinema"
+      },
+      {
+        "id": "ch-89772ad5fe",
+        "name": "AlternaTV (720p) [Not 24/7]"
+      },
+      {
+        "id": "ch-5f7e2e36eb",
+        "name": "Amedia Premium"
+      },
+      {
+        "id": "ch-4fe84dc192",
+        "name": "Asia TV"
+      },
+      {
+        "id": "ch-f1fb2a0e8c",
+        "name": "AXN Asia Taiwan"
+      },
+      {
+        "id": "ch-b58430fc56",
+        "name": "AXN Asia Thailand"
+      },
+      {
+        "id": "ch-c8171123c1",
+        "name": "BBC Four (720p) [Geo-blocked]"
+      },
+      {
+        "id": "ch-5aebebb52e",
+        "name": "BBC Four/CBeebies"
+      },
+      {
+        "id": "ch-c2401c9d27",
+        "name": "BBC Three/CBBC"
+      },
+      {
+        "id": "ch-47df3f897e",
+        "name": "Bolt (Russia)"
+      },
+      {
+        "id": "ch-fcdc221d24",
+        "name": "BRIDGE Classic"
+      },
+      {
+        "id": "ch-fca83f2c07",
+        "name": "Cartoon Classics"
+      },
+      {
+        "id": "ch-84bb46e6e9",
+        "name": "Detvora+"
+      },
+      {
+        "id": "ch-97844498e0",
+        "name": "Disney Channel Latin America"
+      },
+      {
+        "id": "ch-b89dd81700",
+        "name": "Disney Jr. (Turkiye) (1080p) [Geo-blocked]"
+      },
+      {
+        "id": "ch-bee97f4d84",
+        "name": "Dynasty (Germany)"
+      },
+      {
+        "id": "ch-3d597c945d",
+        "name": "FAN"
+      },
+      {
+        "id": "ch-c22454b421",
+        "name": "Golden Eagle Cartoon"
+      },
+      {
+        "id": "ch-ef37932691",
+        "name": "HRT 3 HD (720p) [Geo-blocked]"
+      },
+      {
+        "id": "ch-c0b7eedc6e",
+        "name": "Jiangxi Children's Channel"
+      },
+      {
+        "id": "ch-524f9a51dd",
+        "name": "KidOO (1080p) [Geo-blocked]"
+      },
+      {
+        "id": "ch-fe5afa1d8c",
+        "name": "Multimania"
+      },
+      {
+        "id": "ch-271bb1ac72",
+        "name": "NickOnline Bob Esponja (720p) [Not 24/7]"
+      },
+      {
+        "id": "ch-92c1eaea04",
+        "name": "NickOnline HD"
+      },
+      {
+        "id": "ch-248a09ce3f",
+        "name": "Pingviins"
+      },
+      {
+        "id": "ch-01d8a4fc53",
+        "name": "Pro100TV"
+      },
+      {
+        "id": "ch-470aba2a6c",
+        "name": "Smotrim 100% Klassika"
       }
     ],
     "status_invalid": [
@@ -3262,8 +7745,32 @@
         "name": "Channel S"
       },
       {
+        "id": "ch-a0f0b63e98",
+        "name": "Desh TV"
+      },
+      {
+        "id": "ch-787284cc9b",
+        "name": "Ekhon"
+      },
+      {
+        "id": "ch-8fd784bf92",
+        "name": "Ekushe TV"
+      },
+      {
         "id": "ch-d429a5c212",
         "name": "Global TV"
+      },
+      {
+        "id": "ch-00d7c1cd76",
+        "name": "Green TV"
+      },
+      {
+        "id": "ch-a718b81488",
+        "name": "My TV"
+      },
+      {
+        "id": "ch-f110db1460",
+        "name": "R TV"
       },
       {
         "id": "ch-0439e2385e",
@@ -3370,6 +7877,14 @@
         "name": "Islamic TV"
       },
       {
+        "id": "ch-f47172f491",
+        "name": "Makkah Live"
+      },
+      {
+        "id": "ch-ae793780a7",
+        "name": "Medina Live"
+      },
+      {
         "id": "ch-0d7f702e48",
         "name": "Fox Sports 2"
       },
@@ -3398,10 +7913,10 @@
     ]
   },
   "withheld_counts": {
-    "requires_custom_http_headers": 3,
-    "status_degraded": 9,
+    "requires_custom_http_headers": 85,
+    "status_degraded": 143,
     "status_invalid": 1,
-    "status_offline": 32,
+    "status_offline": 40,
     "unreliable": 3
   },
   "broken_urls": [
@@ -3420,8 +7935,50 @@
       "note": ""
     },
     {
+      "id": "ch-a0f0b63e98",
+      "name": "Desh TV",
+      "status": "OFFLINE",
+      "host": "app24.jagobd.com.bd",
+      "note": ""
+    },
+    {
+      "id": "ch-787284cc9b",
+      "name": "Ekhon",
+      "status": "OFFLINE",
+      "host": "app24.jagobd.com.bd",
+      "note": ""
+    },
+    {
+      "id": "ch-8fd784bf92",
+      "name": "Ekushe TV",
+      "status": "OFFLINE",
+      "host": "app24.jagobd.com.bd",
+      "note": ""
+    },
+    {
       "id": "ch-d429a5c212",
       "name": "Global TV",
+      "status": "OFFLINE",
+      "host": "app24.jagobd.com.bd",
+      "note": ""
+    },
+    {
+      "id": "ch-00d7c1cd76",
+      "name": "Green TV",
+      "status": "OFFLINE",
+      "host": "app24.jagobd.com.bd",
+      "note": ""
+    },
+    {
+      "id": "ch-a718b81488",
+      "name": "My TV",
+      "status": "OFFLINE",
+      "host": "app24.jagobd.com.bd",
+      "note": ""
+    },
+    {
+      "id": "ch-f110db1460",
+      "name": "R TV",
       "status": "OFFLINE",
       "host": "app24.jagobd.com.bd",
       "note": ""
@@ -3616,6 +8173,20 @@
       "note": ""
     },
     {
+      "id": "ch-f47172f491",
+      "name": "Makkah Live",
+      "status": "OFFLINE",
+      "host": "app24.jagobd.com.bd",
+      "note": ""
+    },
+    {
+      "id": "ch-ae793780a7",
+      "name": "Medina Live",
+      "status": "OFFLINE",
+      "host": "app24.jagobd.com.bd",
+      "note": ""
+    },
+    {
       "id": "ch-0d7f702e48",
       "name": "Fox Sports 2",
       "status": "OFFLINE",
@@ -3667,54 +8238,187 @@
       "kept": "yrf Music",
       "dropped": "YRF Music",
       "on": "url"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "24 Hour Free Movies",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "&TV HD",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Ebony TV by Lionsgate",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "FILMBOX+ Comedy Romania",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "ARTFLIX Movie Classics",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Bollywood Classic Romania",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Bollywood Film",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "AlternaTV (720p) [Not 24/7]",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "DreamWorks Channel Asia",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "FAN",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "FilmRise Anime",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "LAMIL35 TV",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "AlternaTV (720p) [Not 24/7]",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "BBC Earth US",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "BritBox Mysteries",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "China Travel",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "CNA Originals",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Deadly Women",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Discovering China",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "DocuBox",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Documentary+",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Documentary+ International",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "History Asia",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "History Hit",
+      "on": "url across sources"
     }
   ],
   "ingest": {
-    "entries_parsed": 177,
-    "channels_accepted": 171,
-    "needs_custom_headers": 3
+    "entries_parsed": 2342,
+    "channels_accepted": 787,
+    "needs_custom_headers": 85
   },
   "playlists": {
     "files": {
       "live/bangladesh.m3u": 4867,
-      "live/documentary.m3u": 4581,
-      "live/entertainment.m3u": 8886,
-      "live/kids.m3u": 1787,
-      "live/lifestyle.m3u": 3043,
-      "live/movies.m3u": 1030,
+      "live/documentary.m3u": 14075,
+      "live/entertainment/hindi.m3u": 2887,
+      "live/entertainment/entertainment.m3u": 23463,
+      "live/entertainment/general.m3u": 2382,
+      "live/entertainment/series.m3u": 1384,
+      "live/entertainment/indian-bangla.m3u": 2097,
+      "live/entertainment/other.m3u": 458,
+      "live/entertainment.m3u": 1225,
+      "live/kids/kids.m3u": 1327,
+      "live/kids/animation.m3u": 8422,
+      "live/kids.m3u": 412,
+      "live/lifestyle.m3u": 2881,
+      "live/movies/movies.m3u": 25939,
+      "live/movies/classic.m3u": 6450,
+      "live/movies.m3u": 423,
       "live/music.m3u": 3099,
       "live/news.m3u": 1947,
+      "live/other/movies-series.m3u": 1581,
+      "live/other/documentary-news.m3u": 1049,
+      "live/other/classic-movies.m3u": 1121,
+      "live/other/classic-series.m3u": 7069,
+      "live/other/animation-comedy.m3u": 1579,
+      "live/other/animation-kids.m3u": 6360,
+      "live/other/classic-comedy.m3u": 838,
+      "live/other/other.m3u": 5074,
+      "live/other.m3u": 1585,
       "live/religious.m3u": 1147,
-      "live/sports.m3u": 1504,
-      "live/international.m3u": 1679,
-      "live/live-tv.m3u": 1860,
-      "movies/crime.m3u": 22851,
-      "movies/documentary/01.m3u": 18621,
-      "movies/documentary/02.m3u": 20584,
-      "movies/documentary.m3u": 443,
-      "movies/comedy.m3u": 15982,
-      "movies/family.m3u": 8456,
-      "movies/animation/01.m3u": 21671,
-      "movies/animation/02.m3u": 21795,
-      "movies/animation.m3u": 433,
-      "movies/drama.m3u": 25176,
-      "movies/english.m3u": 34469,
-      "movies/romance.m3u": 7596,
-      "movies/adventure.m3u": 11083,
-      "movies/action.m3u": 7953,
-      "movies/fantasy.m3u": 3945,
-      "movies/scifi.m3u": 12197,
-      "movies/thriller.m3u": 9701,
-      "movies/horror.m3u": 11372,
-      "movies/hd.m3u": 22471,
-      "movies/fullhd.m3u": 11808,
-      "movies/top-rated.m3u": 7153,
-      "movies/recently-added.m3u": 7363,
-      "movies/trending.m3u": 7011,
-      "movies/movies.m3u": 3520,
-      "master.m3u": 835
+      "live/sports.m3u": 1505,
+      "live/international.m3u": 1863,
+      "live/live-tv.m3u": 2044,
+      "movies/adventure.m3u": 3687,
+      "movies/romance.m3u": 3779,
+      "movies/drama.m3u": 10585,
+      "movies/comedy.m3u": 3106,
+      "movies/fantasy.m3u": 1810,
+      "movies/horror.m3u": 5734,
+      "movies/thriller.m3u": 4321,
+      "movies/scifi.m3u": 6104,
+      "movies/english.m3u": 3545,
+      "movies/crime.m3u": 6313,
+      "movies/action.m3u": 2744,
+      "movies/documentary.m3u": 1371,
+      "movies/hd.m3u": 1221,
+      "movies/fullhd.m3u": 759,
+      "movies/top-rated.m3u": 5129,
+      "movies/recently-added.m3u": 7836,
+      "movies/trending.m3u": 7472,
+      "movies/movies.m3u": 3128,
+      "master.m3u": 1967
     },
-    "total_bytes": 349919,
+    "total_bytes": 217164,
     "structure_ok": true,
     "structure_errors": 0,
     "structure_warnings": 3,
@@ -3731,16 +8435,16 @@
       {
         "severity": "warning",
         "file": "movies/horror.m3u",
-        "line": 59,
+        "line": 26,
         "code": "DUP_TITLE",
-        "message": "title 'Carnival of Souls (1962)' already used on line 17"
+        "message": "title 'Carnival of Souls (1962)' already used on line 8"
       },
       {
         "severity": "warning",
         "file": "movies/horror.m3u",
-        "line": 77,
+        "line": 38,
         "code": "DUP_TITLE",
-        "message": "title 'House on Haunted Hill (1959)' already used on line 32"
+        "message": "title 'House on Haunted Hill (1959)' already used on line 14"
       }
     ]
   }
