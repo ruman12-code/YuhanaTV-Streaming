@@ -119,3 +119,41 @@ class TestTree(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestUnreachableIsFatal(unittest.TestCase):
+    """An orphaned playlist is deployed but can never be opened from the TV.
+
+    A tree carrying orphans was published while CI reported success, because
+    this was only a warning.
+    """
+
+    def _run(self, files, entry="master.m3u"):
+        self.tmp = tempfile.TemporaryDirectory()
+        root = Path(self.tmp.name)
+        for rel, body in files.items():
+            write(root, rel, body)
+        return M3UValidator(cfg_for(root), root).validate_tree(entry)
+
+    def test_orphan_fails_validation(self):
+        r = self._run({
+            "master.m3u": "#EXTM3U\n" + link("Live", f"{BASE}/live.m3u"),
+            "live.m3u": "#EXTM3U\n" + stream("A", "https://o.test/a.m3u8"),
+            "orphan.m3u": "#EXTM3U\n" + stream("B", "https://o.test/b.m3u8"),
+        })
+        self.assertFalse(r["ok"])
+        self.assertIn("orphan.m3u", r["unreachable"])
+        self.assertTrue(any(i["code"] == "UNREACHABLE" and i["severity"] == "error"
+                            for i in r["issues"]))
+
+    def test_fully_linked_tree_passes(self):
+        r = self._run({
+            "master.m3u": "#EXTM3U\n" + link("Live", f"{BASE}/live.m3u"),
+            "live.m3u": "#EXTM3U\n" + link("Sub", f"{BASE}/live/sub.m3u"),
+            "live/sub.m3u": "#EXTM3U\n" + stream("A", "https://o.test/a.m3u8"),
+        })
+        self.assertTrue(r["ok"], r["issues"])
+
+    def tearDown(self):
+        if hasattr(self, "tmp"):
+            self.tmp.cleanup()

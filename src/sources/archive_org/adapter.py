@@ -23,6 +23,7 @@ from dataclasses import dataclass
 from ...models import Movie, stable_id, slugify
 from ...util.urls import check_url
 from ...content_policy import adult_reason
+from ..imdb.datasets import clean_source_title
 
 SEARCH_URL = "https://archive.org/advancedsearch.php"
 METADATA_URL = "https://archive.org/metadata/"
@@ -230,7 +231,9 @@ class ArchiveOrgAdapter:
         if video is None:
             return None, "no TV-playable (h.264/MP4) derivative in the item"
 
-        title = str(meta.get("title") or identifier).strip()
+        raw_title = str(meta.get("title") or identifier).strip()
+        title, embedded_year = clean_source_title(raw_title)
+        title = title or raw_title
         subjects_raw = meta.get("subject") or []
         if isinstance(subjects_raw, str):
             subjects_raw = [subjects_raw]
@@ -249,6 +252,10 @@ class ArchiveOrgAdapter:
             if m:
                 year = int(m.group(1))
                 break
+        # A year the uploader put in the title is about the work itself, so it
+        # beats a date field that may describe the scan.
+        if embedded_year:
+            year = embedded_year
         if year and year < self.min_year:
             return None, f"year {year} is before the configured minimum"
 

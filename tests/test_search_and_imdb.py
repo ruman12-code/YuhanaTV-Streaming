@@ -199,3 +199,63 @@ class TestReportAgreesWithTheGate(unittest.TestCase):
                          withheld={}, ingest_stats=None, epg=None, seed_build=False)["movies"]
         self.assertEqual((r["rated"], r["unrated"], r["matched_to_imdb"]), (2, 1, 2))
         self.assertEqual(r["mean_rating"], 7.0)
+
+
+class TestSourceTitleCleaning(unittest.TestCase):
+    """Archive uploaders append year, cast and director to the title.
+
+    "Gilda (1946) Rita Hayworth, Glenn Ford" never matched IMDb's "Gilda", so it
+    never gained a runtime, so the feature-length gate withheld it. That cost the
+    library most of its playable HD film-noir.
+    """
+
+    def _clean(self, raw):
+        from src.sources.imdb.datasets import clean_source_title
+        return clean_source_title(raw)
+
+    def test_cast_list_is_removed_and_year_extracted(self):
+        self.assertEqual(self._clean("Gilda (1946) Rita Hayworth, Glenn Ford"),
+                         ("Gilda", 1946))
+
+    def test_director_credit_is_removed(self):
+        self.assertEqual(self._clean("The Big Heat (1953) Directed By Fritz Lang"),
+                         ("The Big Heat", 1953))
+        self.assertEqual(self._clean("Kiss Me Deadly (1955, ) Dir: Robert Aldrich"),
+                         ("Kiss Me Deadly", 1955))
+
+    def test_trailing_tags_are_removed(self):
+        self.assertEqual(self._clean("Some Film (1950) (ENG Sub)")[0], "Some Film")
+        self.assertEqual(self._clean("Some Film (1950) restored")[0], "Some Film")
+
+    def test_plain_title_is_untouched(self):
+        self.assertEqual(self._clean("Night of the Living Dead"),
+                         ("Night of the Living Dead", None))
+
+    def test_numeric_titles_survive(self):
+        """A title that IS a year must not be cut down to nothing."""
+        self.assertEqual(self._clean("1984"), ("1984", None))
+        self.assertEqual(self._clean("2001: A Space Odyssey"),
+                         ("2001: A Space Odyssey", None))
+
+    def test_empty_input(self):
+        self.assertEqual(self._clean(""), ("", None))
+        self.assertEqual(self._clean(None), ("", None))
+
+    def test_cleaned_title_matches_imdb_normalisation(self):
+        from src.sources.imdb.datasets import clean_source_title, normalise_title
+        cleaned, _ = clean_source_title("Gilda (1946) Rita Hayworth, Glenn Ford")
+        self.assertEqual(normalise_title(cleaned), normalise_title("Gilda"))
+
+    def test_adapter_uses_the_cleaned_title_and_year(self):
+        from src import config as _c
+        from src.sources.archive_org.adapter import ArchiveOrgAdapter
+        adapter = ArchiveOrgAdapter(_c.load(use_cache=False))
+        payload = {"metadata": {"title": "Gilda (1946) Rita Hayworth, Glenn Ford",
+                                "date": "2009",
+                                "licenseurl": "https://creativecommons.org/publicdomain/mark/1.0/"},
+                   "files": [{"name": "g.mp4", "format": "h.264", "size": "900000000",
+                              "width": "1280", "height": "720"}]}
+        m, reason = adapter.to_movie("gilda", payload)
+        self.assertIsNotNone(m, reason)
+        self.assertEqual(m.title, "Gilda")
+        self.assertEqual(m.year, 1946, "the title's year beats the upload date")

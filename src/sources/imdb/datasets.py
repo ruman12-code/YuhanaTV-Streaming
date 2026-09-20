@@ -35,6 +35,50 @@ _LEADING_ARTICLE = re.compile(r"^(the|a|an)\s+", re.IGNORECASE)
 _WS = re.compile(r"\s+")
 
 
+# Archive uploaders routinely append the year, cast and director to a title:
+# "Gilda (1946) Rita Hayworth, Glenn Ford, George Macready". IMDb holds "Gilda".
+_EMBEDDED_YEAR = re.compile(r"[\(\[]?\s*(1[89]\d{2}|20\d{2})\s*[,;]?\s*[\)\]]?")
+_TRAILING_CREDITS = re.compile(
+    r"\s*(?:[-–—,|]\s*)?(?:dir(?:ected)?\.?\s*(?:by)?\s*[:.]?|starring|with|feat(?:uring)?)\b.*$",
+    re.IGNORECASE)
+_TRAILING_TAGS = re.compile(
+    r"\s*[\(\[]?\s*(?:eng(?:lish)?\s*sub(?:title)?s?|subtitled|full\s*movie|"
+    r"complete|restored|remastered|colou?ri[sz]ed|bd\s*rip|dvd\s*rip|hd\s*rip|"
+    r"public\s*domain|silent)\s*[\)\]]?\s*$",
+    re.IGNORECASE)
+
+
+def clean_source_title(raw: str) -> tuple[str, int | None]:
+    """Reduce an Archive title to the work's name, and pull out its year.
+
+    Returns (title, year). Everything from an embedded year onwards is cast and
+    credit noise often enough that cutting there is the right default: it is what
+    turns "Gilda (1946) Rita Hayworth, Glenn Ford" into "Gilda" and 1946, and
+    without it the HD film-noir classics never matched IMDb, never gained a
+    runtime, and were withheld by the feature-length gate.
+    """
+    title = (raw or "").strip()
+    year = None
+
+    m = _EMBEDDED_YEAR.search(title)
+    if m:
+        candidate = int(m.group(1))
+        head = title[: m.start()].strip(" -–—,:;|([")
+        # Only treat it as a cut point if a real title precedes it; "1984" and
+        # "2001: A Space Odyssey" must survive intact.
+        if len(head) >= 2:
+            year = candidate
+            title = head
+
+    title = _TRAILING_CREDITS.sub("", title)
+    for _ in range(3):
+        stripped = _TRAILING_TAGS.sub("", title)
+        if stripped == title:
+            break
+        title = stripped
+    return title.strip(" -–—,:;|"), year
+
+
 def normalise_title(title: str) -> str:
     """Fold a title to a comparison key.
 

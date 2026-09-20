@@ -256,8 +256,12 @@ class M3UValidator:
         reachable = self._reachable(graph, entry)
         for rel in sorted(self.reports):
             if rel not in reachable:
-                self._add("warning", rel, 0, "UNREACHABLE",
-                          f"playlist is not reachable from {entry}")
+                # An error, not a warning: an orphaned playlist is a file the TV
+                # can never open, and it still gets deployed. A tree that grew
+                # them was published once while CI reported success.
+                self._add("error", rel, 0, "UNREACHABLE",
+                          f"playlist is not reachable from {entry}; "
+                          f"it would be deployed but never shown")
 
         errors = [i for i in self.issues if i.severity == "error"]
         return {
