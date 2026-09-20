@@ -30,7 +30,7 @@ STREAM_TYPES = ("hls", "dash", "mp4", "ts", "unknown")
 
 # Canonical live categories (spec section 6).
 LIVE_CATEGORIES = (
-    "bangladesh", "news", "sports", "entertainment", "movies", "music",
+    "bangladesh", "news", "sports", "entertainment", "movies", "series", "music",
     "kids", "documentary", "educational", "business", "lifestyle",
     "religious", "international", "other",
 )

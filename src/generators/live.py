@@ -5,7 +5,6 @@ Shape produced:
     playlists/master.m3u                 root: Live TV / Bangladesh / International / Movies
     playlists/live/live-tv.m3u           index of live categories (nested playlists)
     playlists/live/<category>.m3u        the channels in one category
-    playlists/live/international.m3u     every non-Bangladesh channel, grouped view
 
 Publication gate: a channel is only written into a playlist when its validated
 `status` is in `validation.publish_statuses`. The gate can be relaxed explicitly
@@ -19,8 +18,9 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from ..models import Channel
+from ..util.urls import check_url
 from .m3u import M3UBuilder
-from .catalog import live_meta, subgroup_meta, LIVE_CATEGORY_META
+from .catalog import live_meta, subgroup_meta, region_meta, LIVE_CATEGORY_META
 
 
 @dataclass
@@ -48,9 +48,14 @@ class LiveGenerator:
         # single SS IPTV screen has to load an unbounded number of tiles (spec 22/34).
         self.subsplit_threshold = int(cfg.get_path("ssiptv.subsplit_threshold", 40))
         self.never_subsplit = set(cfg.get_path("ssiptv.never_subsplit", []))
+        # Categories large enough that "where is this from" is the useful first
+        # question. Splitting Movies by region beats one 250-channel wall.
+        self.region_split = set(cfg.get_path("ssiptv.region_split_categories", []))
         # Once a channel has enough history, sustained unreliability disqualifies it
         # even on a run where it happens to answer. A tile that works one time in
         # four is worse than no tile.
+        self.require_https = bool(cfg.get_path("security.require_https_streams", False))
+        self.denied_hosts = tuple(cfg.get_path("security.denied_stream_hosts", []) or ())
         self.min_reliability = float(cfg.get_path("validation.min_reliability", 0.0))
         self.min_checks_for_gate = int(
             cfg.get_path("validation.min_checks_for_reliability_gate", 5))
@@ -79,6 +84,14 @@ class LiveGenerator:
                 continue
             if not ch.stream_url:
                 hold("no_stream_url", ch)
+                continue
+            verdict = check_url(ch.stream_url, require_https=self.require_https,
+                                denied_hosts=self.denied_hosts)
+            if not verdict.ok:
+                reason = ("plain_http" if "plain http" in verdict.reason
+                          else "denied_host" if "denied-host" in verdict.reason
+                          else "unsafe_url")
+                hold(reason, ch)
                 continue
             if ch.status not in allowed:
                 hold(f"status_{ch.status.lower()}", ch)
@@ -237,15 +250,10 @@ class LiveGenerator:
                                  rel=f"live/{category}.m3u", files=files,
                                  bg=meta.get("bg", "#444444"))
 
-        # 2. international.m3u - every non-Bangladesh channel (spec section 8)
-        intl = [c for c in published if c.category != "bangladesh"]
-        if intl:
-            builder = self._index_of_categories(
-                {c: v for c, v in by_category.items() if c != "bangladesh"},
-                title="🌐 International TV",
-                seed_note=seed_note,
-            )
-            files["live/international.m3u"] = builder.write(self.live_dir / "international.m3u")
+        # A separate "international" index used to sit here. Region splitting now
+        # answers the same question better - Movies and Series open on Bangladesh,
+        # India, United States and so on - and keeping both left one of them
+        # unreachable from the home screen.
 
         # 3. live-tv.m3u - index of every category
         index = self._index_of_categories(by_category, title="📺 Live TV", seed_note=seed_note)
@@ -262,6 +270,23 @@ class LiveGenerator:
         """
         if category in self.never_subsplit or len(items) <= self.subsplit_threshold:
             return {}
+
+        # Region first where it is meaningful and actually known.
+        if category in self.region_split:
+            known = [c for c in items if c.country]
+            if len(known) >= len(items) // 2:
+                by_region: dict[str, list[Channel]] = {}
+                for ch in items:
+                    by_region.setdefault(f"region-{ch.country or 'other'}", []).append(ch)
+                folded: dict[str, list[Channel]] = {}
+                spill: list[Channel] = []
+                for slug, members in by_region.items():
+                    (folded.setdefault(slug, []) if len(members) >= 3
+                     else spill).extend(members)
+                if spill:
+                    folded.setdefault("region-other", []).extend(spill)
+                if len(folded) >= 2:
+                    return folded
         groups: dict[str, list[Channel]] = {}
         for ch in items:
             slug = (ch.tags[0] if ch.tags else "") or "other"
@@ -349,40 +374,45 @@ def build_master(cfg, playlists_root: Path, *, movies=None, channels=None,
         header_comment=seed_note,
     )
 
-    # (relative playlist, label, blurb, fallback colour, artwork source)
+    sports = [c for c in channels if c.category == "sports"]
+    series = [c for c in channels if c.category == "series"]
+    kids = [c for c in channels if c.category == "kids"]
+    movie_ch = [c for c in channels if c.category == "movies"]
+
+    # (relative playlist, label, blurb, art key, fallback colour, artwork source)
     rows = [
-        ("movies/trending.m3u", "🔥 Trending Now",
-         "Best rated of what arrived recently", "#b3121b", by_rating),
-        ("movies/4k.m3u", "💎 4K Ultra HD",
-         f"{len(uhd)} titles in 4K", "#3b1c6b", uhd),
-        ("movies/hd.m3u", "🎞️ HD Movies",
-         f"{len(hd)} titles in 720p or better", "#0e5c8a", hd),
-        ("movies/top-rated.m3u", "⭐ Top Rated",
-         "Highest scoring films in the library", "#8a6a00", by_rating),
-        ("movies/movies.m3u", "🎬 All Movies",
-         "Browse by genre and language", "#8e1b1b", by_rating),
-        ("live/bangladesh.m3u", "🇧🇩 Bangladesh TV",
-         f"{len(bd)} channels", "#006a4e", bd),
-        ("live/live-tv.m3u", "📺 Live TV",
-         "Every channel by category", "#1f3a93", channels),
-        ("live/international.m3u", "🌍 International TV",
-         "Channels from outside Bangladesh", "#2c3e75",
-         [c for c in channels if c.category != "bangladesh"]),
+        ("live/bangladesh.m3u", "🇧🇩 Bangladesh TV", f"{len(bd)} channels",
+         "bangladesh", "#006a4e", bd),
+        ("live/movies.m3u", "🍿 Movie Channels", f"{len(movie_ch)} channels by region",
+         "movie-channels", "#8e1b1b", movie_ch),
+        ("live/series.m3u", "📺 TV Series", f"{len(series)} channels",
+         "series", "#6a2c70", series),
+        ("live/sports.m3u", "🏆 Sports", f"{len(sports)} channels",
+         "sports", "#0b5d3b", sports),
+        ("movies/hd.m3u", "🎞️ HD Movies", f"{len(hd)} titles in 720p or better",
+         "hd-movies", "#0e5c8a", hd),
+        ("movies/top-rated.m3u", "⭐ Top Rated", "Highest scoring films in the library",
+         "top-rated", "#8a6a00", by_rating),
+        ("movies/movies.m3u", "🎬 Movie Library", "On demand, browse by genre",
+         "movie-library", "#7d1128", by_rating),
+        ("live/kids.m3u", "🧸 Kids", f"{len(kids)} channels",
+         "kids", "#d4820a", kids),
+        ("live/live-tv.m3u", "📡 All Live TV", "Every channel by category",
+         "live-tv", "#1f3a93", channels),
+        ("movies/4k.m3u", "💎 4K Ultra HD", f"{len(uhd)} titles in 4K",
+         "4k", "#3b1c6b", uhd),
     ]
 
-    used_art: set[str] = set()
-    for rel, label, blurb, colour, art_items in rows:
+    art_dir = root.parent / "site" / "art"
+    for rel, label, blurb, art_key, colour, art_items in rows:
         if not exists(rel):
             continue
-        attr = "poster" if rel.startswith("movies/") else "logo"
-        b.add_playlist(
-            label,
-            cfg.playlist_url(rel),
-            description=blurb,
-            size="big",
-            # Artwork where we have it, a solid colour where we do not: an empty
-            # tile is worse than a plain one.
-            background=_artwork(art_items, attr, used=used_art) or colour,
-        )
+        # Purpose-drawn tile art where it exists. The alternative was a frame
+        # grabbed from whichever film sorted first, which on public-domain
+        # scans meant grainy monochrome.
+        art_file = art_dir / f"{art_key}.png"
+        background = (cfg.base_url + f"/art/{art_key}.png") if art_file.exists() else colour
+        b.add_playlist(label, cfg.playlist_url(rel), description=blurb,
+                       size="big", background=background)
 
     return b.write(root / "master.m3u")

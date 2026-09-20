@@ -22,6 +22,9 @@ _EXTINF_RE = re.compile(r"^#EXTINF\s*:\s*(-?\d+(?:\.\d+)?)\s*(.*)$", re.IGNORECA
 # A trailing "(1080p)" / "(720p)" / "[HD]" quality claim in the display name.
 _QUALITY_SUFFIX_RE = re.compile(r"\s*[\(\[]\s*(\d{3,4}p|4k|uhd|fhd|hd|sd)\s*[\)\]]\s*$", re.IGNORECASE)
 _VLCOPT_RE = re.compile(r"^#EXTVLCOPT\s*:\s*([^=]+)=(.*)$", re.IGNORECASE)
+# iptv-org writes tvg-id as "00sReplay.us@SD": the country follows the last dot
+# and precedes an optional feed marker.
+_TVG_ID_COUNTRY = re.compile(r"\.([a-zA-Z]{2})(?:@|$)")
 
 # Map the group titles found in the imported playlist onto canonical categories.
 GROUP_TO_CATEGORY = {
@@ -37,7 +40,7 @@ GROUP_TO_CATEGORY = {
     "animation": "kids",
     "documentary": "documentary",
     "movies": "movies",
-    "series": "entertainment",
+    "series": "series",
     "comedy": "entertainment",
     "general": "entertainment",
     "entertainment": "entertainment",
@@ -173,6 +176,12 @@ def entry_to_channel(entry: ParsedEntry, source_id: str) -> tuple[Channel | None
     category = GROUP_TO_CATEGORY.get(group_slug, "other")
     country, language = GROUP_TO_LOCALE.get(group_slug, ("", ""))
 
+    tvg_id = entry.attrs.get("tvg-id", "")
+    if not country:
+        m = _TVG_ID_COUNTRY.search(tvg_id)
+        if m:
+            country = m.group(1).lower()
+
     notes = []
     if quality_claim:
         notes.append(f"source claimed quality '{quality_claim}' (unverified)")
@@ -188,7 +197,7 @@ def entry_to_channel(entry: ParsedEntry, source_id: str) -> tuple[Channel | None
         stream_url=verdict.url,
         stream_type=_stream_type(verdict.url),
         logo=entry.attrs.get("tvg-logo", ""),
-        epg_id=entry.attrs.get("tvg-id", ""),
+        epg_id=tvg_id.split("@", 1)[0],
         source=source_id,
         status="UNVERIFIED",
         rights_status="UNVERIFIED",

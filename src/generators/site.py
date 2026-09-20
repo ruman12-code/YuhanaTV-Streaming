@@ -67,7 +67,6 @@ def render(report: dict, cfg, playlists_root: Path) -> str:
         ("Master playlist — put this one in SS IPTV", f"{base}/iptv/master.m3u"),
         ("Live TV only", f"{base}/iptv/live-tv.m3u"),
         ("Bangladesh only", f"{base}/iptv/bangladesh.m3u"),
-        ("International only", f"{base}/iptv/international.m3u"),
     ]
     if (playlists_root / "movies" / "movies.m3u").exists():
         endpoints.append(("Movies only", f"{base}/iptv/movies.m3u"))

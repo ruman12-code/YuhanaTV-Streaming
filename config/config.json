@@ -21,7 +21,13 @@
       "bangladesh"
     ],
     "collection_size": 24,
-    "min_bucket_size": 3
+    "min_bucket_size": 3,
+    "region_split_categories": [
+      "movies",
+      "series",
+      "entertainment",
+      "sports"
+    ]
   },
   "validation": {
     "timeout_connect_seconds": 8,
@@ -76,7 +82,22 @@
       "mms"
     ],
     "block_private_ip_targets": true,
-    "max_manifest_bytes": 2097152
+    "max_manifest_bytes": 2097152,
+    "require_https_streams": true,
+    "$comment_https": "SS IPTV is served over HTTPS, and a plain-http stream is refused as mixed content by many TV builds. 28% of the movie channels were http.",
+    "denied_stream_hosts": [
+      "jmp2.uk",
+      "tinyurl.com",
+      "bit.ly",
+      "short.gy",
+      "xemzi.short.gy",
+      "t.co",
+      "is.gd",
+      "stitcher-ipv4.pluto.tv",
+      "stitcher.pluto.tv",
+      "service-stitcher.clusters.pluto.tv"
+    ],
+    "$comment_denied_hosts": "Two groups. URL shorteners hide the real origin, so the stream cannot be judged and the target can change under us. Pluto's stitcher builds a per-session ad-stitched manifest that is geo-restricted and expires, so a URL that validated is dead later."
   },
   "policy": {
     "$comment": "Content-rights gating. 'require_rights_review' blocks a source from the published playlist until a human sets redistribution_allowed.",

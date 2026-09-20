@@ -164,6 +164,8 @@ jobs:
           # Without an index.html, Pages answers the site root with its own 404
           # even though every playlist under it is served correctly.
           cp site/index.html _site/index.html
+          # Home-screen tile art, referenced by #EXTBG from master.m3u.
+          [ -d site/art ] && cp -r site/art _site/art || true
           cp -r playlists _site/playlists
           [ -d epg ] && cp -r epg _site/epg || true
           cp validation-report.json _site/ 2>/dev/null || true
@@ -173,7 +175,6 @@ jobs:
           cp playlists/master.m3u            _site/iptv/master.m3u
           cp playlists/live/live-tv.m3u      _site/iptv/live-tv.m3u
           cp playlists/live/bangladesh.m3u   _site/iptv/bangladesh.m3u
-          [ -f playlists/live/international.m3u ] && cp playlists/live/international.m3u _site/iptv/international.m3u || true
           [ -f playlists/movies/movies.m3u ]      && cp playlists/movies/movies.m3u      _site/iptv/movies.m3u || true
           [ -f epg/epg.xml ]                      && cp epg/epg.xml                      _site/iptv/epg.xml || true
           echo "--- published files ---"

@@ -65,6 +65,8 @@ def check_url(
     denied_schemes=DEFAULT_DENIED,
     block_private: bool = True,
     allow_executables: bool = False,
+    require_https: bool = False,
+    denied_hosts=(),
 ) -> UrlVerdict:
     if raw is None:
         return UrlVerdict(False, "", "url is null")
@@ -92,6 +94,17 @@ def check_url(
         return UrlVerdict(False, url, "url host could not be parsed")
     if block_private and _is_private_host(host):
         return UrlVerdict(False, url, f"host '{host}' is a private/loopback address")
+
+    if require_https and scheme != "https":
+        return UrlVerdict(False, url,
+                          "plain http: SS IPTV is served over HTTPS and TV builds "
+                          "commonly refuse mixed content")
+
+    host_l = host.lower()
+    for denied in denied_hosts:
+        d = str(denied).lower().strip()
+        if d and (host_l == d or host_l.endswith("." + d)):
+            return UrlVerdict(False, url, f"host '{host}' is on the denied-host list")
 
     if not allow_executables:
         path_lower = parts.path.lower()

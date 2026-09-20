@@ -14,6 +14,7 @@ LIVE_CATEGORY_META: dict[str, dict] = {
     "sports":        {"order": 30, "label": "🏆 Sports",        "bg": "#0b5d3b"},
     "entertainment": {"order": 40, "label": "🎭 Entertainment", "bg": "#5a2a82"},
     "movies":        {"order": 50, "label": "🎬 Movies on TV",  "bg": "#1f3a93"},
+    "series":        {"order": 55, "label": "📺 TV Series",      "bg": "#6a2c70"},
     "music":         {"order": 60, "label": "🎵 Music",         "bg": "#b5341a"},
     "kids":          {"order": 70, "label": "🧸 Kids",          "bg": "#d4820a"},
     "documentary":   {"order": 80, "label": "🌍 Documentary",   "bg": "#14607a"},
@@ -80,5 +81,41 @@ SUBGROUP_META: dict[str, dict] = {
 
 
 def subgroup_meta(slug: str) -> dict:
+    if slug.startswith("region-"):
+        return REGION_META.get(slug[len("region-"):].lower(),
+                               {"order": 900, "label": "🌐 Other regions", "bg": "#444444"})
     return SUBGROUP_META.get(slug, {"order": 900, "label": slug.replace("-", " ").title(),
                                     "bg": "#444444"})
+
+
+# Region labels for grouping a large category by where its channels come from.
+# Keyed by ISO-3166 alpha-2 as it appears in an iptv-org tvg-id.
+REGION_META: dict[str, dict] = {
+    "bd": {"order": 5,  "label": "🇧🇩 Bangladesh", "bg": "#006a4e"},
+    "in": {"order": 10, "label": "🇮🇳 India",      "bg": "#d35400"},
+    "pk": {"order": 15, "label": "🇵🇰 Pakistan",   "bg": "#1e6b52"},
+    "us": {"order": 20, "label": "🇺🇸 United States", "bg": "#1f3a93"},
+    "gb": {"order": 25, "label": "🇬🇧 United Kingdom", "bg": "#2c3e75"},
+    "ca": {"order": 30, "label": "🇨🇦 Canada",     "bg": "#a93226"},
+    "au": {"order": 35, "label": "🇦🇺 Australia",  "bg": "#117a65"},
+    "br": {"order": 40, "label": "🇧🇷 Brazil",     "bg": "#1e8449"},
+    "mx": {"order": 45, "label": "🇲🇽 Mexico",     "bg": "#148f77"},
+    "es": {"order": 50, "label": "🇪🇸 Spain",      "bg": "#b9770e"},
+    "fr": {"order": 55, "label": "🇫🇷 France",     "bg": "#2471a3"},
+    "de": {"order": 60, "label": "🇩🇪 Germany",    "bg": "#4a235a"},
+    "it": {"order": 65, "label": "🇮🇹 Italy",      "bg": "#196f3d"},
+    "ru": {"order": 70, "label": "🇷🇺 Russia",     "bg": "#7b241c"},
+    "tr": {"order": 75, "label": "🇹🇷 Turkey",     "bg": "#922b21"},
+    "ae": {"order": 80, "label": "🇦🇪 Middle East", "bg": "#7d6608"},
+    "sa": {"order": 82, "label": "🇸🇦 Saudi Arabia", "bg": "#0e6251"},
+    "id": {"order": 85, "label": "🇮🇩 Indonesia",  "bg": "#b03a2e"},
+    "ph": {"order": 87, "label": "🇵🇭 Philippines", "bg": "#1a5276"},
+    "kr": {"order": 90, "label": "🇰🇷 Korea",      "bg": "#7d3c98"},
+    "jp": {"order": 92, "label": "🇯🇵 Japan",      "bg": "#a93226"},
+    "cn": {"order": 94, "label": "🇨🇳 China",      "bg": "#943126"},
+}
+
+
+def region_meta(code: str) -> dict:
+    return REGION_META.get((code or "").lower(),
+                           {"order": 900, "label": "🌐 Other regions", "bg": "#444444"})
