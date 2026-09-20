@@ -11,7 +11,12 @@ name: Update IPTV
 
 on:
   schedule:
-    - cron: '0 */6 * * *'      # stream validation, every 6 hours (spec section 21)
+    - cron: '0 */3 * * *'      # stream validation, every 3 hours
+    # Not hourly: a full pass over ~1,500 channels takes ~37 minutes, so
+    # hourly would run 62% of the time and put 24x the probe load on every
+    # source server. Channel health does not move that fast, and the
+    # reliability score needs runs spread over time to distinguish a flaky
+    # stream from one bad moment.
   workflow_dispatch:
     inputs:
       seed:

@@ -61,8 +61,9 @@
       "min_baseline": 10
     },
     "history_runs_kept": 30,
-    "min_reliability": 0.34,
-    "min_checks_for_reliability_gate": 5
+    "min_reliability": 0.6,
+    "min_checks_for_reliability_gate": 4,
+    "$comment_reliability": "With validation every 3 hours a channel accumulates evidence quickly, so the bar can be higher: below 60% success over 4+ checks it stops being published."
   },
   "security": {
     "allowed_url_schemes": [
