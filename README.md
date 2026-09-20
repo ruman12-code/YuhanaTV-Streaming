@@ -8,41 +8,42 @@ Target player: **SS IPTV** on a **VIDAA** TV.
 
 ---
 
-## Status: Phases 1-7 complete
+## Status: live and validated
 
-**Live:** https://ruman12-code.github.io/YuhanaTV-Streaming/
+**Site:** https://ruman12-code.github.io/YuhanaTV-Streaming/
 
 ### Live TV
 | | |
 |---|---|
-| Channels in registry | **171** |
-| ACTIVE (verified reachable) | **128** |
-| Measured 1080p / 720p | 54 / 47 |
-| Canonical `tvg-id` assigned | **104** |
+| Channels in registry | **1003** |
+| **ACTIVE (probed end to end)** | **720** |
+| Movie channels active | **289** — 104 at 720p or better |
+| 🇧🇩 Bangladesh | 24–26 active, varies by run |
+| Withheld | 105 need HTTP headers SS IPTV cannot send · 240 failed or degraded |
 
-### Movie Library
+### Movie Library (VOD)
 | | |
 |---|---|
-| Catalogued | **663** — 0 adult titles (screened at import) |
-| Rights CLEARED, playback byte-verified | **663** |
-| **Published as VOD** | **529** |
-| Withheld | {"rating_below_6": 122, "playback_discoverable": 11, "playback_unverified": 1} |
-| Matched to IMDb / rated | 287 / 271 · mean 5.91 |
-| HD 720p+ / Full HD 1080p+ / 4K | **70 / 41 / 7** |
+| Catalogued | **583** |
+| **Published** | **151** |
+| Playable HD features | **14** (720p/1080p classics) |
+| Matched to IMDb / rated | 316 / 302 · mean 5.99 |
+| Container | 100% mp4/m4v — no format the TV cannot decode |
 
-### EPG
-| | |
-|---|---|
-| Channels in `epg.xml` | 77 |
-| Programmes | **0** — no schedule is ever fabricated |
-| Channels with a public guide source available | 73 (only 1 Bangladeshi) |
+There is **no 4K tile**, and there will not be one: the only 4K items in the
+source are a Blender demo and a NASA reel, neither of which is a film. HD viewing
+comes from the movie channels, not the VOD library.
 
 ### Tree
 ```
-37 playlists · ~1,180 entries · no screen over the 120-item budget
- 0 structural errors · 0 circular references · 0 duplicate tiles
-199 tests passing
+55 playlists · 1,192 entries · no screen over the 120-item budget
+ 0 structural errors · 0 unreachable · 0 circular references
+232 tests passing
 ```
+
+### Schedule and cost
+Channel validation every 6 hours, movie refresh daily. Roughly 1,100 CI minutes a
+month, which costs **nothing**: GitHub Actions is unlimited on public repositories.
 
 ## Use it
 
