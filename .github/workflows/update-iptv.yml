@@ -126,6 +126,11 @@ jobs:
             [ -d epg ] && cp -r epg "$STAGE"/ || true
             git fetch origin "$GITHUB_REF_NAME"
             git reset --hard "origin/$GITHUB_REF_NAME"
+            # Replace the output trees rather than merging into them. cp -r only
+            # adds and overwrites: a playlist this run deliberately removed would
+            # survive in the reset tree and be republished as an orphan, which is
+            # how nineteen unreachable files reached the TV.
+            rm -rf playlists site
             cp -r "$STAGE"/. . 2>/dev/null || true
             rm -rf "$STAGE"
             commit_outputs || exit 0
