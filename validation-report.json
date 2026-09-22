@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-09-22T11:27:56+00:00",
+  "generated_at": "2026-09-22T16:56:47+00:00",
   "build_kind": "validated",
   "warning": "",
   "live_channels": {
     "total": 1477,
-    "active": 1085,
-    "degraded": 87,
+    "active": 763,
+    "degraded": 407,
     "offline": 289,
-    "invalid": 16,
+    "invalid": 18,
     "unverified": 0,
     "by_category": {
       "movies": 472,
@@ -126,10 +126,10 @@
   },
   "resolution": {
     "measured_4k": 0,
-    "measured_1080p": 337,
-    "measured_720p": 199,
-    "measured_576p": 39,
-    "measured_480p": 28,
+    "measured_1080p": 339,
+    "measured_720p": 201,
+    "measured_576p": 38,
+    "measured_480p": 25,
     "unmeasured": 852,
     "note": "Counts come from #EXT-X-STREAM-INF RESOLUTION only. Source-claimed labels such as '(1080p)' in a channel name are never counted."
   },
@@ -155,293 +155,280 @@
   },
   "run_health": {
     "ok": true,
-    "reason": "2% of 1086 baseline channels regressed; within limits",
+    "reason": "29% of 1084 baseline channels regressed; within limits",
     "checked": 1477,
-    "newly_failing": 41,
-    "baseline_active": 1086,
-    "failure_fraction": 0.0349,
-    "regression_fraction": 0.0157
+    "newly_failing": 338,
+    "baseline_active": 1084,
+    "failure_fraction": 0.2884,
+    "regression_fraction": 0.2943
   },
   "last_probe": {
     "$comment": "What the most recent run actually measured, before the 3-strike demotion rule is applied. `live_channels` above reports stored status, which lags deliberately.",
     "counts": {
-      "ACTIVE": 1085,
-      "OFFLINE": 309,
-      "DEGRADED": 53,
-      "INVALID": 30
+      "ACTIVE": 763,
+      "OFFLINE": 606,
+      "DEGRADED": 74,
+      "INVALID": 34
     },
     "failing_stage": {
-      "OFFLINE:http": 295,
-      "DEGRADED:variant": 32,
-      "INVALID:manifest": 30,
-      "DEGRADED:segment": 15,
-      "OFFLINE:dns": 14,
-      "DEGRADED:none": 6
+      "OFFLINE:http": 589,
+      "DEGRADED:variant": 43,
+      "INVALID:manifest": 34,
+      "DEGRADED:none": 18,
+      "OFFLINE:dns": 17,
+      "DEGRADED:segment": 13
     }
   },
   "reliability": {
     "channels_with_history": 1477,
-    "mean_reliability": 0.775,
-    "fully_reliable": 1015,
+    "mean_reliability": 0.7577,
+    "fully_reliable": 743,
     "never_once_up": 289,
     "flapping": [
       {
-        "id": "ch-17a477efe4",
-        "name": "All Time Movies",
-        "reliability": 0.25,
-        "checks": 12
-      },
-      {
-        "id": "ch-716bf2f06e",
-        "name": "De Pelicula Latin America",
-        "reliability": 0.25,
-        "checks": 12
-      },
-      {
-        "id": "ch-1ad5ac9e1d",
-        "name": "ETV Cinema",
-        "reliability": 0.25,
-        "checks": 12
+        "id": "ch-7304184149",
+        "name": "Nick Bangla",
+        "reliability": 0.293,
+        "checks": 41
       },
       {
         "id": "ch-3b587c8865",
         "name": "FilmBox",
-        "reliability": 0.275,
-        "checks": 40
-      },
-      {
-        "id": "ch-7304184149",
-        "name": "Nick Bangla",
-        "reliability": 0.3,
-        "checks": 40
+        "reliability": 0.293,
+        "checks": 41
       },
       {
         "id": "ch-7ccfcd9b22",
         "name": "Sony Max",
+        "reliability": 0.293,
+        "checks": 41
+      },
+      {
+        "id": "ch-16e6a9fc9f",
+        "name": "4Dmas Noticias TV",
         "reliability": 0.3,
-        "checks": 40
-      },
-      {
-        "id": "ch-6066453b6f",
-        "name": "Love Natural",
-        "reliability": 0.325,
-        "checks": 40
-      },
-      {
-        "id": "ch-129414515c",
-        "name": "Sananda",
-        "reliability": 0.325,
-        "checks": 40
-      },
-      {
-        "id": "ch-676957d364",
-        "name": "Sun Bangla",
-        "reliability": 0.325,
-        "checks": 40
+        "checks": 10
       },
       {
         "id": "ch-d5d020f44a",
         "name": "Acasa Gold",
-        "reliability": 0.333,
-        "checks": 12
+        "reliability": 0.308,
+        "checks": 13
       },
       {
         "id": "ch-d9ae2970fb",
         "name": "Acasa HD",
-        "reliability": 0.333,
-        "checks": 12
+        "reliability": 0.308,
+        "checks": 13
       },
       {
-        "id": "ch-c543cdc108",
-        "name": "Canal Nets",
-        "reliability": 0.333,
-        "checks": 9
+        "id": "ch-716bf2f06e",
+        "name": "De Pelicula Latin America",
+        "reliability": 0.308,
+        "checks": 13
       },
       {
-        "id": "ch-976a881e50",
-        "name": "Hero",
-        "reliability": 0.333,
-        "checks": 9
+        "id": "ch-1ad5ac9e1d",
+        "name": "ETV Cinema",
+        "reliability": 0.308,
+        "checks": 13
+      },
+      {
+        "id": "ch-6066453b6f",
+        "name": "Love Natural",
+        "reliability": 0.341,
+        "checks": 41
+      },
+      {
+        "id": "ch-129414515c",
+        "name": "Sananda",
+        "reliability": 0.341,
+        "checks": 41
+      },
+      {
+        "id": "ch-676957d364",
+        "name": "Sun Bangla",
+        "reliability": 0.341,
+        "checks": 41
       },
       {
         "id": "ch-2526a07356",
         "name": "Willow",
-        "reliability": 0.35,
-        "checks": 40
-      },
-      {
-        "id": "ch-0d7f702e48",
-        "name": "Fox Sports 2",
-        "reliability": 0.375,
-        "checks": 40
-      },
-      {
-        "id": "ch-5cc55e1ac4",
-        "name": "Channel S",
-        "reliability": 0.4,
-        "checks": 40
+        "reliability": 0.341,
+        "checks": 41
       },
       {
         "id": "ch-8b7673f626",
         "name": "Balapan International",
-        "reliability": 0.4,
-        "checks": 10
+        "reliability": 0.364,
+        "checks": 11
+      },
+      {
+        "id": "ch-0d7f702e48",
+        "name": "Fox Sports 2",
+        "reliability": 0.366,
+        "checks": 41
       },
       {
         "id": "ch-965fac492f",
         "name": ".red",
-        "reliability": 0.417,
-        "checks": 12
+        "reliability": 0.385,
+        "checks": 13
       },
       {
         "id": "ch-4beb7120f3",
         "name": "Belarus-2 HD",
-        "reliability": 0.417,
-        "checks": 12
+        "reliability": 0.385,
+        "checks": 13
+      },
+      {
+        "id": "ch-c543cdc108",
+        "name": "Canal Nets",
+        "reliability": 0.4,
+        "checks": 10
+      },
+      {
+        "id": "ch-976a881e50",
+        "name": "Hero",
+        "reliability": 0.4,
+        "checks": 10
+      },
+      {
+        "id": "ch-5cc55e1ac4",
+        "name": "Channel S",
+        "reliability": 0.415,
+        "checks": 41
       },
       {
         "id": "ch-467d43405b",
         "name": "Canal Chilote",
-        "reliability": 0.417,
-        "checks": 12
+        "reliability": 0.462,
+        "checks": 13
       },
       {
         "id": "ch-d429a5c212",
         "name": "Global TV",
-        "reliability": 0.475,
-        "checks": 40
-      },
-      {
-        "id": "ch-e90153538c",
-        "name": "Rupashi Bangla TV",
-        "reliability": 0.5,
-        "checks": 10
+        "reliability": 0.488,
+        "checks": 41
       },
       {
         "id": "ch-a0f0b63e98",
         "name": "Desh TV",
-        "reliability": 0.525,
-        "checks": 40
-      },
-      {
-        "id": "ch-b55bcca7df",
-        "name": "Islamic TV",
-        "reliability": 0.55,
-        "checks": 40
-      },
-      {
-        "id": "ch-787284cc9b",
-        "name": "Ekhon",
-        "reliability": 0.575,
-        "checks": 40
-      },
-      {
-        "id": "ch-00d7c1cd76",
-        "name": "Green TV",
-        "reliability": 0.575,
-        "checks": 40
+        "reliability": 0.537,
+        "checks": 41
       },
       {
         "id": "ch-0c8b0c404f",
         "name": "Armenia Premium",
-        "reliability": 0.583,
-        "checks": 12
-      },
-      {
-        "id": "ch-92a191b0cf",
-        "name": "Enter-Film",
-        "reliability": 0.583,
-        "checks": 12
+        "reliability": 0.538,
+        "checks": 13
       },
       {
         "id": "ch-72ce5d89bb",
         "name": "ETV Cinema HD",
-        "reliability": 0.583,
-        "checks": 12
+        "reliability": 0.538,
+        "checks": 13
+      },
+      {
+        "id": "ch-e90153538c",
+        "name": "Rupashi Bangla TV",
+        "reliability": 0.545,
+        "checks": 11
       },
       {
         "id": "ch-c4c9803c6f",
         "name": "Al Jazeera English HD",
-        "reliability": 0.6,
-        "checks": 10
-      },
-      {
-        "id": "ch-ae793780a7",
-        "name": "Medina Live",
-        "reliability": 0.6,
-        "checks": 40
-      },
-      {
-        "id": "ch-a3769a7dcc",
-        "name": "4ever Drama",
-        "reliability": 0.6,
-        "checks": 10
-      },
-      {
-        "id": "ch-c0fb8cf6ac",
-        "name": "FUTV",
-        "reliability": 0.6,
-        "checks": 10
+        "reliability": 0.545,
+        "checks": 11
       },
       {
         "id": "ch-4164593686",
         "name": "LRT Plius",
+        "reliability": 0.545,
+        "checks": 11
+      },
+      {
+        "id": "ch-00d7c1cd76",
+        "name": "Green TV",
+        "reliability": 0.561,
+        "checks": 41
+      },
+      {
+        "id": "ch-b55bcca7df",
+        "name": "Islamic TV",
+        "reliability": 0.561,
+        "checks": 41
+      },
+      {
+        "id": "ch-c660cf739c",
+        "name": "CBeebies Asia India",
+        "reliability": 0.571,
+        "checks": 7
+      },
+      {
+        "id": "ch-787284cc9b",
+        "name": "Ekhon",
+        "reliability": 0.585,
+        "checks": 41
+      },
+      {
+        "id": "ch-306579e09b",
+        "name": "HOT Drama",
         "reliability": 0.6,
         "checks": 10
       },
       {
-        "id": "ch-97844498e0",
-        "name": "Disney Channel Latin America",
-        "reliability": 0.615,
-        "checks": 13
-      },
-      {
-        "id": "ch-15055bf00d",
-        "name": "Amedia Hit",
-        "reliability": 0.615,
-        "checks": 13
-      },
-      {
         "id": "ch-8fd784bf92",
         "name": "Ekushe TV",
-        "reliability": 0.625,
-        "checks": 40
+        "reliability": 0.61,
+        "checks": 41
+      },
+      {
+        "id": "ch-ae793780a7",
+        "name": "Medina Live",
+        "reliability": 0.61,
+        "checks": 41
+      },
+      {
+        "id": "ch-25df410ee2",
+        "name": "4ever Theater",
+        "reliability": 0.615,
+        "checks": 13
+      },
+      {
+        "id": "ch-21c433cb0a",
+        "name": "AMC Latin America Brazil",
+        "reliability": 0.615,
+        "checks": 13
+      },
+      {
+        "id": "ch-92a191b0cf",
+        "name": "Enter-Film",
+        "reliability": 0.615,
+        "checks": 13
+      },
+      {
+        "id": "ch-980e90d4d4",
+        "name": "Nashe Lubimoe Kino Ukraine",
+        "reliability": 0.615,
+        "checks": 13
+      },
+      {
+        "id": "ch-7ba80413db",
+        "name": "Retro",
+        "reliability": 0.615,
+        "checks": 13
       },
       {
         "id": "ch-a718b81488",
         "name": "My TV",
-        "reliability": 0.625,
-        "checks": 40
-      },
-      {
-        "id": "ch-8090d498ec",
-        "name": "News 21 Bangla TV",
-        "reliability": 0.65,
-        "checks": 40
-      },
-      {
-        "id": "ch-d75f2701f4",
-        "name": "Disney Junior",
-        "reliability": 0.65,
-        "checks": 40
+        "reliability": 0.634,
+        "checks": 41
       }
     ],
     "note": "reliability is checks_ok/checks_total across validation runs; a channel with checks_total == 0 has never been measured."
   },
   "history": [
-    {
-      "at": "2026-09-20T14:29:25+00:00",
-      "counts": {
-        "ACTIVE": 1076,
-        "OFFLINE": 320,
-        "DEGRADED": 56,
-        "INVALID": 29
-      },
-      "health_ok": true,
-      "health_reason": "1% of 722 baseline channels regressed; within limits",
-      "failure_fraction": 0.208,
-      "regression_fraction": 0.0055
-    },
     {
       "at": "2026-09-20T15:33:54+00:00",
       "counts": {
@@ -558,12 +545,25 @@
       "health_reason": "2% of 1086 baseline channels regressed; within limits",
       "failure_fraction": 0.0349,
       "regression_fraction": 0.0157
+    },
+    {
+      "at": "2026-09-22T16:27:55+00:00",
+      "counts": {
+        "ACTIVE": 763,
+        "OFFLINE": 606,
+        "DEGRADED": 74,
+        "INVALID": 34
+      },
+      "health_ok": true,
+      "health_reason": "29% of 1084 baseline channels regressed; within limits",
+      "failure_fraction": 0.2884,
+      "regression_fraction": 0.2943
     }
   ],
   "epg": {
-    "channels_in_epg": 878,
+    "channels_in_epg": 650,
     "channels_with_programmes": 0,
-    "channels_without_programmes": 878,
+    "channels_without_programmes": 650,
     "programmes": 0,
     "dropped": 0,
     "coverage_percent": 0.0,
@@ -571,7 +571,7 @@
     "guide_sources_available": 629,
     "channels_total": 1477,
     "channels_with_canonical_id": 1410,
-    "bytes": 148632,
+    "bytes": 106342,
     "guide_coverage": {
       "9XJalwa.in": [
         {
@@ -18646,32 +18646,12 @@
     ],
     "status_degraded": [
       {
-        "id": "ch-5cc55e1ac4",
-        "name": "Channel S"
-      },
-      {
-        "id": "ch-630f14b47e",
-        "name": "Channel S (Bangladesh)"
-      },
-      {
         "id": "ch-a0f0b63e98",
         "name": "Desh TV"
       },
       {
-        "id": "ch-787284cc9b",
-        "name": "Ekhon"
-      },
-      {
-        "id": "ch-8fd784bf92",
-        "name": "Ekushe TV"
-      },
-      {
         "id": "ch-d429a5c212",
         "name": "Global TV"
-      },
-      {
-        "id": "ch-00d7c1cd76",
-        "name": "Green TV"
       },
       {
         "id": "ch-f110db1460",
@@ -18686,12 +18666,12 @@
         "name": "ClickTV Chile"
       },
       {
-        "id": "ch-ade3407529",
-        "name": "Ecovision"
-      },
-      {
         "id": "ch-2ade37a728",
         "name": "Francophonie24"
+      },
+      {
+        "id": "ch-1f11408447",
+        "name": "History Asia"
       },
       {
         "id": "ch-4185159828",
@@ -18700,10 +18680,6 @@
       {
         "id": "ch-4beb7120f3",
         "name": "Belarus-2 HD"
-      },
-      {
-        "id": "ch-c543cdc108",
-        "name": "Canal Nets"
       },
       {
         "id": "ch-6b73c7e571",
@@ -18734,8 +18710,44 @@
         "name": "Sony Yay!"
       },
       {
-        "id": "ch-17a477efe4",
-        "name": "All Time Movies"
+        "id": "ch-fcea52f700",
+        "name": "30A TV Classic Movies"
+      },
+      {
+        "id": "ch-3550299322",
+        "name": "City Eden KinoAction"
+      },
+      {
+        "id": "ch-d67ccf4fbd",
+        "name": "City Eden KinoArt"
+      },
+      {
+        "id": "ch-5657438d41",
+        "name": "City Eden KinoAsia"
+      },
+      {
+        "id": "ch-e373f4745e",
+        "name": "City Eden KinoDetektiv"
+      },
+      {
+        "id": "ch-07b68a9b1c",
+        "name": "City Eden KinoDrama"
+      },
+      {
+        "id": "ch-b869a21bfe",
+        "name": "City Eden KinoFantastika"
+      },
+      {
+        "id": "ch-ef03c81c9c",
+        "name": "City Eden KinoKlassika"
+      },
+      {
+        "id": "ch-d925833fdf",
+        "name": "City Eden KinoKomediya"
+      },
+      {
+        "id": "ch-1748621300",
+        "name": "City Eden KinoMistika"
       },
       {
         "id": "ch-1ad5ac9e1d",
@@ -18750,12 +18762,20 @@
         "name": "NEW K.MOVIES"
       },
       {
+        "id": "ch-423bc00a7c",
+        "name": "ON Movies"
+      },
+      {
         "id": "ch-470aba2a6c",
         "name": "Smotrim 100% Klassika"
       },
       {
         "id": "ch-10c20c99d4",
         "name": "The Carol Burnett Show"
+      },
+      {
+        "id": "ch-b414873abf",
+        "name": "TVS Retro"
       },
       {
         "id": "ch-adc2aa57c3",
@@ -18842,6 +18862,14 @@
         "name": "Balabol"
       },
       {
+        "id": "ch-eba583a096",
+        "name": "City Eden KinoDok"
+      },
+      {
+        "id": "ch-74c584d077",
+        "name": "City Eden TeleNovella"
+      },
+      {
         "id": "ch-fb1b0ff166",
         "name": "30A Golf Kingdom"
       },
@@ -18854,16 +18882,8 @@
         "name": "Esport3 Originals"
       },
       {
-        "id": "ch-11ba7585ee",
-        "name": "Game+"
-      },
-      {
         "id": "ch-c08d141550",
         "name": "KTV Sport Plus"
-      },
-      {
-        "id": "ch-37e9ee2459",
-        "name": "T Sports HD"
       }
     ],
     "status_invalid": [
@@ -18874,6 +18894,10 @@
       {
         "id": "ch-c37b64312b",
         "name": "World Channel"
+      },
+      {
+        "id": "ch-b773ffffe9",
+        "name": "NickOnline Bob Esponja"
       },
       {
         "id": "ch-92c1eaea04",
@@ -18892,6 +18916,14 @@
       {
         "id": "ch-0bc4c14b1a",
         "name": "Ekhon TV"
+      },
+      {
+        "id": "ch-8fd784bf92",
+        "name": "Ekushe TV"
+      },
+      {
+        "id": "ch-00d7c1cd76",
+        "name": "Green TV"
       },
       {
         "id": "ch-4015ae0fbf",
@@ -19034,20 +19066,12 @@
         "name": "Geekdot"
       },
       {
-        "id": "ch-fe32bc39d6",
-        "name": "JapanimTV"
-      },
-      {
         "id": "ch-c0b7eedc6e",
         "name": "Jiangxi Children's Channel"
       },
       {
         "id": "ch-fe5afa1d8c",
         "name": "Multimania"
-      },
-      {
-        "id": "ch-b773ffffe9",
-        "name": "NickOnline Bob Esponja"
       },
       {
         "id": "ch-248a09ce3f",
@@ -19060,6 +19084,10 @@
       {
         "id": "ch-7fb7af1118",
         "name": "Afghan Nobel Movies"
+      },
+      {
+        "id": "ch-17a477efe4",
+        "name": "All Time Movies"
       },
       {
         "id": "ch-dd436f008c",
@@ -19158,10 +19186,6 @@
         "name": "Ghost TV"
       },
       {
-        "id": "ch-976a881e50",
-        "name": "Hero"
-      },
-      {
         "id": "ch-c2ab6d1293",
         "name": "iFilm 2"
       },
@@ -19244,10 +19268,6 @@
       {
         "id": "ch-a6517d6adb",
         "name": "Sangeet Bhojpuri"
-      },
-      {
-        "id": "ch-16e6a9fc9f",
-        "name": "4Dmas Noticias TV"
       },
       {
         "id": "ch-0f8690b1d6",
@@ -19372,8 +19392,28 @@
     ],
     "unreliable": [
       {
+        "id": "ch-5cc55e1ac4",
+        "name": "Channel S"
+      },
+      {
+        "id": "ch-787284cc9b",
+        "name": "Ekhon"
+      },
+      {
         "id": "ch-467d43405b",
         "name": "Canal Chilote"
+      },
+      {
+        "id": "ch-c543cdc108",
+        "name": "Canal Nets"
+      },
+      {
+        "id": "ch-976a881e50",
+        "name": "Hero"
+      },
+      {
+        "id": "ch-16e6a9fc9f",
+        "name": "4Dmas Noticias TV"
       }
     ]
   },
@@ -19381,10 +19421,10 @@
     "denied_host": 313,
     "plain_http": 336,
     "requires_custom_http_headers": 127,
-    "status_degraded": 55,
-    "status_invalid": 4,
-    "status_offline": 121,
-    "unreliable": 1
+    "status_degraded": 60,
+    "status_invalid": 5,
+    "status_offline": 120,
+    "unreliable": 6
   },
   "broken_urls": [
     {
@@ -19416,11 +19456,25 @@
       "note": "source claimed quality '1080p' (unverified)"
     },
     {
+      "id": "ch-8fd784bf92",
+      "name": "Ekushe TV",
+      "status": "OFFLINE",
+      "host": "app24.jagobd.com.bd",
+      "note": ""
+    },
+    {
       "id": "ch-589eca07cd",
       "name": "Gazi TV",
       "status": "OFFLINE",
       "host": "tvn1.chowdhury-shaheb.com",
       "note": "source claimed quality '1080p' (unverified)"
+    },
+    {
+      "id": "ch-00d7c1cd76",
+      "name": "Green TV",
+      "status": "OFFLINE",
+      "host": "app24.jagobd.com.bd",
+      "note": ""
     },
     {
       "id": "ch-4015ae0fbf",
@@ -19941,6 +19995,13 @@
       "note": "source claimed quality '1080p' (unverified)"
     },
     {
+      "id": "ch-c660cf739c",
+      "name": "CBeebies Asia India",
+      "status": "OFFLINE",
+      "host": "202.70.146.135:8000",
+      "note": "source claimed quality '576p' (unverified)"
+    },
+    {
       "id": "ch-3ff2a50fa0",
       "name": "Cine+ Kids",
       "status": "OFFLINE",
@@ -20032,13 +20093,6 @@
       "note": "source claimed quality '576p' (unverified)"
     },
     {
-      "id": "ch-fe32bc39d6",
-      "name": "JapanimTV",
-      "status": "OFFLINE",
-      "host": "foxkidstv.be:3369",
-      "note": "source claimed quality '1080p' (unverified)"
-    },
-    {
       "id": "ch-c0b7eedc6e",
       "name": "Jiangxi Children's Channel",
       "status": "OFFLINE",
@@ -20062,7 +20116,7 @@
     {
       "id": "ch-b773ffffe9",
       "name": "NickOnline Bob Esponja",
-      "status": "OFFLINE",
+      "status": "INVALID",
       "host": "bob.x1colegal.com",
       "note": "source marks the channel as not 24/7"
     },
@@ -20121,6 +20175,13 @@
       "status": "OFFLINE",
       "host": "live.relentlessinnovations.net:1936",
       "note": "source claimed quality '720p' (unverified)"
+    },
+    {
+      "id": "ch-17a477efe4",
+      "name": "All Time Movies",
+      "status": "OFFLINE",
+      "host": "tvsen6.aynaott.com",
+      "note": "source claimed quality '576p' (unverified)"
     },
     {
       "id": "ch-dd436f008c",
@@ -20543,13 +20604,6 @@
       "note": "source claimed quality '720p' (unverified)"
     },
     {
-      "id": "ch-976a881e50",
-      "name": "Hero",
-      "status": "OFFLINE",
-      "host": "live-fi.tvkaista.net",
-      "note": "source marks the channel as not 24/7"
-    },
-    {
       "id": "ch-005f97e2af",
       "name": "Hit HD",
       "status": "OFFLINE",
@@ -20935,13 +20989,6 @@
       "note": "source claimed quality '1080p' (unverified)"
     },
     {
-      "id": "ch-16e6a9fc9f",
-      "name": "4Dmas Noticias TV",
-      "status": "OFFLINE",
-      "host": "rds3.desdeparaguay.net",
-      "note": "source marks the channel as not 24/7"
-    },
-    {
       "id": "ch-4bdc094987",
       "name": ":24",
       "status": "OFFLINE",
@@ -21115,6 +21162,13 @@
       "status": "OFFLINE",
       "host": "jmp2.uk",
       "note": ""
+    },
+    {
+      "id": "ch-306579e09b",
+      "name": "HOT Drama",
+      "status": "INVALID",
+      "host": "stream.mcquack.net",
+      "note": "source claimed quality '1080p' (unverified); source required custom HTTP headers"
     },
     {
       "id": "ch-ac20082f05",
@@ -22077,8 +22131,8 @@
   },
   "playlists": {
     "files": {
-      "live/bangladesh.m3u": 7019,
-      "live/documentary.m3u": 10557,
+      "live/bangladesh.m3u": 7447,
+      "live/documentary.m3u": 10487,
       "live/entertainment/region-us.m3u": 2523,
       "live/entertainment/region-in.m3u": 2303,
       "live/entertainment/region-do.m3u": 807,
@@ -22087,20 +22141,20 @@
       "live/entertainment/region-ar.m3u": 905,
       "live/entertainment/region-ch.m3u": 996,
       "live/entertainment.m3u": 1462,
-      "live/kids.m3u": 11273,
+      "live/kids.m3u": 11532,
       "live/lifestyle.m3u": 2242,
-      "live/movies/region-other.m3u": 8136,
-      "live/movies/region-us.m3u": 8160,
+      "live/movies/region-other.m3u": 7735,
+      "live/movies/region-us.m3u": 7976,
       "live/movies/region-sa.m3u": 1047,
       "live/movies/region-ir.m3u": 980,
-      "live/movies/region-in.m3u": 6938,
+      "live/movies/region-in.m3u": 6939,
       "live/movies/region-br.m3u": 865,
       "live/movies/region-es.m3u": 974,
       "live/movies/region-fr.m3u": 1914,
-      "live/movies/region-ru.m3u": 3712,
+      "live/movies/region-ru.m3u": 1699,
       "live/movies/region-pl.m3u": 1340,
       "live/movies/region-uk.m3u": 1402,
-      "live/movies.m3u": 2178,
+      "live/movies.m3u": 2176,
       "live/music.m3u": 3321,
       "live/news/news.m3u": 13297,
       "live/news/news-public.m3u": 843,
@@ -22108,8 +22162,8 @@
       "live/news.m3u": 580,
       "live/other.m3u": 2602,
       "live/religious.m3u": 1413,
-      "live/series.m3u": 8825,
-      "live/sports.m3u": 15010,
+      "live/series.m3u": 8387,
+      "live/sports.m3u": 15396,
       "live/live-tv.m3u": 2225,
       "movies/drama.m3u": 28715,
       "movies/romance.m3u": 8124,
@@ -22133,7 +22187,7 @@
       "movies/movies.m3u": 3506,
       "master.m3u": 1519
     },
-    "total_bytes": 291029,
+    "total_bytes": 288995,
     "structure_ok": true,
     "structure_errors": 0,
     "structure_warnings": 5,
