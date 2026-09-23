@@ -16,6 +16,7 @@ from pathlib import Path
 
 from ..models import Channel, slugify, stable_id
 from ..util.urls import check_url, host_of
+from ..content_policy import adult_channel_reason
 from ..classify import (categorise, clean_display_name, is_bangladeshi,
                         is_geo_blocked, is_not_24_7)
 
@@ -169,11 +170,18 @@ def entry_to_channel(entry: ParsedEntry, source_id: str) -> tuple[Channel | None
 
     raw_name = entry.attrs.get("tvg-name") or entry.title or "Unnamed"
 
-    # iptv-org annotates the display name with facts about the stream. A channel
-    # it marks geo-blocked cannot play from here, however healthy it looks to a
-    # probe run in another country - 26 such channels were reported ACTIVE.
-    if is_geo_blocked(raw_name):
-        return None, "source marks the channel geo-blocked"
+    # iptv-org annotates the display name with facts about the stream. These are
+    # recorded, not acted on here.
+    #
+    # [Geo-blocked] used to be an outright rejection at ingest. That was wrong,
+    # and wrong in the direction that hurt most. The tag means "restricted to
+    # its home territory"; it does not say restricted FROM Bangladesh. A
+    # Bangladeshi or Indian channel fenced to South Asia is exactly the channel
+    # the owner can watch and this validator - running in a US datacentre -
+    # cannot. Dropping it at ingest threw away the viewer's own region to
+    # protect a probe's vantage point. The channel is kept and tagged; the
+    # publication gate decides, with the viewer's region in hand.
+    geo_blocked = is_geo_blocked(raw_name)
     intermittent = is_not_24_7(raw_name)
 
     quality_claim = ""
@@ -183,6 +191,16 @@ def entry_to_channel(entry: ParsedEntry, source_id: str) -> tuple[Channel | None
     raw_name = clean_display_name(raw_name)
 
     group_slug = slugify(entry.attrs.get("group-title", ""))
+
+    # No adult material, on the owner's explicit instruction and because this
+    # library carries a Kids category on a family television. Screened here, at
+    # the door, so such a channel never enters the registry at all - the full
+    # aggregator index has a whole category of them, which the narrower category
+    # feeds this project started with never contained.
+    adult = adult_channel_reason(raw_name, group_slug)
+    if adult:
+        return None, f"adult content ({adult})"
+
     country, language = GROUP_TO_LOCALE.get(group_slug, ("", ""))
 
     tvg_id = entry.attrs.get("tvg-id", "")
@@ -208,6 +226,8 @@ def entry_to_channel(entry: ParsedEntry, source_id: str) -> tuple[Channel | None
         notes.append("source required custom HTTP headers")
     if intermittent:
         notes.append("source marks the channel as not 24/7")
+    if geo_blocked:
+        notes.append("source marks the channel geo-restricted to its home region")
 
     ch = Channel(
         id=stable_id("ch", raw_name, host_of(entry.url)),
@@ -225,7 +245,10 @@ def entry_to_channel(entry: ParsedEntry, source_id: str) -> tuple[Channel | None
         http_referrer=entry.vlc_opts.get("http-referrer", ""),
         http_user_agent=entry.vlc_opts.get("http-user-agent", ""),
         notes="; ".join(notes),
-        tags=[t for t in [group_slug] if t and t != "unknown"],
+        tags=[t for t in [group_slug,
+                          "geo-blocked" if geo_blocked else "",
+                          "not-24-7" if intermittent else ""]
+              if t and t != "unknown"],
     )
     return ch, ""
 

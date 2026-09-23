@@ -457,3 +457,73 @@ class TestDuplicateTiles(unittest.TestCase):
              self._ch("ABC News Live 2", 40, 40, "https://a/2.m3u8")],
             allow_unverified=False)
         self.assertEqual(len(pub), 2)
+
+
+class TestRegionBlockedChannels(unittest.TestCase):
+    """Validation runs in a US datacentre; the TV is in South Asia.
+
+    A South Asian broadcaster that fences its stream to its home region refuses
+    the runner and serves the owner. Withholding those channels measured the
+    distance between GitHub and Dhaka, not whether the owner can watch.
+    """
+
+    def setUp(self):
+        self.cfg = config.load(use_cache=False)
+        self.cfg["validation"]["publish_region_blocked"] = True
+        self.cfg["site"]["viewer_region_countries"] = ["bd", "in", "pk"]
+        self.gen = LiveGenerator(self.cfg, Path(tempfile.mkdtemp()))
+
+    def _ch(self, country, http=0, tags=(), status="OFFLINE", reason=""):
+        return Channel(id=f"c-{country}-{http}-{status}", name="C", category="news",
+                       country=country, status=status, stream_url="https://h/a.m3u8",
+                       last_http_status=http, status_reason=reason,
+                       tags=list(tags), checks_total=10, checks_ok=0)
+
+    def test_refusal_in_the_viewers_region_is_published(self):
+        for code in (403, 451):
+            pub, _ = self.gen._partition([self._ch("bd", http=code)],
+                                         allow_unverified=False)
+            self.assertEqual(len(pub), 1, code)
+
+    def test_source_marked_geo_block_in_region_is_published(self):
+        pub, _ = self.gen._partition([self._ch("in", tags=("news", "geo-blocked"))],
+                                     allow_unverified=False)
+        self.assertEqual(len(pub), 1)
+
+    def test_the_same_refusal_outside_the_region_is_not(self):
+        # A US channel that refuses a US runner will refuse Dhaka too.
+        pub, held = self.gen._partition([self._ch("us", http=403)], allow_unverified=False)
+        self.assertEqual(pub, [])
+        self.assertIn("status_offline", held)
+
+    def test_a_dead_host_in_the_region_is_still_withheld(self):
+        # No HTTP status at all means nothing answered: DNS failure, refused
+        # connection. That is dead everywhere, not fenced.
+        pub, held = self.gen._partition([self._ch("bd", http=0)], allow_unverified=False)
+        self.assertEqual(pub, [])
+
+    def test_a_404_in_the_region_is_still_withheld(self):
+        pub, _ = self.gen._partition([self._ch("bd", http=404)], allow_unverified=False)
+        self.assertEqual(pub, [])
+
+    def test_the_rule_can_be_switched_off(self):
+        self.cfg["validation"]["publish_region_blocked"] = False
+        gen = LiveGenerator(self.cfg, Path(tempfile.mkdtemp()))
+        pub, _ = gen._partition([self._ch("bd", http=403)], allow_unverified=False)
+        self.assertEqual(pub, [])
+
+
+class TestCheckOrdering(unittest.TestCase):
+    """The catalogue no longer fits in one CI run, so ordering decides what gets
+    measured. Never-checked first, then least recently verified: a new channel
+    is measured on the run that discovers it, and nothing can be starved."""
+
+    def test_never_checked_come_first_then_oldest(self):
+        from scripts.pipeline import _check_order
+        fresh = Channel(id="new", name="new", checks_total=0)
+        recent = Channel(id="recent", name="recent", checks_total=9,
+                         last_verified="2026-09-23T12:00:00+00:00")
+        stale = Channel(id="stale", name="stale", checks_total=9,
+                        last_verified="2026-09-01T12:00:00+00:00")
+        self.assertEqual([c.id for c in _check_order([recent, stale, fresh])],
+                         ["new", "stale", "recent"])

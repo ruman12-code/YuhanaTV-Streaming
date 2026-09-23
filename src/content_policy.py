@@ -33,6 +33,55 @@ _ALLOWLIST_RE = re.compile(
     re.IGNORECASE)
 
 
+# Live-TV screening needs more than the keyword list above. An adult channel is
+# usually named after its brand, which contains none of those words, and the
+# aggregators label the whole category rather than the channel. Both are checked
+# because either alone misses: iptv-org's group is "XXX", while a channel picked
+# up from an uncategorised index carries only its brand name.
+_ADULT_GROUPS = frozenset({
+    "xxx", "adult", "adults", "porn", "erotic", "erotica", "18", "18plus",
+    "for-adults", "adult-channels",
+})
+
+# Brands whose entire output is pornographic. Matched as whole words against the
+# channel name. Kept deliberately short and specific: every entry here is a
+# channel that exists in public aggregator lists, not a guess.
+_ADULT_BRANDS = (
+    r"brazzers", r"penthouse", r"playboy", r"hustler", r"vivid(?:\s?tv)?",
+    r"dorcel", r"private\s?tv", r"redlight", r"red\s?light\s?hd",
+    r"sextreme", r"sexy\s?hot", r"venus\s?tv", r"blue\s?hustler",
+    r"dusk\s?tv", r"passion\s?(?:tv|xxx)", r"eroxxx", r"leo\s?tv",
+    r"barely\s?legal", r"naked\s?news", r"babes?\s?tv", r"pink\s?erotic",
+    r"french\s?lover", r"hot\s?xxx", r"extasy\s?tv", r"sct\s?erotic",
+    r"o[\s-]?la[\s-]?la", r"visit[\s-]?x", r"daring\s?tv", r"sexstation",
+)
+_ADULT_BRAND_RE = re.compile(
+    r"(?<![\w])(?:" + "|".join(_ADULT_BRANDS) + r")(?![\w])", re.IGNORECASE)
+
+
+def adult_channel_reason(name: str, group_slug: str = "", tags=()) -> str:
+    """Return why a LIVE channel reads as adult, or '' if it does not.
+
+    Three independent signals, because no one of them is sufficient:
+      * the aggregator's own category (iptv-org files these under "XXX"),
+      * a known pornographic brand in the channel name,
+      * the generic keyword list used for the film library.
+    """
+    # Group titles are compound in the aggregator feeds ("Movies;Series" comes
+    # through as "movies-series"), so every token is checked, not the whole slug.
+    slug = (group_slug or "").strip().lower()
+    for token in [slug] + slug.split("-"):
+        if token in _ADULT_GROUPS:
+            return f"category '{token}'"
+    for t in tags or ():
+        if str(t).strip().lower() in _ADULT_GROUPS:
+            return f"tag '{t}'"
+    brand = _ADULT_BRAND_RE.search(name or "")
+    if brand:
+        return f"brand '{brand.group(0).lower()}'"
+    return adult_reason(name)
+
+
 def adult_reason(*fields: str) -> str:
     """Return the matched term if anything reads as adult material, else ''."""
     haystack = " ".join(f for f in fields if f)

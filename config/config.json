@@ -4,7 +4,17 @@
     "base_url": "https://ruman12-code.github.io/YuhanaTV-Streaming",
     "playlist_path": "/playlists",
     "epg_path": "/epg",
-    "brand": "YuhanaTV"
+    "brand": "YuhanaTV",
+    "viewer_region_countries": [
+      "bd",
+      "in",
+      "pk",
+      "lk",
+      "np",
+      "bt",
+      "mv"
+    ],
+    "$comment_viewer_region": "Where the TV actually is. This is an assumption - inferred from the project being built around Bangladesh priority and the owner's original playlist - and it is here rather than in code so it can be corrected in one place. It matters because validation runs on a GitHub runner in the United States: a South Asian channel fenced to its home region refuses the runner and serves the owner. Those channels are published on the strength of where the viewer is, not where the probe is."
   },
   "ssiptv": {
     "$comment": "Limits taken from SS IPTV operator documentation and Smart-TV memory constraints.",
@@ -27,9 +37,22 @@
     "region_split_categories": [
       "movies",
       "series",
-      "entertainment"
+      "entertainment",
+      "news",
+      "music",
+      "documentary",
+      "religious",
+      "sports",
+      "kids",
+      "lifestyle",
+      "educational",
+      "business",
+      "international",
+      "other"
     ],
-    "$comment_navigation": "Sports and Kids stay as one alphabetical list each: the owner asked to browse them straight through, and pagination already keeps any single screen inside the tile budget."
+    "$comment_navigation": "Sports and Kids stay as one alphabetical list each: the owner asked to browse them straight through, and pagination already keeps any single screen inside the tile budget.",
+    "protected_subsplit_threshold": 120,
+    "$comment_subsplit": "never_subsplit no longer means never: those categories stay on one flat screen while they fit inside protected_subsplit_threshold, and split by country beyond it. Against the full iptv-org index Sports and Kids run to four figures, and a flat list cut into a dozen numbered pages is harder to navigate than a country folder. Bangladesh is still never split - it is a country bucket already."
   },
   "validation": {
     "timeout_connect_seconds": 8,
@@ -40,7 +63,7 @@
       2,
       5
     ],
-    "concurrency": 8,
+    "concurrency": 40,
     "per_host_concurrency": 2,
     "per_host_delay_seconds": 1.0,
     "check_first_segment": true,
@@ -71,7 +94,12 @@
     },
     "publish_slow_degraded": true,
     "slow_degraded_min_reliability": 0.7,
-    "$comment_slow_degraded": "DEGRADED covers three unrelated conditions: a slow origin (plays, just starts slower), an unfetchable segment or variant (black screen), and the holding state for a channel that failed once but not enough times to be condemned. Publishing only ACTIVE conflated them and dropped T Sports HD from the Bangladesh screen on 38 of 46 successful probes. A channel is re-admitted only when the recorded reason is latency, consecutive_failures is 0, and reliability is at least slow_degraded_min_reliability."
+    "$comment_slow_degraded": "DEGRADED covers three unrelated conditions: a slow origin (plays, just starts slower), an unfetchable segment or variant (black screen), and the holding state for a channel that failed once but not enough times to be condemned. Publishing only ACTIVE conflated them and dropped T Sports HD from the Bangladesh screen on 38 of 46 successful probes. A channel is re-admitted only when the recorded reason is latency, consecutive_failures is 0, and reliability is at least slow_degraded_min_reliability.",
+    "publish_region_blocked": true,
+    "$comment_region_blocked": "A channel in the viewer's region that answers the probe with 403 or 451, or that its source marks geo-restricted, is published even though the US probe could not play it. The probe's verdict carries no information about the viewer's own network in that case, and the owner asked not to have playable channels withheld. It does NOT relax anything for channels outside the viewer's region, where a 403 means the owner cannot play it either.",
+    "$comment_concurrency": "Raised from 8 for the full iptv-org catalogue - roughly 10,000 channels instead of 1,800. per_host_concurrency and per_host_delay_seconds are unchanged, so no single origin is probed any harder than before; only the number of DIFFERENT hosts in flight goes up.",
+    "max_check_seconds": 2400,
+    "$comment_check_budget": "40 minutes. The full aggregator index does not fit in one CI run, so a run probes never-checked channels first, then the least recently verified, and stops at the first chunk boundary past the budget. The next run continues where it stopped, so the whole catalogue is covered over a few passes and no channel is starved. Chunked rather than cancelled mid-probe: an interrupted probe would count as a failure and push a working channel towards OFFLINE on nothing but a clock."
   },
   "security": {
     "allowed_url_schemes": [
@@ -95,18 +123,14 @@
     "require_https_streams": false,
     "$comment_https": "OFF, and it should stay off. This was switched on assuming SS IPTV refuses plain-http streams as mixed content. That assumption was never tested and was wrong: the owner's original working playlist was 31% plain http and played fine. The gate removed 333 channels including AXN, Star Movies, HBO, Sony Max and Star Sports. The other gates here are evidence-based; this one was not.",
     "denied_stream_hosts": [
-      "jmp2.uk",
       "tinyurl.com",
       "bit.ly",
-      "short.gy",
-      "xemzi.short.gy",
       "t.co",
       "is.gd",
-      "stitcher-ipv4.pluto.tv",
-      "stitcher.pluto.tv",
-      "service-stitcher.clusters.pluto.tv"
+      "short.gy",
+      "xemzi.short.gy"
     ],
-    "$comment_denied_hosts": "Two groups. URL shorteners hide the real origin, so the stream cannot be judged and the target can change under us. Pluto's stitcher builds a per-session ad-stitched manifest that is geo-restricted and expires, so a URL that validated is dead later."
+    "$comment_denied_hosts": "General-purpose shorteners only. These can point anywhere, they are not operated by anyone in the streaming chain, and their target changes without notice. jmp2.uk and the Pluto stitcher hosts used to be on this list: that was a blanket ban standing in for a check we were not making, and it withheld 1,020 channels that probe ACTIVE at 92% reliability. The publication gate now runs its safety rules on the recorded redirect destination as well as the advertised URL, which is the real answer."
   },
   "policy": {
     "$comment": "Content-rights gating. 'require_rights_review' blocks a source from the published playlist until a human sets redistribution_allowed.",

@@ -55,6 +55,8 @@ class LiveGenerator:
         # single SS IPTV screen has to load an unbounded number of tiles (spec 22/34).
         self.subsplit_threshold = int(cfg.get_path("ssiptv.subsplit_threshold", 40))
         self.never_subsplit = set(cfg.get_path("ssiptv.never_subsplit", []))
+        self.protected_subsplit_threshold = int(
+            cfg.get_path("ssiptv.protected_subsplit_threshold", 120))
         # Categories large enough that "where is this from" is the useful first
         # question. Splitting Movies by region beats one 250-channel wall.
         self.region_split = set(cfg.get_path("ssiptv.region_split_categories", []))
@@ -81,6 +83,15 @@ class LiveGenerator:
             cfg.get_path("validation.publish_slow_degraded", True))
         self.slow_degraded_min_reliability = float(
             cfg.get_path("validation.slow_degraded_min_reliability", 0.7))
+        # Validation runs in a US datacentre; the TV is in South Asia. When an
+        # origin in the viewer's own region refuses the runner, the probe has
+        # measured the distance between GitHub and the broadcaster, not whether
+        # the owner can watch. Those channels are published on the strength of
+        # where the viewer is.
+        self.publish_region_blocked = bool(
+            cfg.get_path("validation.publish_region_blocked", True))
+        self.viewer_region = {
+            str(c).lower() for c in cfg.get_path("site.viewer_region_countries", []) or ()}
 
     # --- gating --------------------------------------------------------------
 
@@ -107,8 +118,17 @@ class LiveGenerator:
             if not ch.stream_url:
                 hold("no_stream_url", ch)
                 continue
+            # Both the advertised URL and the endpoint it actually redirects to.
+            # Checking only the first let a link shortener carry anything past
+            # every rule here, which is why shorteners had to be banned outright.
+            # Measuring the destination is the better answer than banning the
+            # door: it also caught nothing being hidden behind iptv-org's own
+            # redirector, which a blanket ban was withholding 1,020 channels for.
             verdict = check_url(ch.stream_url, require_https=self.require_https,
                                 denied_hosts=self.denied_hosts)
+            if verdict.ok and ch.final_url and ch.final_url != ch.stream_url:
+                verdict = check_url(ch.final_url, require_https=self.require_https,
+                                    denied_hosts=self.denied_hosts)
             if not verdict.ok:
                 reason = ("plain_http" if "plain http" in verdict.reason
                           else "denied_host" if "denied-host" in verdict.reason
@@ -119,6 +139,9 @@ class LiveGenerator:
                 continue
             if ch.status not in allowed and not (
                     ch.status == "DEGRADED" and self._slow_but_working(ch)):
+                if self._blocked_from_here_only(ch):
+                    published.append(ch)
+                    continue
                 hold(f"status_{ch.status.lower()}", ch)
                 continue
             # Applied to slow-but-working channels too, so the re-admission above
@@ -151,6 +174,26 @@ class LiveGenerator:
         if ch.checks_total < self.min_checks_for_gate:
             return False
         return ch.reliability >= self.slow_degraded_min_reliability
+
+    def _blocked_from_here_only(self, ch) -> bool:
+        """True when the probe's failure says more about the runner than the stream.
+
+        Both halves are required. The channel must be in the viewer's own region,
+        and the failure must look like a refusal rather than an absence: an
+        explicit 403/451, or a source that marks the channel fenced to its home
+        territory. A DNS failure, a refused connection or a 404 is a dead stream
+        everywhere and stays withheld.
+
+        Nothing outside the viewer's region is relaxed: there a 403 means the
+        owner cannot play it either.
+        """
+        if not self.publish_region_blocked or not self.viewer_region:
+            return False
+        if (ch.country or "").lower() not in self.viewer_region:
+            return False
+        if ch.last_http_status in (403, 451):
+            return True
+        return "geo-blocked" in (ch.tags or [])
 
     def _collapse_duplicates(self, published: list[Channel], hold) -> list[Channel]:
         """One tile per channel, keeping the best-evidenced entry.
@@ -324,7 +367,12 @@ class LiveGenerator:
                     header_comment=seed_note,
                 )
                 for slug, sub_items in sorted(
-                    subgroups.items(), key=lambda kv: subgroup_meta(kv[0])["order"]
+                    subgroups.items(),
+                    # Order first, then the label: the generated country folders
+                    # all share one order value and must come out alphabetically
+                    # rather than in the order the channels happened to be read.
+                    key=lambda kv: (subgroup_meta(kv[0])["order"],
+                                    subgroup_meta(kv[0])["label"]),
                 ):
                     sm = subgroup_meta(slug)
                     index.add_playlist(
@@ -357,7 +405,16 @@ class LiveGenerator:
         over threshold, and the split must produce at least two groups that are
         each meaningfully populated, otherwise the extra click buys nothing.
         """
-        if category in self.never_subsplit or len(items) <= self.subsplit_threshold:
+        # "never_subsplit" was written when the whole catalogue was 1,500
+        # channels and Sports and Kids fitted on one screen. Against the full
+        # iptv-org index they do not, and a flat list paginated into a dozen
+        # numbered screens is worse to navigate than a country folder. So the
+        # protection is now a much higher threshold rather than an absolute
+        # rule: these categories stay flat while they fit, and split when the
+        # only alternative is pagination.
+        threshold = (self.protected_subsplit_threshold
+                     if category in self.never_subsplit else self.subsplit_threshold)
+        if len(items) <= threshold:
             return {}
 
         # Movie channels split by film language into exactly four flat folders.

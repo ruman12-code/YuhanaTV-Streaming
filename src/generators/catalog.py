@@ -7,6 +7,8 @@ the registry.
 
 from __future__ import annotations
 
+from .countries import country_label
+
 # order, label, tile background colour
 LIVE_CATEGORY_META: dict[str, dict] = {
     "bangladesh":    {"order": 10, "label": "🇧🇩 Bangladesh",   "bg": "#006a4e"},
@@ -92,8 +94,7 @@ def subgroup_meta(slug: str) -> dict:
     if slug.startswith("lang-"):
         return LANGUAGE_META.get(slug, {"order": 900, "label": "🌍 Others", "bg": "#5d6d7e"})
     if slug.startswith("region-"):
-        return REGION_META.get(slug[len("region-"):].lower(),
-                               {"order": 900, "label": "🌐 Other regions", "bg": "#444444"})
+        return region_meta(slug[len("region-"):])
     return SUBGROUP_META.get(slug, {"order": 900, "label": slug.replace("-", " ").title(),
                                     "bg": "#444444"})
 
@@ -126,6 +127,34 @@ REGION_META: dict[str, dict] = {
 }
 
 
+# Deterministic tile colours for the countries REGION_META does not hand-pick.
+# Muted enough to sit behind white SS IPTV label text.
+_AUTO_BG = ("#1f3a93", "#0b5d3b", "#7d1128", "#8e1b1b", "#4a235a", "#0e6251",
+            "#7d6608", "#1a5276", "#7b241c", "#196f3d", "#5b2c6f", "#154360")
+
+
 def region_meta(code: str) -> dict:
-    return REGION_META.get((code or "").lower(),
-                           {"order": 900, "label": "🌐 Other regions", "bg": "#444444"})
+    """Label, order and colour for one country folder.
+
+    REGION_META hand-places the countries that should come first - Bangladesh,
+    India, Pakistan, then the big broadcasters. Every other ISO country gets a
+    generated entry: a real flag and a real name, ordered alphabetically after
+    the hand-picked ones.
+
+    This used to fall through to a single "Other regions" bucket. That was fine
+    for a 1,500-channel catalogue with 22 countries in it, and useless against
+    the full index, where it would have swept a hundred countries into one
+    unnavigable screen.
+    """
+    c = (code or "").strip().lower()
+    hand = REGION_META.get(c)
+    if hand:
+        return hand
+    label = country_label(c)
+    if label:
+        # One order value for the whole generated block; callers break the tie
+        # on the label, so these come out alphabetically after the hand-picked
+        # countries rather than in whatever order the channels were read.
+        return {"order": 100, "label": label,
+                "bg": _AUTO_BG[sum(ord(x) for x in c) % len(_AUTO_BG)]}
+    return {"order": 900, "label": "🌐 Other regions", "bg": "#444444"}

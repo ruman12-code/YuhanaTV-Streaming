@@ -94,12 +94,19 @@ class TestIngestApplies(unittest.TestCase):
         p.write_text(body, encoding="utf-8")
         return import_file(p, "t")
 
-    def test_geo_blocked_channel_never_enters_the_registry(self):
+    def test_geo_blocked_channel_is_kept_and_tagged(self):
+        """[Geo-blocked] means "restricted to its home territory", not
+        "restricted from Bangladesh". Rejecting these at ingest threw away
+        exactly the South Asian channels the owner can watch and this
+        validator, running in a US datacentre, cannot. Keep and tag."""
         ch, st = self._ingest(
             '#EXTM3U\n#EXTINF:-1 tvg-id="X.in" group-title="Documentary",'
             'History TV18 HD (1080p) [Geo-blocked]\nhttps://h/b.m3u8\n')
-        self.assertEqual(ch, [])
-        self.assertIn("geo-blocked", st["rejected"][0]["reason"])
+        self.assertEqual(len(ch), 1)
+        self.assertIn("geo-blocked", ch[0].tags)
+        self.assertEqual(st["rejected"], [])
+        # The annotation is stripped from what reaches a tile.
+        self.assertEqual(ch[0].name, "History TV18 HD")
 
     def test_bangladesh_is_a_country_bucket_not_a_genre(self):
         ch, _ = self._ingest(

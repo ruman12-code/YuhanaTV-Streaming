@@ -88,6 +88,14 @@ class Channel:
     # gate has to tell them apart. Without this the label is unusable: T Sports
     # HD passed 38 of 46 probes and was dropped from the TV as "degraded".
     status_reason: str = ""
+    # HTTP status of the last probe, kept because 403/451 from a US runner means
+    # something different from a dead host: it is usually the origin refusing
+    # THIS vantage point, not refusing everyone.
+    last_http_status: int = 0
+    # Where the stream URL actually ended up after redirects. Recorded so the
+    # publication gate can apply its safety rules to the real endpoint: a link
+    # shortener otherwise hides its target from every check we make.
+    final_url: str = ""
     # Reliability history, accumulated across validation runs. A channel that
     # passes once and fails four times is not the same asset as one that always
     # passes, and the difference has to survive into the published playlist.

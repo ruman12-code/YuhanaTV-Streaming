@@ -112,3 +112,62 @@ These are application features. They cannot be expressed in M3U, and faking them
 make the playlist layer non-deterministic. They belong to the optional web catalogue
 (Phase 10). The movie database is built with full-text search in mind so that the web
 layer can provide search even though SS IPTV cannot.
+
+## What "playable" can and cannot mean here (2026-09-23)
+
+The owner asked for every playable channel, with no adult content. Two of those
+three words are measurable from CI and one is not.
+
+**Not measurable: playable on the owner's TV.** Validation runs on a
+GitHub-hosted runner in the United States. The TV is in South Asia. Nothing in
+this repository has ever opened a stream from the owner's network, and no
+amount of green in `validation-report.json` changes that. The probe answers a
+different question — "does this origin serve a US datacentre?" — and the two
+answers diverge in both directions:
+
+* A South Asian broadcaster fenced to its home region refuses the runner and
+  serves the owner. These used to be dropped at ingest on the source's
+  `[Geo-blocked]` tag, which threw away exactly the channels the owner can
+  watch. They are now kept, and published when the channel is in the viewer's
+  region and the failure looks like a refusal (403/451) rather than an absence
+  (DNS failure, refused connection, 404). See `validation.publish_region_blocked`.
+* A US or European FAST service answers the runner and will very likely refuse
+  Dhaka. Roughly a thousand channels reach this library through iptv-org's
+  redirector to Pluto and similar platforms, filed under United States, Sweden
+  and Germany. They probe ACTIVE at 92% reliability *from the runner*. Whether
+  any of them plays on the owner's TV is unknown and untestable from here. They
+  are published because the measurement available says they work and the owner
+  asked not to have playable channels withheld; the country folders keep them
+  out of the way of anyone browsing Bangladesh or India.
+
+**Measurable: structurally playable on SS IPTV.** A stream that needs a
+per-request `Referer` or `User-Agent` cannot work in SS IPTV, which sends
+neither. Those are withheld on a capability limit, not a guess.
+
+**Measurable: not adult.** Screened at ingest on three independent signals —
+the aggregator's own category, a known pornographic brand in the channel name,
+and the keyword list used for the film library. Screening previously existed
+only for the film library, because the narrow category feeds this project
+started with contained no adult channels. The full aggregator index has a
+category of them.
+
+### Gates that are policy, not measurement
+
+Two exclusions stand whatever a probe says, and they are not up for
+re-litigation by a reliability score:
+
+* A stream URL carrying subscriber credentials — a portal MAC or an account
+  login — only works by presenting someone's paid subscription.
+* Adult material, on the owner's explicit instruction.
+
+### A note on blanket bans
+
+Three gates in this project's history were assumptions dressed as rules: an
+HTTPS requirement (withheld 333 channels; the owner's own working playlist was
+31% plain HTTP), rejecting `[Geo-blocked]` channels at ingest, and a
+denied-host list covering iptv-org's redirector (withheld 1,020 channels that
+probe ACTIVE). Each was replaced by a measurement — respectively none, the
+viewer's region, and a safety check applied to the recorded redirect
+destination rather than the advertised URL. Where a rule cannot be replaced by
+a measurement, it belongs in the section above and needs a reason that does not
+depend on a probe.

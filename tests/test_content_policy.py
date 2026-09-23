@@ -8,7 +8,9 @@ import sys, unittest
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from src.content_policy import adult_reason, is_adult
+import tempfile
+from src.content_policy import adult_reason, is_adult, adult_channel_reason
+from src.ingest.m3u_import import import_file
 
 
 class TestScreening(unittest.TestCase):
@@ -98,3 +100,42 @@ class TestOpenLicenceCreators(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestLiveChannelAdultScreening(unittest.TestCase):
+    """The owner asked for every playable channel and no adult content.
+
+    The narrow category feeds this project started with contained none, so
+    screening existed only for the film library. The full aggregator index has
+    an entire category of adult channels, and they would otherwise have been
+    filed by name into Movies or Entertainment on a family TV.
+    """
+
+    def test_aggregator_category_is_caught(self):
+        self.assertTrue(adult_channel_reason("Some Channel", "xxx"))
+        self.assertTrue(adult_channel_reason("Some Channel", "adult"))
+
+    def test_compound_category_is_caught(self):
+        # Group titles arrive compound: "XXX;Movies" slugifies to "xxx-movies".
+        self.assertTrue(adult_channel_reason("Some Channel", "xxx-movies"))
+        self.assertTrue(adult_channel_reason("Some Channel", "movies-xxx"))
+
+    def test_brand_name_is_caught_without_any_category(self):
+        for name in ("Brazzers TV", "Playboy TV", "Hustler HD", "Dorcel TV",
+                     "Red Light HD", "Vivid TV", "Penthouse Gold"):
+            self.assertTrue(adult_channel_reason(name, "movies"), name)
+
+    def test_ordinary_channels_pass(self):
+        for name, group in (("BBC News", "news"), ("Discovery Channel", "documentary"),
+                            ("Naked Science", "documentary"), ("Cartoon Network", "kids"),
+                            ("Zee Cinema", "movies"), ("T Sports HD", "sports"),
+                            ("Star Movies Select HD", "movies-series")):
+            self.assertEqual(adult_channel_reason(name, group), "", name)
+
+    def test_an_adult_channel_never_enters_the_registry(self):
+        p = Path(tempfile.mkdtemp()) / "s.m3u"
+        p.write_text('#EXTM3U\n#EXTINF:-1 tvg-id="X.us" group-title="XXX",Some Channel\n'
+                     'https://h/a.m3u8\n', encoding="utf-8")
+        channels, stats = import_file(p, "t")
+        self.assertEqual(channels, [])
+        self.assertIn("adult", stats["rejected"][0]["reason"])

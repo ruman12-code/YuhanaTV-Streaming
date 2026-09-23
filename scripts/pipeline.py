@@ -17,6 +17,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import time
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
@@ -185,20 +186,58 @@ def cmd_ingest(args) -> int:
     return 0
 
 
+def _check_order(channels: list) -> list:
+    """Never-checked channels first, then least-recently-checked.
+
+    With the full aggregator index the catalogue no longer fits in one CI run,
+    so a run takes as much of it as its time budget allows and the next run
+    continues where this one stopped. Ordering this way means a newly ingested
+    channel is measured on the run that discovers it, and no channel can be
+    starved: every pass moves the oldest verification forward.
+    """
+    return sorted(channels, key=lambda c: (c.checks_total > 0, c.last_verified or ""))
+
+
+def _validate_within_budget(validator, channels: list, budget_seconds: float) -> list:
+    """Validate in chunks, stopping at the first chunk boundary past the budget.
+
+    Chunked rather than cancelled mid-flight so every probe that was started is
+    recorded: a half-finished probe would otherwise count as a failure and move
+    a working channel towards OFFLINE on nothing but a clock.
+    """
+    chunk = max(validator.concurrency * 4, 40)
+    started = time.monotonic()
+    results: list = []
+    for i in range(0, len(channels), chunk):
+        results.extend(validator.validate_all(channels[i:i + chunk]))
+        if time.monotonic() - started >= budget_seconds:
+            break
+    return results
+
+
 def cmd_check(args) -> int:
     cfg = config.load()
-    channels = load_channels(CHANNELS_DIR)
+    all_channels = load_channels(CHANNELS_DIR)
     if args.limit:
-        channels = channels[: args.limit]
-    if not channels:
+        all_channels = all_channels[: args.limit]
+    if not all_channels:
         print("no channels to check", file=sys.stderr)
         return 1
 
     # Snapshot the pre-run state so the health gate has something to regress from.
-    previous_status = {c.id: c.status for c in load_channels(CHANNELS_DIR)}
+    previous_status = {c.id: c.status for c in all_channels}
 
     validator = StreamValidator(cfg)
-    results = validator.validate_all(channels)
+    budget = float(args.budget_seconds
+                   or cfg.get_path("validation.max_check_seconds", 0) or 0)
+    channels = _check_order(all_channels)
+    if budget:
+        results = _validate_within_budget(validator, channels, budget)
+        if len(results) < len(channels):
+            print(f"  time budget reached: checked {len(results)} of {len(channels)}; "
+                  f"the rest are first in line next run")
+    else:
+        results = validator.validate_all(channels)
     by_id = {r.channel_id: r for r in results}
 
     gate_cfg = cfg.get_path("validation.health_gate", {}) or {}
@@ -242,6 +281,8 @@ def cmd_check(args) -> int:
             ch.consecutive_failures = 0
             ch.status = r.status
         ch.status_reason = r.error or ""
+        ch.last_http_status = int(r.http_status or 0)
+        ch.final_url = r.final_url or ""
         if ch.status != previous:
             ch.last_status_change = now
         ch.last_verified = r.checked_at
@@ -449,6 +490,8 @@ def main() -> int:
     sp = sub.add_parser("ingest"); sp.add_argument("--source"); \
         sp.add_argument("--source-id", default="src-user-m3u"); sp.set_defaults(fn=cmd_ingest)
     sp = sub.add_parser("check"); sp.add_argument("--limit", type=int, default=0); \
+        sp.add_argument("--budget-seconds", type=float, default=0,
+                        help="stop after this long; 0 uses validation.max_check_seconds"); \
         sp.set_defaults(fn=cmd_check)
     sp = sub.add_parser("build"); sp.add_argument("--seed", action="store_true"); \
         sp.add_argument("--force", action="store_true",

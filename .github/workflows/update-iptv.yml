@@ -12,11 +12,12 @@ name: Update IPTV
 on:
   schedule:
     - cron: '0 */3 * * *'      # stream validation, every 3 hours
-    # Not hourly: a full pass over ~1,500 channels takes ~37 minutes, so
-    # hourly would run 62% of the time and put 24x the probe load on every
-    # source server. Channel health does not move that fast, and the
-    # reliability score needs runs spread over time to distinguish a flaky
-    # stream from one bad moment.
+    # Not hourly. A run now probes the full aggregator index rather than a
+    # curated slice, under a 40-minute budget (validation.max_check_seconds),
+    # taking never-checked channels first and then the least recently verified.
+    # Hourly would put 3x the probe load on every source server for no gain:
+    # channel health does not move that fast, and the reliability score needs
+    # runs spread over time to tell a flaky stream from one bad moment.
   workflow_dispatch:
     inputs:
       seed:
@@ -45,7 +46,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
 
@@ -64,6 +65,7 @@ jobs:
 
       - name: Check streams
         run: python3 scripts/pipeline.py check --limit "${{ github.event.inputs.limit || 0 }}"
+        # The budget lives in config so a local run behaves the same as CI.
 
       - name: Canonical tvg-ids and EPG
         run: python3 scripts/build_epg.py
