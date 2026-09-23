@@ -241,6 +241,7 @@ def cmd_check(args) -> int:
         else:
             ch.consecutive_failures = 0
             ch.status = r.status
+        ch.status_reason = r.error or ""
         if ch.status != previous:
             ch.last_status_change = now
         ch.last_verified = r.checked_at

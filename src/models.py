@@ -81,6 +81,13 @@ class Channel:
     http_referrer: str = ""
     http_user_agent: str = ""
     consecutive_failures: int = 0
+    # Why the last probe landed on this status, verbatim from the validator.
+    # DEGRADED is three different things - a slow origin, an unfetchable
+    # segment or variant, and the transitional state of a channel that has
+    # failed once but not yet enough times to be condemned - and the publication
+    # gate has to tell them apart. Without this the label is unusable: T Sports
+    # HD passed 38 of 46 probes and was dropped from the TV as "degraded".
+    status_reason: str = ""
     # Reliability history, accumulated across validation runs. A channel that
     # passes once and fails four times is not the same asset as one that always
     # passes, and the difference has to survive into the published playlist.

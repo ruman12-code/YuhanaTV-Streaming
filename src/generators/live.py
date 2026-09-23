@@ -14,6 +14,7 @@ playlist says so in a comment line rather than pretending the streams are known 
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -21,7 +22,12 @@ from ..models import Channel
 from ..util.urls import check_url
 from .m3u import M3UBuilder
 from .catalog import live_meta, subgroup_meta, region_meta, LIVE_CATEGORY_META
-from ..classify import movie_language_bucket
+from ..classify import movie_language_bucket, display_key
+
+# The validator's wording for the one DEGRADED cause that still plays on a TV.
+# Anchored, so "manifest served but the first segment was not fetchable" can
+# never match it by accident.
+SLOW_ORIGIN_RE = re.compile(r"^slow origin \(", re.I)
 
 
 @dataclass
@@ -62,6 +68,19 @@ class LiveGenerator:
             cfg.get_path("validation.min_reliability_by_category", {}) or {})
         self.min_checks_for_gate = int(
             cfg.get_path("validation.min_checks_for_reliability_gate", 5))
+        # DEGRADED is not one condition. The validator uses it for a slow origin
+        # (the stream plays, it just takes longer to start), for an unfetchable
+        # segment or variant (a black screen on the TV), and the pipeline reuses
+        # it as the holding state for a channel that failed once but not enough
+        # times to be condemned. Publishing on status alone threw away the
+        # difference: T Sports HD, which answered 38 of 46 probes, vanished from
+        # the Bangladesh screen because one run found its origin slow. A slow
+        # channel with a clean streak and good history is published; the other
+        # two cases are not.
+        self.publish_slow_degraded = bool(
+            cfg.get_path("validation.publish_slow_degraded", True))
+        self.slow_degraded_min_reliability = float(
+            cfg.get_path("validation.slow_degraded_min_reliability", 0.7))
 
     # --- gating --------------------------------------------------------------
 
@@ -98,9 +117,12 @@ class LiveGenerator:
                           else "unsafe_url")
                 hold(reason, ch)
                 continue
-            if ch.status not in allowed:
+            if ch.status not in allowed and not (
+                    ch.status == "DEGRADED" and self._slow_but_working(ch)):
                 hold(f"status_{ch.status.lower()}", ch)
                 continue
+            # Applied to slow-but-working channels too, so the re-admission above
+            # can only ever be narrower than the ordinary gate, never a way round it.
             floor = self.min_reliability_by_category.get(ch.category, self.min_reliability)
             if (floor > 0
                     and ch.checks_total >= self.min_checks_for_gate
@@ -108,7 +130,68 @@ class LiveGenerator:
                 hold("unreliable", ch)
                 continue
             published.append(ch)
+
+        published = self._collapse_duplicates(published, hold)
         return published, withheld
+
+    def _slow_but_working(self, ch) -> bool:
+        """True for a DEGRADED channel whose only complaint is a slow origin.
+
+        Requires all three: the recorded reason is latency and nothing else, the
+        channel is not mid-failure (a hard failure below the condemn threshold
+        also parks a channel in DEGRADED), and its accumulated history clears the
+        bar. Any of those missing and the channel stays withheld.
+        """
+        if not self.publish_slow_degraded:
+            return False
+        if not SLOW_ORIGIN_RE.match(ch.status_reason or ""):
+            return False
+        if ch.consecutive_failures:
+            return False
+        if ch.checks_total < self.min_checks_for_gate:
+            return False
+        return ch.reliability >= self.slow_degraded_min_reliability
+
+    def _collapse_duplicates(self, published: list[Channel], hold) -> list[Channel]:
+        """One tile per channel, keeping the best-evidenced entry.
+
+        Cross-source de-duplication at ingest matches on the stream URL, so two
+        sources carrying the same channel on different origins both survive. On
+        the Bangladesh screen that showed as ATN Bangla twice, plus Boishakhi
+        next to Boishakhi TV and Bangla Vision next to Banglavision - the same
+        channel, spelled differently.
+
+        Done here rather than at ingest on purpose. Both records keep accruing
+        reliability history in the registry, and by this point status and
+        reliability are known, so the entry that is kept is the one with the
+        better evidence rather than whichever source was read first.
+        """
+        best: dict[tuple[str, str], Channel] = {}
+        order: list[tuple[str, str]] = []
+        for ch in published:
+            key = (ch.category, display_key(ch.name))
+            current = best.get(key)
+            if current is None:
+                best[key] = ch
+                order.append(key)
+            elif self._evidence(ch) > self._evidence(current):
+                best[key] = ch
+                hold("duplicate_of_better_entry", current)
+            else:
+                hold("duplicate_of_better_entry", ch)
+        return [best[k] for k in order]
+
+    @staticmethod
+    def _evidence(ch: Channel) -> tuple:
+        """Ranking for two records of the same channel. Measurement first."""
+        height = 0
+        if "x" in (ch.resolution or ""):
+            try:
+                height = int(ch.resolution.split("x")[1])
+            except (ValueError, IndexError):
+                height = 0
+        return (ch.reliability, ch.checks_total, height, ch.status == "ACTIVE",
+                len(ch.name))
 
     # --- rendering -----------------------------------------------------------
 

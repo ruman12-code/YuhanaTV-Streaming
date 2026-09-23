@@ -78,15 +78,43 @@ TOKEN_TO_CATEGORY = {
 # Channels that are Bangladeshi but whose source records no country. Matched on
 # the name so they join the other Bangladeshi channels rather than sitting under
 # a genre with the rest of the world.
-BD_NAME_RE = re.compile(
-    r"\b(t[\s-]?sports|btv|atn|ntv|rtv|somoy|jamuna|ekushey|ekattor|maasranga|"
-    r"boishakhi|bijoy|deepto|banglavision|channel\s*i|channel\s*s|dbc|independent tv|"
-    r"news24 bd|nagorik|desh tv|my tv|gtv bangla|duronto|asian tv|mohona|sa tv)\b",
+# Two tiers, because the tokens are not equally reliable.
+#
+# Unambiguous: these names mean a Bangladeshi channel wherever it is uplinked.
+# The declared country does not overrule them, so the London-based diaspora
+# feeds (Channel S UK, ATN Bangla UK) stay on the Bangladesh screen.
+BD_NAME_STRONG_RE = re.compile(
+    r"\b(t[\s-]?sports|atn|somoy|jamuna|ekushey|ekattor|maasranga|boishakhi|"
+    r"bijoy|deepto|banglavision|bangla\s*vision|channel\s*i|channel\s*s|dbc|"
+    r"news24 bd|nagorik|desh tv|gtv bangla|duronto|asian tv|mohona|sa tv)\b",
     re.IGNORECASE)
 
+# Ambiguous: call signs Bangladesh shares with other broadcasters. BTV is also
+# Uganda Broadcasting and Bulgarian National TV; NTV is Kenya, Russia and
+# Latvia; RTV is the Netherlands, Indonesia and Serbia. These only count when
+# the channel declares Bangladesh or declares nothing - "BTV (Uganda)" was
+# sitting on the Bangladesh screen because of this.
+BD_NAME_WEAK_RE = re.compile(
+    r"\b(btv|n[\s-]?tv|rtv|my tv|independent tv)\b", re.IGNORECASE)
 
-def is_bangladeshi(name: str) -> bool:
-    return bool(BD_NAME_RE.search(clean_display_name(name)))
+# Kept as the union, for callers that only want "does this name look Bangladeshi".
+BD_NAME_RE = re.compile(
+    f"(?:{BD_NAME_STRONG_RE.pattern})|(?:{BD_NAME_WEAK_RE.pattern})", re.IGNORECASE)
+
+
+def is_bangladeshi(name: str, country: str = "") -> bool:
+    """True when the channel belongs on the Bangladesh screen.
+
+    A strong name wins outright. A weak one needs the country to agree, or to
+    be absent.
+    """
+    cleaned = clean_display_name(name)
+    if BD_NAME_STRONG_RE.search(cleaned):
+        return True
+    c = (country or "").strip().lower()
+    if c and c != "bd":
+        return False
+    return bool(BD_NAME_WEAK_RE.search(cleaned))
 
 
 # iptv-org annotates the display name; these are facts about playability, not decoration.
@@ -187,3 +215,28 @@ def movie_language_bucket(name: str, country: str = "") -> str:
     if c in ENGLISH_COUNTRIES:
         return "english"
     return "others"
+
+
+# Trailing tokens that name a feed variant rather than a different channel.
+_DISPLAY_SUFFIX = re.compile(
+    r"(?:\s|^)(?:tv|hd|sd|fhd|uhd|4k|channel)$", re.IGNORECASE)
+_DISPLAY_STRIP = re.compile(r"[^a-z0-9()]+")
+
+
+def display_key(name: str) -> str:
+    """Identity of a channel for "is this the same tile twice?".
+
+    Spacing and a trailing feed-variant token are not identity: "Banglavision"
+    and "Bangla Vision", "Boishakhi" and "Boishakhi TV", "Maasranga" and
+    "Maasranga TV" are each one channel carried by two sources.
+
+    A parenthetical IS kept, because that is where the sources put the thing
+    that genuinely distinguishes two feeds - Channel S (Bangladesh) and
+    Channel S (United Kingdom) are different channels and need separate tiles.
+    """
+    cleaned = clean_display_name(name).lower()
+    previous = None
+    while previous != cleaned:
+        previous = cleaned
+        cleaned = _DISPLAY_SUFFIX.sub("", cleaned).strip()
+    return _DISPLAY_STRIP.sub("", cleaned)

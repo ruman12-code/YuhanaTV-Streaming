@@ -194,7 +194,7 @@ def entry_to_channel(entry: ParsedEntry, source_id: str) -> tuple[Channel | None
     # Bangladesh is a country bucket, not a genre: the owner wants every
     # Bangladeshi channel in one place regardless of what it broadcasts.
     if (country == "bd" or GROUP_TO_CATEGORY.get(group_slug) == "bangladesh"
-            or is_bangladeshi(raw_name)):
+            or is_bangladeshi(raw_name, country)):
         category = "bangladesh"
         country = country or "bd"
         language = language or "bn"

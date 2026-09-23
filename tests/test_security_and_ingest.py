@@ -6,6 +6,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from src import config
 from src.models import Channel
 from src.util.urls import check_url
+from src.classify import is_bangladeshi, display_key
 from src.ingest.m3u_import import parse_m3u, import_file
 from src.generators.live import LiveGenerator
 
@@ -331,3 +332,128 @@ class TestSubscriberCredentials(unittest.TestCase):
         pub, held = gen._partition([ch], allow_unverified=False)
         self.assertEqual(pub, [])
         self.assertIn("subscriber_credentials", held)
+
+
+class TestSlowDegradedIsStillPublished(unittest.TestCase):
+    """DEGRADED is three conditions; only one of them means "do not publish".
+
+    T Sports HD answered 38 of 46 probes and disappeared from the Bangladesh
+    screen, because a run found its origin slow and the gate published ACTIVE
+    only. A slow origin starts later on the TV; an unfetchable segment is a
+    black screen. The gate has to read the reason, not the label.
+    """
+
+    def setUp(self):
+        self.cfg = config.load(use_cache=False)
+        self.cfg["validation"]["publish_slow_degraded"] = True
+        self.cfg["validation"]["slow_degraded_min_reliability"] = 0.7
+        self.cfg["validation"]["min_checks_for_reliability_gate"] = 4
+        self.gen = LiveGenerator(self.cfg, Path(tempfile.mkdtemp()))
+
+    def _ch(self, reason, ok=38, total=46, fails=0, name="T Sports HD"):
+        return Channel(id=f"c-{name}-{reason[:8]}", name=name, category="bangladesh",
+                       status="DEGRADED", stream_url="https://h/a.m3u8",
+                       status_reason=reason, consecutive_failures=fails,
+                       checks_total=total, checks_ok=ok)
+
+    def test_slow_origin_is_published(self):
+        pub, _ = self.gen._partition([self._ch("slow origin (4200 ms)")],
+                                     allow_unverified=False)
+        self.assertEqual([c.name for c in pub], ["T Sports HD"])
+
+    def test_unfetchable_segment_is_not(self):
+        pub, held = self.gen._partition(
+            [self._ch("manifest served but the first segment was not fetchable")],
+            allow_unverified=False)
+        self.assertEqual(pub, [])
+        self.assertIn("status_degraded", held)
+
+    def test_unusable_variant_is_not(self):
+        pub, held = self.gen._partition(
+            [self._ch("master manifest served but its variant playlist was not usable")],
+            allow_unverified=False)
+        self.assertEqual(pub, [])
+        self.assertIn("status_degraded", held)
+
+    def test_a_channel_mid_failure_is_not(self):
+        # A hard failure below the condemn threshold also parks a channel in
+        # DEGRADED, carrying the previous run's reason with it.
+        pub, held = self.gen._partition([self._ch("slow origin (4200 ms)", fails=2)],
+                                        allow_unverified=False)
+        self.assertEqual(pub, [])
+        self.assertIn("status_degraded", held)
+
+    def test_a_slow_channel_with_poor_history_is_not(self):
+        pub, held = self.gen._partition([self._ch("slow origin (4200 ms)", ok=10, total=46)],
+                                        allow_unverified=False)
+        self.assertEqual(pub, [])
+
+    def test_no_recorded_reason_is_not_assumed_benign(self):
+        pub, _ = self.gen._partition([self._ch("")], allow_unverified=False)
+        self.assertEqual(pub, [])
+
+
+class TestBangladeshDetection(unittest.TestCase):
+    """"BTV (Uganda)" was on the Bangladesh screen: btv is also Uganda
+    Broadcasting's call sign. A declared foreign country overrules an ambiguous
+    call sign, but never an unambiguous Bangladeshi name - the London diaspora
+    feeds are Bangladeshi channels and belong on that screen."""
+
+    def test_ambiguous_call_sign_yields_to_a_declared_country(self):
+        self.assertFalse(is_bangladeshi("BTV (Uganda)", "ug"))
+        self.assertFalse(is_bangladeshi("NTV (Kenya)", "ke"))
+        self.assertFalse(is_bangladeshi("RTV (Indonesia)", "id"))
+
+    def test_ambiguous_call_sign_counts_when_nothing_contradicts_it(self):
+        self.assertTrue(is_bangladeshi("BTV", "bd"))
+        self.assertTrue(is_bangladeshi("N TV", ""))
+
+    def test_unambiguous_name_survives_a_foreign_uplink(self):
+        self.assertTrue(is_bangladeshi("Channel S (United Kingdom)", "uk"))
+        self.assertTrue(is_bangladeshi("ATN Bangla UK", "uk"))
+        self.assertTrue(is_bangladeshi("T Sports HD", "bd"))
+
+    def test_unrelated_channels_are_not_swept_in(self):
+        for name, country in (("CNN", "us"), ("Star Sports 2 HD", "in"),
+                              ("BBC News", "uk")):
+            self.assertFalse(is_bangladeshi(name, country), name)
+
+
+class TestDuplicateTiles(unittest.TestCase):
+    """Two sources carrying one channel on different origins both survived
+    ingest, so the Bangladesh screen showed ATN Bangla twice, and Boishakhi
+    beside Boishakhi TV. One tile per channel, keeping the better evidenced."""
+
+    def setUp(self):
+        self.gen = LiveGenerator(config.load(use_cache=False), Path(tempfile.mkdtemp()))
+
+    def _ch(self, name, ok, total, url):
+        return Channel(id=f"c-{url}", name=name, category="bangladesh", status="ACTIVE",
+                       stream_url=url, checks_total=total, checks_ok=ok)
+
+    def test_spelling_variants_collapse_to_the_better_record(self):
+        a = self._ch("Boishakhi", 10, 40, "https://a/x.m3u8")       # 0.25
+        b = self._ch("Boishakhi TV", 38, 40, "https://b/x.m3u8")    # 0.95
+        pub, held = self.gen._partition([a, b], allow_unverified=False)
+        self.assertEqual([c.name for c in pub], ["Boishakhi TV"])
+        self.assertIn("duplicate_of_better_entry", held)
+
+    def test_identical_names_collapse(self):
+        pub, _ = self.gen._partition(
+            [self._ch("ATN Bangla", 40, 40, "https://a/x.m3u8"),
+             self._ch("ATN Bangla", 20, 40, "https://b/x.m3u8")], allow_unverified=False)
+        self.assertEqual(len(pub), 1)
+
+    def test_parenthetical_feeds_stay_separate(self):
+        pub, _ = self.gen._partition(
+            [self._ch("Channel S (Bangladesh)", 40, 40, "https://a/x.m3u8"),
+             self._ch("Channel S (United Kingdom)", 40, 40, "https://b/x.m3u8")],
+            allow_unverified=False)
+        self.assertEqual(len(pub), 2)
+
+    def test_numbered_channels_stay_separate(self):
+        pub, _ = self.gen._partition(
+            [self._ch("ABC News Live 1", 40, 40, "https://a/1.m3u8"),
+             self._ch("ABC News Live 2", 40, 40, "https://a/2.m3u8")],
+            allow_unverified=False)
+        self.assertEqual(len(pub), 2)
