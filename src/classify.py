@@ -75,6 +75,20 @@ TOKEN_TO_CATEGORY = {
     "shop": "other",
 }
 
+# Channels that are Bangladeshi but whose source records no country. Matched on
+# the name so they join the other Bangladeshi channels rather than sitting under
+# a genre with the rest of the world.
+BD_NAME_RE = re.compile(
+    r"\b(t[\s-]?sports|btv|atn|ntv|rtv|somoy|jamuna|ekushey|ekattor|maasranga|"
+    r"boishakhi|bijoy|deepto|banglavision|channel\s*i|channel\s*s|dbc|independent tv|"
+    r"news24 bd|nagorik|desh tv|my tv|gtv bangla|duronto|asian tv|mohona|sa tv)\b",
+    re.IGNORECASE)
+
+
+def is_bangladeshi(name: str) -> bool:
+    return bool(BD_NAME_RE.search(clean_display_name(name)))
+
+
 # iptv-org annotates the display name; these are facts about playability, not decoration.
 GEO_BLOCKED_RE = re.compile(r"\[\s*geo[\s-]?blocked\s*\]", re.IGNORECASE)
 NOT_24_7_RE = re.compile(r"\[\s*not\s*24/7\s*\]", re.IGNORECASE)
@@ -126,3 +140,50 @@ def from_group(group_slug: str) -> str:
 def categorise(name: str, group_slug: str, *, default: str = "other") -> str:
     """Name first, then group title. See the module docstring for why."""
     return from_name(name) or from_group(group_slug) or default
+
+
+# --- language buckets for the Movie Channels screen -------------------------
+# Four flat folders, no nesting: the owner browses by what language a film is in,
+# not by which country licensed the feed.
+
+_BANGLA_RE = re.compile(
+    r"\b(bangla|bengali|jalsha|zee bangla|star jalsha|colors bangla|sony aath|"
+    r"enterr10 bangla|bhojpuri bangla|dhallywood)\b", re.IGNORECASE)
+_INDIAN_RE = re.compile(
+    r"\b(hindi|bollywood|zee|sony (max|pix|wah|set)|star (gold|plus|bharat|pravah|utsav)|"
+    r"colors|&pictures|and pictures|utv|b4u|sahara|enterr10|dangal|goldmines|"
+    r"filmy|cinema ?tv|manoranjan|shemaroo|tamil|telugu|kannada|malayalam|"
+    r"marathi|punjabi|bhojpuri|gujarati|asianet|sun tv|zee5|maa |gemini|udaya)\b",
+    re.IGNORECASE)
+_ENGLISH_RE = re.compile(
+    r"\b(hbo|axn|amc|paramount|sony movie|warner|wb |mgm|cinemax|showtime|"
+    r"hollywood|starz|epix|tcm|turner classic|fox movies|universal|sundance|"
+    r"lionsgate|screenpix|movies! |grit|charge|comet|cinevault|filmrise|"
+    r"hallmark|lifetime|syfy|tnt|usa network)\b", re.IGNORECASE)
+
+INDIAN_COUNTRIES = {"in"}
+BANGLA_COUNTRIES = {"bd"}
+ENGLISH_COUNTRIES = {"us", "gb", "uk", "ca", "au", "nz", "ie", "za"}
+
+
+def movie_language_bucket(name: str, country: str = "") -> str:
+    """Which of the four Movie Channels folders a channel belongs in.
+
+    Name first again: a Bollywood channel licensed from Dubai is still Bollywood,
+    and the feed's country says nothing about the language of the films.
+    """
+    cleaned = clean_display_name(name)
+    if _BANGLA_RE.search(cleaned):
+        return "bangla"
+    if _INDIAN_RE.search(cleaned):
+        return "indian"
+    if _ENGLISH_RE.search(cleaned):
+        return "english"
+    c = (country or "").lower()
+    if c in BANGLA_COUNTRIES:
+        return "bangla"
+    if c in INDIAN_COUNTRIES:
+        return "indian"
+    if c in ENGLISH_COUNTRIES:
+        return "english"
+    return "others"

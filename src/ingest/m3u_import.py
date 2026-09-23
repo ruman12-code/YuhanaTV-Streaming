@@ -16,8 +16,8 @@ from pathlib import Path
 
 from ..models import Channel, slugify, stable_id
 from ..util.urls import check_url, host_of
-from ..classify import (categorise, clean_display_name, is_geo_blocked,
-                        is_not_24_7)
+from ..classify import (categorise, clean_display_name, is_bangladeshi,
+                        is_geo_blocked, is_not_24_7)
 
 _ATTR_RE = re.compile(r'([A-Za-z0-9_-]+)\s*=\s*"([^"]*)"')
 _EXTINF_RE = re.compile(r"^#EXTINF\s*:\s*(-?\d+(?:\.\d+)?)\s*(.*)$", re.IGNORECASE)
@@ -193,7 +193,8 @@ def entry_to_channel(entry: ParsedEntry, source_id: str) -> tuple[Channel | None
 
     # Bangladesh is a country bucket, not a genre: the owner wants every
     # Bangladeshi channel in one place regardless of what it broadcasts.
-    if country == "bd" or GROUP_TO_CATEGORY.get(group_slug) == "bangladesh":
+    if (country == "bd" or GROUP_TO_CATEGORY.get(group_slug) == "bangladesh"
+            or is_bangladeshi(raw_name)):
         category = "bangladesh"
         country = country or "bd"
         language = language or "bn"

@@ -72,22 +72,26 @@ def draw_tile(key: str, glyph: str, caption: str, c1, c2, accent) -> Path:
     img = Image.composite(Image.new("RGB", (W, H), tuple(min(255, c + 46) for c in c2)),
                           img, glow.filter(ImageFilter.GaussianBlur(90)))
 
+    # No text is drawn. SS IPTV writes its own label over the tile, and a baked-in
+    # wordmark sat underneath it: two overlapping strings, neither readable. The
+    # art is a background now, and the app supplies the only words on the tile.
+    #
+    # The bottom third is darkened so whatever the app writes there has contrast
+    # to sit against, whichever colour it chooses.
+    shade = Image.new("L", (W, H), 0)
+    ImageDraw.Draw(shade).rectangle((0, int(H * 0.55), W, H), fill=150)
+    img = Image.composite(Image.new("RGB", (W, H), (0, 0, 0)), img,
+                          shade.filter(ImageFilter.GaussianBlur(40)))
     layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     d = ImageDraw.Draw(layer)
-
-    # Faint concentric arcs for depth.
     for i, r in enumerate(range(150, 460, 52)):
         d.ellipse((W - 150 - r, H - 60 - r, W - 150 + r, H - 60 + r),
-                  outline=(*accent, 26 if i % 2 else 16), width=2)
+                  outline=(*accent, 24 if i % 2 else 14), width=2)
 
-    # Accent rule and wordmark.
-    d.rectangle((44, H - 96, 44 + 68, H - 96 + 6), fill=(*accent, 255))
-    d.text((44, H - 78), caption, font=_font(34), fill=(255, 255, 255, 236))
-
-    # Glyph, large and low-contrast, as a watermark rather than an icon.
-    gf = _font(190)
+    # A single large glyph, top-right, well clear of the label area.
+    gf = _font(150)
     bbox = d.textbbox((0, 0), glyph, font=gf)
-    d.text((W - 60 - (bbox[2] - bbox[0]), 26), glyph, font=gf, fill=(*accent, 62))
+    d.text((W - 70 - (bbox[2] - bbox[0]), 18), glyph, font=gf, fill=(*accent, 70))
 
     img = Image.alpha_composite(img.convert("RGBA"), layer).convert("RGB")
 

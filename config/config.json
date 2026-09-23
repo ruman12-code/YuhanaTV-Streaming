@@ -63,9 +63,12 @@
       "min_baseline": 10
     },
     "history_runs_kept": 30,
-    "min_reliability": 0.6,
+    "min_reliability": 0.5,
     "min_checks_for_reliability_gate": 4,
-    "$comment_reliability": "With validation every 3 hours a channel accumulates evidence quickly, so the bar can be higher: below 60% success over 4+ checks it stops being published."
+    "$comment_reliability": "Default 0.5: a channel that is up more often than not earns a tile. Bangladesh gets more latitude at 0.25 because it is the priority market and validation runs from a US datacentre, which inflates failure rates for BD-hosted streams; Green TV, Desh TV, Global TV and Channel S were all being withheld on distance rather than on being broken.",
+    "min_reliability_by_category": {
+      "bangladesh": 0.25
+    }
   },
   "security": {
     "allowed_url_schemes": [
@@ -86,8 +89,8 @@
     ],
     "block_private_ip_targets": true,
     "max_manifest_bytes": 2097152,
-    "require_https_streams": true,
-    "$comment_https": "SS IPTV is served over HTTPS, and a plain-http stream is refused as mixed content by many TV builds. 28% of the movie channels were http.",
+    "require_https_streams": false,
+    "$comment_https": "OFF, and it should stay off. This was switched on assuming SS IPTV refuses plain-http streams as mixed content. That assumption was never tested and was wrong: the owner's original working playlist was 31% plain http and played fine. The gate removed 333 channels including AXN, Star Movies, HBO, Sony Max and Star Sports. The other gates here are evidence-based; this one was not.",
     "denied_stream_hosts": [
       "jmp2.uk",
       "tinyurl.com",

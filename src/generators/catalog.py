@@ -80,7 +80,17 @@ SUBGROUP_META: dict[str, dict] = {
 }
 
 
+LANGUAGE_META: dict[str, dict] = {
+    "lang-bangla":  {"order": 10, "label": "🇧🇩 Bangla",             "bg": "#006a4e"},
+    "lang-indian":  {"order": 20, "label": "🇮🇳 Indian / Bollywood", "bg": "#d35400"},
+    "lang-english": {"order": 30, "label": "🇬🇧 English",            "bg": "#1f3a93"},
+    "lang-others":  {"order": 40, "label": "🌍 Others",              "bg": "#5d6d7e"},
+}
+
+
 def subgroup_meta(slug: str) -> dict:
+    if slug.startswith("lang-"):
+        return LANGUAGE_META.get(slug, {"order": 900, "label": "🌍 Others", "bg": "#5d6d7e"})
     if slug.startswith("region-"):
         return REGION_META.get(slug[len("region-"):].lower(),
                                {"order": 900, "label": "🌐 Other regions", "bg": "#444444"})

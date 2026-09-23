@@ -21,6 +21,7 @@ from ..models import Channel
 from ..util.urls import check_url
 from .m3u import M3UBuilder
 from .catalog import live_meta, subgroup_meta, region_meta, LIVE_CATEGORY_META
+from ..classify import movie_language_bucket
 
 
 @dataclass
@@ -57,6 +58,8 @@ class LiveGenerator:
         self.require_https = bool(cfg.get_path("security.require_https_streams", False))
         self.denied_hosts = tuple(cfg.get_path("security.denied_stream_hosts", []) or ())
         self.min_reliability = float(cfg.get_path("validation.min_reliability", 0.0))
+        self.min_reliability_by_category = dict(
+            cfg.get_path("validation.min_reliability_by_category", {}) or {})
         self.min_checks_for_gate = int(
             cfg.get_path("validation.min_checks_for_reliability_gate", 5))
 
@@ -96,9 +99,10 @@ class LiveGenerator:
             if ch.status not in allowed:
                 hold(f"status_{ch.status.lower()}", ch)
                 continue
-            if (self.min_reliability > 0
+            floor = self.min_reliability_by_category.get(ch.category, self.min_reliability)
+            if (floor > 0
                     and ch.checks_total >= self.min_checks_for_gate
-                    and ch.reliability < self.min_reliability):
+                    and ch.reliability < floor):
                 hold("unreliable", ch)
                 continue
             published.append(ch)
@@ -271,6 +275,18 @@ class LiveGenerator:
         if category in self.never_subsplit or len(items) <= self.subsplit_threshold:
             return {}
 
+        # Movie channels split by film language into exactly four flat folders.
+        # Region was the wrong axis here: someone hunting for a Bengali film does
+        # not care which country licensed the feed.
+        if category == "movies":
+            buckets: dict[str, list[Channel]] = {}
+            for ch in items:
+                buckets.setdefault(f"lang-{movie_language_bucket(ch.name, ch.country)}",
+                                   []).append(ch)
+            buckets = {k: v for k, v in buckets.items() if v}
+            if len(buckets) >= 2:
+                return buckets
+
         # Region first where it is meaningful and actually known.
         if category in self.region_split:
             known = [c for c in items if c.country]
@@ -393,11 +409,15 @@ def build_master(cfg, playlists_root: Path, *, movies=None, channels=None,
          f"{len(sports)} channels worldwide", "sports", "#0b5d3b"),
         ("live/kids.m3u",        "🧸 Kids",
          f"{len(kids)} channels worldwide", "kids", "#d4820a"),
+        ("live/movies.m3u",      "🍿 Movie Channels",
+         "Bangla, Indian, English, Others", "movie-channels", "#8e1b1b"),
         ("movies/movies.m3u",    "🎬 Movies on Demand",
-         "On demand, browse by genre", "movie-library", "#7d1128"),
-        ("live/series.m3u",      "📺 TV Series",
-         f"{len(series)} channels", "series", "#6a2c70"),
+         "Watch any time, by genre", "movie-library", "#7d1128"),
     ]
+    # No TV Series tile. It would have held live channels, and the owner asked
+    # for an on-demand library; recent series are under copyright and no source
+    # permits redistributing them. Series channels live inside All Live TV
+    # instead of a tile promising something that is not there.
 
     art_dir = root.parent / "site" / "art"
     for rel, label, blurb, art_key, colour in rows:

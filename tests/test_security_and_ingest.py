@@ -250,3 +250,38 @@ class TestLivePagination(unittest.TestCase):
         for line in text.splitlines():
             if line.startswith("#EXTINF"):
                 self.assertIn('type="playlist"', line)
+
+
+class TestPerCategoryReliability(unittest.TestCase):
+    """Bangladesh gets latitude the rest does not.
+
+    Validation runs from a US datacentre, which inflates failure rates for
+    BD-hosted streams; four Bangladeshi channels were being withheld on distance
+    rather than on being broken.
+    """
+
+    def setUp(self):
+        self.cfg = config.load(use_cache=False)
+        self.cfg["validation"]["min_reliability"] = 0.5
+        self.cfg["validation"]["min_reliability_by_category"] = {"bangladesh": 0.25}
+        self.cfg["validation"]["min_checks_for_reliability_gate"] = 4
+        self.gen = LiveGenerator(self.cfg, Path(tempfile.mkdtemp()))
+
+    def _ch(self, category, ok, total):
+        return Channel(id=f"{category}-{ok}", name="C", category=category,
+                       status="ACTIVE", stream_url="https://h/a.m3u8",
+                       checks_total=total, checks_ok=ok)
+
+    def test_flaky_bangladeshi_channel_is_kept(self):
+        pub, _ = self.gen._partition([self._ch("bangladesh", 4, 10)], allow_unverified=False)
+        self.assertEqual(len(pub), 1, "40% is above the 25% Bangladesh floor")
+
+    def test_equally_flaky_channel_elsewhere_is_withheld(self):
+        pub, held = self.gen._partition([self._ch("movies", 4, 10)], allow_unverified=False)
+        self.assertEqual(pub, [])
+        self.assertIn("unreliable", held)
+
+    def test_a_truly_dead_bangladeshi_channel_is_still_withheld(self):
+        pub, held = self.gen._partition([self._ch("bangladesh", 0, 45)], allow_unverified=False)
+        self.assertEqual(pub, [])
+        self.assertIn("unreliable", held)
