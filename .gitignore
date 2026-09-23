@@ -5,3 +5,12 @@ venv/
 _site/
 .DS_Store
 *.log
+
+# Cached copies of the full aggregator index (several MB each). Kept out of
+# version control because CI refreshes them every three hours and committing
+# them would grow the repository by tens of megabytes a day. Losing the cache
+# is safe: ingest refuses to save a registry that collapses (see
+# ingest.min_retention_fraction), so a failed download fails the run loudly
+# instead of silently deleting most of the catalogue.
+data/sources/src-iptv-org-index-category.m3u
+data/sources/src-iptv-org-index-all.m3u

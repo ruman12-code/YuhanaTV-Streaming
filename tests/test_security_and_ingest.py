@@ -527,3 +527,25 @@ class TestCheckOrdering(unittest.TestCase):
                         last_verified="2026-09-01T12:00:00+00:00")
         self.assertEqual([c.id for c in _check_order([recent, stale, fresh])],
                          ["new", "stale", "recent"])
+
+
+class TestIngestRetentionGuard(unittest.TestCase):
+    """save_channels replaces the registry, so one source failing to download
+    would delete every channel it carries. With the full aggregator index that
+    is most of the catalogue, and the validation health gate cannot see it -
+    that gate judges probe results, and no probe has run at ingest time."""
+
+    def test_the_floor_is_configured(self):
+        cfg = config.load(use_cache=False)
+        floor = float(cfg.get_path("ingest.min_retention_fraction", 0))
+        self.assertGreater(floor, 0, "an ingest collapse must be refused")
+        self.assertLess(floor, 1.0)
+
+    def test_a_collapse_is_below_the_floor_and_a_normal_run_is_not(self):
+        floor = float(config.load(use_cache=False)
+                      .get_path("ingest.min_retention_fraction", 0.6))
+        existing = 12000
+        # One source of several failing to download.
+        self.assertLess(4600, floor * existing)
+        # Ordinary churn as channels come and go between runs.
+        self.assertGreaterEqual(11500, floor * existing)

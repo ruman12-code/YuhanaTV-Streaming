@@ -59,11 +59,21 @@ def _fetch_remote_source(url: str, dest: Path, cfg) -> bool:
         "User-Agent": cfg.get_path("validation.user_agent", "Mozilla/5.0"),
         "Accept": "*/*",
     })
+    cap = 32 * 1024 * 1024
     try:
         with urllib.request.urlopen(req, timeout=float(cfg.get_path("validation.timeout_read_seconds", 12))) as resp:
-            body = resp.read(16 * 1024 * 1024)
+            # One byte past the cap, so hitting it is distinguishable from a file
+            # that happens to be exactly that size.
+            body = resp.read(cap + 1)
     except Exception as exc:  # noqa: BLE001
         print(f"  fetch failed for {url}: {type(exc).__name__}: {exc}", file=sys.stderr)
+        return False
+    if len(body) > cap:
+        # Importing a truncated playlist would look like the source had shrunk,
+        # and would quietly drop every channel past the cut. Refuse it; the
+        # caller falls back to the cached copy.
+        print(f"  refusing {url}: larger than the {cap // (1024 * 1024)}MB limit",
+              file=sys.stderr)
         return False
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.write_bytes(body)
@@ -175,6 +185,27 @@ def cmd_ingest(args) -> int:
             ch.checks_ok = prev.checks_ok
             ch.first_seen = prev.first_seen
             ch.last_status_change = prev.last_status_change
+            # Carried for the same reason as status itself. The publication gate
+            # reads these to re-admit a slow-but-working channel and one that is
+            # only blocked from the runner's country, and a run whose time budget
+            # runs out leaves most channels unchecked. Dropping them here would
+            # silently withhold those channels until their next probe.
+            ch.status_reason = prev.status_reason
+            ch.last_http_status = prev.last_http_status
+            ch.final_url = prev.final_url
+
+    # An ingest that collapses is a fetch failure, not news about the world.
+    # save_channels REPLACES the registry, so a source that fails to download
+    # would take every one of its channels with it - and the health gate cannot
+    # see this, because it judges probe results and no probe has run yet.
+    floor = float(cfg.get_path("ingest.min_retention_fraction", 0.6) or 0)
+    if floor and existing and len(channels) < floor * len(existing):
+        print(f"refusing to save: this ingest produced {len(channels)} channels "
+              f"against {len(existing)} already in the registry "
+              f"({len(channels) / len(existing):.0%} < {floor:.0%} floor). "
+              f"A source almost certainly failed to download. "
+              f"The registry is left untouched.", file=sys.stderr)
+        return 1
 
     counts = save_channels(CHANNELS_DIR, channels)
     write_json(STATUS_DIR / "ingest-stats.json", stats)

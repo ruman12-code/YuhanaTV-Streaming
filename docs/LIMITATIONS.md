@@ -171,3 +171,17 @@ viewer's region, and a safety check applied to the recorded redirect
 destination rather than the advertised URL. Where a rule cannot be replaced by
 a measurement, it belongs in the section above and needs a reason that does not
 depend on a probe.
+
+## Repository growth (known, not yet a problem)
+
+`data/channels/*.json` is the registry, and it is committed on every run so the
+reliability history survives. At roughly twelve thousand channels, a run that
+re-probes most of them rewrites that many `last_verified` timestamps, and there
+are eight runs a day. Compressed, that is on the order of a megabyte or two per
+run.
+
+Extrapolated, the repository reaches GitHub's 5GB soft limit somewhere inside a
+year. Nothing needs doing now, and there are two straightforward remedies when
+it does: squash the history of the output commits, or move the registry out of
+git and into a workflow cache or release asset. Recording it here so that it is
+a decision rather than a surprise.

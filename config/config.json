@@ -150,5 +150,9 @@
     "min_runtime_minutes": 60,
     "require_known_runtime": true,
     "$comment_runtime": "A movie library must hold movies. Archive collections are full of ephemeral shorts, talks and test footage; 60 minutes is the feature threshold and an unknown runtime cannot be confirmed as a feature."
+  },
+  "ingest": {
+    "min_retention_fraction": 0.6,
+    "$comment_retention": "Circuit breaker for the ingest step, the counterpart to validation's health gate. save_channels replaces the registry, so one source failing to download would delete every channel it carries - and with the full aggregator index that is most of the catalogue. An ingest that returns less than this fraction of what is already on disk is refused, the registry is left untouched and the run fails loudly."
   }
 }
