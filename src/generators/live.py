@@ -93,6 +93,8 @@ class LiveGenerator:
             if not verdict.ok:
                 reason = ("plain_http" if "plain http" in verdict.reason
                           else "denied_host" if "denied-host" in verdict.reason
+                          else "subscriber_credentials"
+                          if "subscriber credentials" in verdict.reason
                           else "unsafe_url")
                 hold(reason, ch)
                 continue
@@ -395,6 +397,18 @@ def build_master(cfg, playlists_root: Path, *, movies=None, channels=None,
     kids = [c for c in channels if c.category == "kids"]
     movie_ch = [c for c in channels if c.category == "movies"]
 
+    # The blurb names the language folders that actually exist. It used to be
+    # the fixed string "Bangla, Indian, English, Others", which promised a
+    # Bangla folder on a screen that had none: the only Bangla movie channel in
+    # the registry was an Xtream panel URL carrying an account login, so it is
+    # no longer published. A blurb that lies about the next screen is worse
+    # than a shorter one.
+    _LANG_LABEL = {"bangla": "Bangla", "indian": "Indian",
+                   "english": "English", "others": "Others"}
+    _present = {movie_language_bucket(c.name, c.country) for c in movie_ch}
+    movie_blurb = ", ".join(label for key, label in _LANG_LABEL.items()
+                            if key in _present) or "By language"
+
     # Six tiles, no more. The screen before this one had nine and the owner
     # could not find what he was looking for; every extra tile costs more than
     # the shortcut it provides. Everything still reachable, one level deeper.
@@ -410,7 +424,7 @@ def build_master(cfg, playlists_root: Path, *, movies=None, channels=None,
         ("live/kids.m3u",        "🧸 Kids",
          f"{len(kids)} channels worldwide", "kids", "#d4820a"),
         ("live/movies.m3u",      "🍿 Movie Channels",
-         "Bangla, Indian, English, Others", "movie-channels", "#8e1b1b"),
+         movie_blurb, "movie-channels", "#8e1b1b"),
         ("movies/movies.m3u",    "🎬 Movies on Demand",
          "Watch any time, by genre", "movie-library", "#7d1128"),
     ]

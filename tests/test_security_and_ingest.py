@@ -285,3 +285,49 @@ class TestPerCategoryReliability(unittest.TestCase):
         pub, held = self.gen._partition([self._ch("bangladesh", 0, 45)], allow_unverified=False)
         self.assertEqual(pub, [])
         self.assertIn("unreliable", held)
+
+
+class TestSubscriberCredentials(unittest.TestCase):
+    """A stream URL that only works by presenting someone's subscription is
+    excluded, however healthy it probes.
+
+    The case that prompted this: Sony Max arrived from the owner's own uploaded
+    playlist as a Stalker/Ministra portal URL carrying a set-top-box MAC and a
+    play token. It answered 14 of 45 probes, so only the reliability floor was
+    holding it back — a number that could drift above the threshold on any run
+    and publish it by accident. Bypassing authentication is a rule, not a score.
+    """
+
+    def test_portal_mac_url_is_rejected(self):
+        v = check_url("http://dksmedia.tv/play/live.php"
+                      "?mac=00:1A:79:B6:60:3D&stream=156013&play_token=slNi06NyY0")
+        self.assertFalse(v.ok)
+        self.assertIn("subscriber credentials", v.reason)
+
+    def test_xtream_login_in_query_is_rejected(self):
+        v = check_url("http://host.tv/get.php?username=john&password=hunter2&type=m3u")
+        self.assertFalse(v.ok)
+
+    def test_xtream_path_style_is_rejected(self):
+        v = check_url("http://host.tv:8080/live/john/hunter2/12345.ts")
+        self.assertFalse(v.ok)
+
+    def test_static_publisher_token_is_not_a_credential(self):
+        # `?token=test` and `?token=onlinetv` identify the stream, not a
+        # subscriber. Rejecting these would drop ~20 working channels.
+        for url in ("http://4.30.180.36:8420/hbo2/index.m3u8?token=test",
+                    "https://fs.uplink.kz/24KZ/mono.m3u8?token=onlinetv"):
+            self.assertTrue(check_url(url).ok, url)
+
+    def test_ordinary_hls_path_is_not_mistaken_for_xtream(self):
+        self.assertTrue(check_url("https://cdn.example.com/live/bbc/hls/index.m3u8").ok)
+
+    def test_generator_reports_its_own_withheld_reason(self):
+        gen = LiveGenerator(config.load(use_cache=False), Path(tempfile.mkdtemp()))
+        ch = Channel(id="x", name="Sony Max", category="movies", status="ACTIVE",
+                     stream_url="http://dksmedia.tv/play/live.php"
+                                "?mac=00:1A:79:B6:60:3D&play_token=abc",
+                     checks_total=45, checks_ok=45)
+        pub, held = gen._partition([ch], allow_unverified=False)
+        self.assertEqual(pub, [])
+        self.assertIn("subscriber_credentials", held)

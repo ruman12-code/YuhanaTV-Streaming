@@ -29,6 +29,32 @@ _EXECUTABLE_SUFFIXES = (
     ".jar", ".scr", ".com", ".deb", ".rpm",
 )
 
+# Credentials that identify a paying subscriber rather than a public endpoint.
+#
+# Two shapes turn up in scraped playlists:
+#   * Stalker/Ministra portals, which authenticate a set-top box by its MAC
+#     address: .../play/live.php?mac=00:1A:79:B6:60:3D&play_token=...
+#   * Xtream Codes panels, which carry the account login in the query string:
+#     .../live/username/password/12345.ts or ...?username=x&password=y
+#
+# Both are somebody's paid subscription. Publishing one means using their
+# credentials to get a stream, which is bypassing authentication (spec 28),
+# and it is not made acceptable by the URL happening to answer a probe. A
+# static publisher-side token such as `?token=test` or `?token=onlinetv` is
+# NOT this: it identifies the stream, not a subscriber, so it is left alone.
+_SUBSCRIBER_MAC = re.compile(r"[?&]mac=(?:[0-9a-f]{2}[:%-]){5}[0-9a-f]{2}", re.I)
+_SUBSCRIBER_LOGIN = re.compile(r"[?&]username=[^&]+&(?:[^&]*&)*password=", re.I)
+_XTREAM_PATH = re.compile(r"/(?:live|movie|series)/[^/]+/[^/]+/\d+\.(?:ts|m3u8|mp4|mkv)$", re.I)
+
+
+def carries_subscriber_credentials(url: str) -> bool:
+    """True when the URL only works by presenting someone's subscription."""
+    if not url:
+        return False
+    return bool(_SUBSCRIBER_MAC.search(url)
+                or _SUBSCRIBER_LOGIN.search(url)
+                or _XTREAM_PATH.search(urlsplit(url).path))
+
 
 @dataclass(frozen=True)
 class UrlVerdict:
@@ -105,6 +131,12 @@ def check_url(
         d = str(denied).lower().strip()
         if d and (host_l == d or host_l.endswith("." + d)):
             return UrlVerdict(False, url, f"host '{host}' is on the denied-host list")
+
+    if carries_subscriber_credentials(url):
+        return UrlVerdict(False, url,
+                          "url carries subscriber credentials (portal MAC or "
+                          "account login); publishing it would mean using "
+                          "someone's paid subscription")
 
     if not allow_executables:
         path_lower = parts.path.lower()
