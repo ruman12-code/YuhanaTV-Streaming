@@ -29,7 +29,10 @@ NAME_RULES: tuple[tuple[str, str], ...] = (
                r"golf|racing|motogp|formula ?1|f1 ?tv|cricket|football|soccer|"
                r"nba|nfl|nhl|mlb|tennis|olympic|dazn|astro (supersport|arena)|"
                r"star sports|ten sports|sky sports|bein)\b"),
-    ("news", r"\b(news|24x7|24/7 news|aaj tak|ndtv|republic|times ?now|"
+    # "republic" is anchored to the Indian news brands. Bare, it matched every
+    # "(Czech Republic)" and "(Dominican Republic)" in the catalogue and filed
+    # National Geographic and Film+ under News.
+    ("news", r"\b(news|24x7|24/7 news|aaj tak|ndtv|republic (tv|bharat|bangla|world)|"
              r"al ?jazeera|cnn|bbc (world|news)|dw|france ?24|euronews|sky news|"
              r"newsmax|cgtn|rt news|trt world|abp|india today|wion|noticias)\b"),
     ("movies", r"\b(cinema|cinemax|movies?|movie ?club|film(s|x|box|rise)?|"
@@ -56,6 +59,7 @@ GROUP_TOKEN_PRIORITY = (
     "kids", "animation", "sports", "movies", "series",
     "news", "music", "documentary", "culture", "religious", "lifestyle",
     "business", "comedy", "entertainment", "family", "general", "public",
+    "undefined",
 )
 
 TOKEN_TO_CATEGORY = {
@@ -71,7 +75,11 @@ TOKEN_TO_CATEGORY = {
     "lifestyle": "lifestyle", "travel": "lifestyle", "cooking": "lifestyle",
     "outdoor": "lifestyle", "auto": "lifestyle",
     "business": "business",
-    "comedy": "entertainment", "entertainment": "entertainment", "general": "entertainment",
+    "comedy": "entertainment", "entertainment": "entertainment",
+    # Not entertainment: see LIVE_CATEGORIES. Name-based rules run first, so a
+    # channel in one of these groups whose name says "News" or "Sports" is still
+    # classified on its name; only the genuinely unclassifiable land here.
+    "general": "general", "undefined": "general", "other": "general",
     "shop": "other",
 }
 
@@ -165,9 +173,27 @@ def from_group(group_slug: str) -> str:
     return ""
 
 
+# A trailing "(Country)" disambiguates two feeds of one brand; it says nothing
+# about genre. Stripped before the genre rules run, so "History (Czech Republic)"
+# is classified on "History".
+_TRAILING_COUNTRY = None
+
+
+def _strip_country_suffix(name: str) -> str:
+    global _TRAILING_COUNTRY
+    if _TRAILING_COUNTRY is None:
+        from .generators.countries import COUNTRY_NAMES
+        alts = sorted({re.escape(v) for v in COUNTRY_NAMES.values()},
+                      key=len, reverse=True)
+        _TRAILING_COUNTRY = re.compile(
+            r"\s*\((?:" + "|".join(alts) + r")\)\s*$", re.IGNORECASE)
+    return _TRAILING_COUNTRY.sub("", name or "").strip()
+
+
 def categorise(name: str, group_slug: str, *, default: str = "other") -> str:
     """Name first, then group title. See the module docstring for why."""
-    return from_name(name) or from_group(group_slug) or default
+    return (from_name(_strip_country_suffix(name))
+            or from_group(group_slug) or default)
 
 
 # --- language buckets for the Movie Channels screen -------------------------

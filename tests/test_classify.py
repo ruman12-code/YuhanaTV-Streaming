@@ -133,3 +133,55 @@ class TestIngestApplies(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestCountrySuffixDoesNotDecideGenre(unittest.TestCase):
+    """A trailing "(Country)" disambiguates two feeds of one brand. It says
+    nothing about genre, and taking it as evidence filed National Geographic
+    and Film+ under News because "republic" was in the news pattern for
+    Republic TV. Twenty-eight channels were wrong before the full index; at
+    this scale it is a whole class."""
+
+    def test_country_parenthetical_is_ignored_for_genre(self):
+        self.assertEqual(categorise("History (Czech Republic)", "general"), "documentary")
+        self.assertEqual(categorise("National Geographic (Czech Republic)", "general"),
+                         "documentary")
+        self.assertEqual(categorise("Film+ (Czech Republic)", "general"), "movies")
+        self.assertEqual(categorise("Cartoon Network (Dominican Republic)", "general"),
+                         "kids")
+
+    def test_the_republic_news_brands_still_match(self):
+        for name in ("Republic TV", "Republic Bharat", "Republic Bangla",
+                     "Republic World"):
+            self.assertEqual(categorise(name, "entertainment"), "news", name)
+
+    def test_a_general_station_named_after_its_country_is_not_a_genre(self):
+        self.assertEqual(categorise("Prima (Czech Republic)", "general"), "general")
+        self.assertEqual(categorise("Global TV (Dominican Republic)", "undefined"),
+                         "general")
+
+
+class TestGeneralIsNotEntertainment(unittest.TestCase):
+    """The narrow category feeds had no "General" or "Undefined" groups. The
+    full aggregator index files four thousand channels that way - provincial
+    broadcasters carrying news, drama and sport in one schedule. Calling them
+    Entertainment made the word meaningless for the 900 channels that are."""
+
+    def test_unclassifiable_groups_land_in_general(self):
+        self.assertEqual(categorise("Telecentro", "undefined"), "general")
+        self.assertEqual(categorise("Onda TV", "general"), "general")
+
+    def test_a_name_that_says_what_it_is_still_wins(self):
+        self.assertEqual(categorise("Star Sports 2 HD", "general"), "sports")
+        self.assertEqual(categorise("Zee Cinema", "undefined"), "movies")
+        self.assertEqual(categorise("BBC News Pashto", "general"), "news")
+
+    def test_real_entertainment_groups_are_untouched(self):
+        self.assertEqual(categorise("Some Channel", "entertainment"), "entertainment")
+        self.assertEqual(categorise("Some Channel", "comedy"), "entertainment")
+
+    def test_general_is_a_valid_model_category(self):
+        from src.models import Channel, LIVE_CATEGORIES
+        self.assertIn("general", LIVE_CATEGORIES)
+        self.assertEqual(Channel(id="x", name="y", category="general").category,
+                         "general")

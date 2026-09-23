@@ -32,6 +32,12 @@ STREAM_TYPES = ("hls", "dash", "mp4", "ts", "unknown")
 LIVE_CATEGORIES = (
     "bangladesh", "news", "sports", "entertainment", "movies", "series", "music",
     "kids", "documentary", "educational", "business", "lifestyle",
+    # General-interest terrestrial stations - a provincial Chinese broadcaster,
+    # a Dominican network, an Indonesian TVRI region. They carry news, drama and
+    # sport in one schedule, which is not a genre, and the aggregator files them
+    # under "General" or "Undefined". Calling them Entertainment put four
+    # thousand of them in a bucket the word no longer meant anything in.
+    "general",
     "religious", "international", "other",
 )
 

@@ -23,6 +23,7 @@ LIVE_CATEGORY_META: dict[str, dict] = {
     "educational":   {"order": 90, "label": "📚 Educational",   "bg": "#2d6a4f"},
     "business":      {"order": 100, "label": "💼 Business",     "bg": "#34495e"},
     "lifestyle":     {"order": 110, "label": "✨ Lifestyle",    "bg": "#a1246b"},
+    "general":       {"order": 88, "label": "📺 General & Local TV", "bg": "#34495e"},
     "religious":     {"order": 120, "label": "🕌 Religious",    "bg": "#1e6b52"},
     "international": {"order": 130, "label": "🌐 International", "bg": "#2c3e75"},
     "other":         {"order": 999, "label": "📺 Other",        "bg": "#444444"},
