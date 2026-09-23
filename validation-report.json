@@ -1,33 +1,35 @@
 {
-  "generated_at": "2026-09-23T14:31:43+00:00",
+  "generated_at": "2026-09-23T15:00:56+00:00",
   "build_kind": "validated",
   "warning": "",
   "live_channels": {
-    "total": 1478,
-    "active": 1070,
-    "degraded": 106,
+    "total": 1798,
+    "active": 1317,
+    "degraded": 177,
     "offline": 286,
-    "invalid": 16,
+    "invalid": 18,
     "unverified": 0,
     "by_category": {
-      "movies": 469,
-      "kids": 172,
-      "entertainment": 170,
-      "sports": 168,
+      "movies": 470,
+      "entertainment": 247,
+      "news": 211,
+      "kids": 181,
+      "sports": 172,
       "series": 164,
-      "news": 118,
-      "documentary": 94,
+      "documentary": 115,
+      "religious": 73,
       "bangladesh": 59,
-      "music": 25,
-      "other": 23,
-      "lifestyle": 8,
-      "religious": 8
+      "music": 48,
+      "other": 39,
+      "lifestyle": 15,
+      "business": 4
     },
     "by_country": {
-      "us": 343,
-      "in": 109,
+      "us": 345,
+      "in": 337,
       "ru": 106,
       "unknown": 104,
+      "pk": 100,
       "se": 97,
       "bd": 54,
       "de": 49,
@@ -42,15 +44,14 @@
       "br": 22,
       "ir": 19,
       "cl": 16,
-      "pk": 16,
+      "nl": 16,
       "mx": 15,
+      "ca": 15,
       "bg": 14,
-      "nl": 14,
       "hu": 14,
       "ro": 14,
       "it": 13,
       "sa": 12,
-      "ca": 12,
       "do": 11,
       "cz": 10,
       "au": 9,
@@ -70,6 +71,7 @@
       "cr": 4,
       "gr": 4,
       "vn": 4,
+      "ae": 4,
       "hr": 3,
       "kg": 3,
       "mm": 3,
@@ -80,7 +82,6 @@
       "dz": 3,
       "sg": 3,
       "cm": 3,
-      "ae": 3,
       "si": 2,
       "pr": 2,
       "cy": 2,
@@ -127,11 +128,11 @@
   },
   "resolution": {
     "measured_4k": 0,
-    "measured_1080p": 340,
-    "measured_720p": 201,
-    "measured_576p": 35,
-    "measured_480p": 27,
-    "unmeasured": 849,
+    "measured_1080p": 401,
+    "measured_720p": 248,
+    "measured_576p": 64,
+    "measured_480p": 55,
+    "unmeasured": 949,
     "note": "Counts come from #EXT-X-STREAM-INF RESOLUTION only. Source-claimed labels such as '(1080p)' in a channel name are never counted."
   },
   "movies": {
@@ -156,35 +157,35 @@
   },
   "run_health": {
     "ok": true,
-    "reason": "2% of 1093 baseline channels regressed; within limits",
-    "checked": 1478,
-    "newly_failing": 42,
-    "baseline_active": 1093,
-    "failure_fraction": 0.0357,
-    "regression_fraction": 0.0165
+    "reason": "1% of 1090 baseline channels regressed; within limits",
+    "checked": 1798,
+    "newly_failing": 106,
+    "baseline_active": 1090,
+    "failure_fraction": 0.0709,
+    "regression_fraction": 0.011
   },
   "last_probe": {
     "$comment": "What the most recent run actually measured, before the 3-strike demotion rule is applied. `live_channels` above reports stored status, which lags deliberately.",
     "counts": {
-      "ACTIVE": 1070,
-      "OFFLINE": 312,
-      "DEGRADED": 66,
-      "INVALID": 30
+      "ACTIVE": 1317,
+      "OFFLINE": 370,
+      "DEGRADED": 75,
+      "INVALID": 36
     },
     "failing_stage": {
-      "OFFLINE:http": 295,
-      "DEGRADED:variant": 38,
-      "INVALID:manifest": 30,
-      "DEGRADED:none": 18,
-      "OFFLINE:dns": 17,
-      "DEGRADED:segment": 10
+      "OFFLINE:http": 352,
+      "DEGRADED:variant": 40,
+      "INVALID:manifest": 36,
+      "DEGRADED:segment": 21,
+      "OFFLINE:dns": 18,
+      "DEGRADED:none": 14
     }
   },
   "reliability": {
-    "channels_with_history": 1478,
-    "mean_reliability": 0.7642,
-    "fully_reliable": 765,
-    "never_once_up": 288,
+    "channels_with_history": 1798,
+    "mean_reliability": 0.765,
+    "fully_reliable": 1016,
+    "never_once_up": 363,
     "flapping": [
       {
         "id": "ch-7304184149",
@@ -193,22 +194,16 @@
         "checks": 46
       },
       {
-        "id": "ch-17a477efe4",
-        "name": "All Time Movies",
-        "reliability": 0.278,
-        "checks": 18
-      },
-      {
-        "id": "ch-7ccfcd9b22",
-        "name": "Sony Max",
-        "reliability": 0.304,
-        "checks": 46
-      },
-      {
         "id": "ch-2526a07356",
         "name": "Willow",
         "reliability": 0.304,
         "checks": 46
+      },
+      {
+        "id": "ch-8b7673f626",
+        "name": "Balapan International",
+        "reliability": 0.312,
+        "checks": 16
       },
       {
         "id": "ch-0d7f702e48",
@@ -223,16 +218,16 @@
         "checks": 12
       },
       {
+        "id": "ch-17a477efe4",
+        "name": "All Time Movies",
+        "reliability": 0.333,
+        "checks": 18
+      },
+      {
         "id": "ch-3b587c8865",
         "name": "FilmBox",
         "reliability": 0.37,
         "checks": 46
-      },
-      {
-        "id": "ch-8b7673f626",
-        "name": "Balapan International",
-        "reliability": 0.375,
-        "checks": 16
       },
       {
         "id": "ch-965fac492f",
@@ -241,8 +236,8 @@
         "checks": 18
       },
       {
-        "id": "ch-1ad5ac9e1d",
-        "name": "ETV Cinema",
+        "id": "ch-4beb7120f3",
+        "name": "Belarus-2 HD",
         "reliability": 0.389,
         "checks": 18
       },
@@ -277,16 +272,16 @@
         "checks": 46
       },
       {
-        "id": "ch-5cc55e1ac4",
-        "name": "Channel S",
-        "reliability": 0.435,
-        "checks": 46
-      },
-      {
-        "id": "ch-4beb7120f3",
-        "name": "Belarus-2 HD",
+        "id": "ch-1ad5ac9e1d",
+        "name": "ETV Cinema",
         "reliability": 0.444,
         "checks": 18
+      },
+      {
+        "id": "ch-5cc55e1ac4",
+        "name": "Channel S",
+        "reliability": 0.457,
+        "checks": 46
       },
       {
         "id": "ch-16e6a9fc9f",
@@ -295,10 +290,10 @@
         "checks": 15
       },
       {
-        "id": "ch-d429a5c212",
-        "name": "Global TV",
-        "reliability": 0.5,
-        "checks": 46
+        "id": "ch-306579e09b",
+        "name": "HOT Drama",
+        "reliability": 0.467,
+        "checks": 15
       },
       {
         "id": "ch-e5889c0479",
@@ -313,16 +308,10 @@
         "checks": 18
       },
       {
-        "id": "ch-4164593686",
-        "name": "LRT Plius",
-        "reliability": 0.5,
-        "checks": 16
-      },
-      {
-        "id": "ch-306579e09b",
-        "name": "HOT Drama",
-        "reliability": 0.533,
-        "checks": 15
+        "id": "ch-d429a5c212",
+        "name": "Global TV",
+        "reliability": 0.522,
+        "checks": 46
       },
       {
         "id": "ch-a0f0b63e98",
@@ -331,28 +320,16 @@
         "checks": 46
       },
       {
-        "id": "ch-e90153538c",
-        "name": "Rupashi Bangla TV",
-        "reliability": 0.562,
-        "checks": 16
-      },
-      {
         "id": "ch-c4c9803c6f",
         "name": "Al Jazeera English HD",
         "reliability": 0.562,
         "checks": 16
       },
       {
-        "id": "ch-a3769a7dcc",
-        "name": "4ever Drama",
+        "id": "ch-4164593686",
+        "name": "LRT Plius",
         "reliability": 0.562,
         "checks": 16
-      },
-      {
-        "id": "ch-00d7c1cd76",
-        "name": "Green TV",
-        "reliability": 0.565,
-        "checks": 46
       },
       {
         "id": "ch-d75f2701f4",
@@ -361,20 +338,14 @@
         "checks": 46
       },
       {
-        "id": "ch-b55bcca7df",
-        "name": "Islamic TV",
-        "reliability": 0.565,
-        "checks": 46
-      },
-      {
-        "id": "ch-787284cc9b",
-        "name": "Ekhon",
+        "id": "ch-00d7c1cd76",
+        "name": "Green TV",
         "reliability": 0.587,
         "checks": 46
       },
       {
-        "id": "ch-ae793780a7",
-        "name": "Medina Live",
+        "id": "ch-b55bcca7df",
+        "name": "Islamic TV",
         "reliability": 0.587,
         "checks": 46
       },
@@ -385,8 +356,14 @@
         "checks": 15
       },
       {
-        "id": "ch-8fd784bf92",
-        "name": "Ekushe TV",
+        "id": "ch-75237e4624",
+        "name": "Match! Boets",
+        "reliability": 0.6,
+        "checks": 15
+      },
+      {
+        "id": "ch-787284cc9b",
+        "name": "Ekhon",
         "reliability": 0.609,
         "checks": 46
       },
@@ -397,10 +374,10 @@
         "checks": 46
       },
       {
-        "id": "ch-0c3c181019",
-        "name": "ClickTV Chile",
-        "reliability": 0.611,
-        "checks": 18
+        "id": "ch-ae793780a7",
+        "name": "Medina Live",
+        "reliability": 0.609,
+        "checks": 46
       },
       {
         "id": "ch-467d43405b",
@@ -409,14 +386,32 @@
         "checks": 18
       },
       {
-        "id": "ch-a718b81488",
-        "name": "My TV",
+        "id": "ch-0c8b0c404f",
+        "name": "Armenia Premium",
+        "reliability": 0.611,
+        "checks": 18
+      },
+      {
+        "id": "ch-e90153538c",
+        "name": "Rupashi Bangla TV",
+        "reliability": 0.625,
+        "checks": 16
+      },
+      {
+        "id": "ch-a3769a7dcc",
+        "name": "4ever Drama",
+        "reliability": 0.625,
+        "checks": 16
+      },
+      {
+        "id": "ch-8fd784bf92",
+        "name": "Ekushe TV",
         "reliability": 0.63,
         "checks": 46
       },
       {
-        "id": "ch-b5cca1e8a4",
-        "name": "Ananda TV",
+        "id": "ch-a718b81488",
+        "name": "My TV",
         "reliability": 0.63,
         "checks": 46
       },
@@ -425,6 +420,12 @@
         "name": "BRIDGE Classic",
         "reliability": 0.632,
         "checks": 19
+      },
+      {
+        "id": "ch-b5cca1e8a4",
+        "name": "Ananda TV",
+        "reliability": 0.652,
+        "checks": 46
       }
     ],
     "note": "reliability is checks_ok/checks_total across validation runs; a channel with checks_total == 0 has never been measured."
@@ -548,32 +549,39 @@
       "regression_fraction": 0.0092
     },
     {
-      "at": "2026-09-23T14:09:46+00:00",
+      "at": "2026-09-23T14:32:42+00:00",
       "counts": {
-        "ACTIVE": 1070,
-        "OFFLINE": 312,
-        "DEGRADED": 66,
-        "INVALID": 30
+        "ACTIVE": 1317,
+        "OFFLINE": 370,
+        "DEGRADED": 75,
+        "INVALID": 36
       },
       "health_ok": true,
-      "health_reason": "2% of 1093 baseline channels regressed; within limits",
-      "failure_fraction": 0.0357,
-      "regression_fraction": 0.0165
+      "health_reason": "1% of 1090 baseline channels regressed; within limits",
+      "failure_fraction": 0.0709,
+      "regression_fraction": 0.011
     }
   ],
   "epg": {
-    "channels_in_epg": 862,
+    "channels_in_epg": 1094,
     "channels_with_programmes": 0,
-    "channels_without_programmes": 862,
+    "channels_without_programmes": 1094,
     "programmes": 0,
     "dropped": 0,
     "coverage_percent": 0.0,
     "note": "A channel with no real programme data carries a <channel> entry and no <programme> elements. Schedules are never fabricated.",
-    "guide_sources_available": 634,
-    "channels_total": 1478,
-    "channels_with_canonical_id": 1412,
-    "bytes": 145702,
+    "guide_sources_available": 780,
+    "channels_total": 1798,
+    "channels_with_canonical_id": 1732,
+    "bytes": 187753,
     "guide_coverage": {
+      "7SMusic.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_7S_MUSIC"
+        }
+      ],
       "9XJalwa.in": [
         {
           "site": "airtelxstream.in",
@@ -598,6 +606,18 @@
           "site_id": "139"
         }
       ],
+      "9XTashan.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_9X_TASHAN"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142504"
+        }
+      ],
       "10TV.in": [
         {
           "site": "airtelxstream.in",
@@ -613,6 +633,23 @@
           "site": "tataplay.com",
           "lang": "en",
           "site_id": "266"
+        }
+      ],
+      "AadinathTV.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_AADINATH_TV"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142505"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "969"
         }
       ],
       "AajTak.in": [
@@ -672,6 +709,13 @@
           "site": "tataplay.com",
           "lang": "en",
           "site_id": "129"
+        }
+      ],
+      "AaseervathamTV.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_AASEERVATHAM_TV"
         }
       ],
       "ABPAnanda.in": [
@@ -776,6 +820,18 @@
           "site_id": "1321"
         }
       ],
+      "ANBNews.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_ANB_NEWS"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "787"
+        }
+      ],
       "AndTV.in": [
         {
           "site": "airtelxstream.in",
@@ -821,6 +877,47 @@
           "site": "zee5.com",
           "lang": "en",
           "site_id": "0-9-channel_1510237423"
+        }
+      ],
+      "AradanaTV.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_ARADANA"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142649"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "285"
+        }
+      ],
+      "ArgusNews.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_ARGUS"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142650"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "907"
+        }
+      ],
+      "AryanTVNational.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_ARYAN_TV_NATIONAL"
         }
       ],
       "Asianet.in": [
@@ -922,6 +1019,50 @@
           "site_id": "1173"
         }
       ],
+      "AsianetNews.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_ASIANET_NEWS"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142679"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "532"
+        },
+        {
+          "site": "zee5.com",
+          "lang": "en",
+          "site_id": "0-9-200"
+        }
+      ],
+      "AssamTalks.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_ASSAM_TALKS"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142683"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "29"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "1484"
+        }
+      ],
       "B4UBhojpuri.in": [
         {
           "site": "airtelxstream.in",
@@ -996,6 +1137,60 @@
           "site": "virgintvgo.virginmedia.com",
           "lang": "en",
           "site_id": "430"
+        }
+      ],
+      "B4UMusic.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_B4U_MUSIC"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "158141"
+        },
+        {
+          "site": "mytelly.co.uk",
+          "lang": "en",
+          "site_id": "1815/b4u-music"
+        },
+        {
+          "site": "sky.com",
+          "lang": "en",
+          "site_id": "GB#5708"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "9"
+        },
+        {
+          "site": "tvireland.ie",
+          "lang": "en",
+          "site_id": "1815/b4u-music"
+        },
+        {
+          "site": "tvtv.us",
+          "lang": "en",
+          "site_id": "24465"
+        },
+        {
+          "site": "virgintvgo.virginmedia.com",
+          "lang": "en",
+          "site_id": "431"
+        }
+      ],
+      "BansalNews.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_BANSAL_NEWS"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "652"
         }
       ],
       "BBCNews.uk": [
@@ -1400,6 +1595,52 @@
           "site_id": "NL_000116_019005"
         }
       ],
+      "Bharat24.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_BHARAT_24"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142710"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "1010"
+        }
+      ],
+      "BharatExpress.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_BHARAT_EXPRESS"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142711"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "1051"
+        }
+      ],
+      "BharatSamachar.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_BHARAT_SAMACHAR"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "291"
+        }
+      ],
       "BhojpuriCinema.in": [
         {
           "site": "airtelxstream.in",
@@ -1415,6 +1656,122 @@
           "site": "tataplay.com",
           "lang": "en",
           "site_id": "181"
+        }
+      ],
+      "BIGTV.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_BIG_TV"
+        }
+      ],
+      "BRKNews.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_BRK_NEWS"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "1194"
+        }
+      ],
+      "ChannelWIN.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_CHANNEL_WIN"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "161"
+        }
+      ],
+      "ChardiklaTimeTV.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_CHARDIKLA_TIME_TV"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142736"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "193"
+        }
+      ],
+      "CNBCAwaaz.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_CNBC_AWAAZ"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142745"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "204"
+        }
+      ],
+      "CNBCBajar.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_CNBC_BAJAR"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142742"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "303"
+        }
+      ],
+      "CNBCTV18.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_CNBC_TV18"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142743"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "168"
+        }
+      ],
+      "CNBCTV18PrimeHD.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_CNBC_PRIME_HD"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142744"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "304"
         }
       ],
       "Colors.in": [
@@ -1595,6 +1952,33 @@
           "site_id": "1000"
         }
       ],
+      "ColorsGujarati.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_COLORS_GUJARATI"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "158148"
+        },
+        {
+          "site": "sky.com",
+          "lang": "en",
+          "site_id": "GB#1090"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "107"
+        },
+        {
+          "site": "virgintvgo.virginmedia.com",
+          "lang": "en",
+          "site_id": "2166"
+        }
+      ],
       "ColorsInfinity.in": [
         {
           "site": "airtelxstream.in",
@@ -1625,6 +2009,321 @@
           "site": "tataplay.com",
           "lang": "en",
           "site_id": "187"
+        }
+      ],
+      "ColorsKannada.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_COLORS_KANNADA_HD"
+        },
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_COLORS_KANNADA"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "157579"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "158235"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "108"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "612"
+        }
+      ],
+      "ColorsMarathi.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_COLORS_MARATHI_HD"
+        },
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_COLORS_MARATHI"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "157580"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "158237"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "134"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "308"
+        }
+      ],
+      "ColorsSuper.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_COLORS_SUPER"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "158240"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "533"
+        }
+      ],
+      "ColorsTamil.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_COLORS_TAMIL_HD"
+        },
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_COLORS_TAMIL"
+        },
+        {
+          "site": "content.astro.com.my",
+          "lang": "en",
+          "site_id": "298"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "157682"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "158241"
+        },
+        {
+          "site": "playtv.unifi.com.my",
+          "lang": "hi",
+          "site_id": "20000113"
+        },
+        {
+          "site": "singtel.com",
+          "lang": "en",
+          "site_id": "5623"
+        },
+        {
+          "site": "starhubtvplus.com",
+          "lang": "en",
+          "site_id": "32897913-6eff-45db-90e9-948b56bddbb6"
+        },
+        {
+          "site": "starhubtvplus.com",
+          "lang": "zh",
+          "site_id": "32897913-6eff-45db-90e9-948b56bddbb6"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "418"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "674"
+        }
+      ],
+      "CVRNews.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_CVR_NEWS"
+        }
+      ],
+      "Dangal2.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_DANGAL_2"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142772"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "194"
+        }
+      ],
+      "DangalTV.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_DANGAL"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142771"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "51"
+        }
+      ],
+      "DDArunPrabha.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_DD_ARUNPRABHA"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142776"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "758"
+        }
+      ],
+      "DDAssam.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_DD_NORTH_EAST"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142777"
+        }
+      ],
+      "DDBangla.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_DD_BANGLA"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142778"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "314"
+        }
+      ],
+      "DDBharati.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_DD_BHARATI"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142779"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "316"
+        },
+        {
+          "site": "tvpassport.com",
+          "lang": "en",
+          "site_id": "dd-bharati-doordarshan/13649"
+        }
+      ],
+      "DDBihar.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_DD_BIHAR"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142780"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "317"
+        }
+      ],
+      "DDChandana.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_DD_CHANDANA"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142781"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "321"
+        }
+      ],
+      "DDGirnar.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_DD_GIRNAR"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142782"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "209534"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "323"
+        }
+      ],
+      "DDHimachalPradesh.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_DD_SHIMLA"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "1217"
         }
       ],
       "DDIndia.in": [
@@ -1664,6 +2363,277 @@
           "site_id": "dd-india-doordarshan/13650"
         }
       ],
+      "DDKashir.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_DD_KASHIR"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142788"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "325"
+        }
+      ],
+      "DDKisan.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_DD_KISAN"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142789"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "209326"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "326"
+        }
+      ],
+      "DDMadhyaPradesh.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_DD_MP"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142790"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "330"
+        }
+      ],
+      "DDMalayalam.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_DD_MALAYALAM"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142791"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "328"
+        }
+      ],
+      "DDManipur.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_DD_IMPHAL"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142792"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "329"
+        }
+      ],
+      "DDMeghalaya.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_DD_SHILLONG"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142793"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "991"
+        }
+      ],
+      "DDNational.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_DD_NATIONAL_HD"
+        },
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_DD_NATIONAL"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "158252"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "158253"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "191"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "1218"
+        }
+      ],
+      "DDNews.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_DD_NEWS_HD"
+        },
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_DD_NEWS"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "157683"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "158254"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "322"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "691"
+        },
+        {
+          "site": "tvpassport.com",
+          "lang": "en",
+          "site_id": "dd-news-doordarshan/13651"
+        }
+      ],
+      "DDOdia.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_DD_ORIYA"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142796"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "209539"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "333"
+        }
+      ],
+      "DDPunjabi.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_DD_PUNJABI"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142800"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "335"
+        }
+      ],
+      "DDRajasthan.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_DD_RAJASTHAN"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142801"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "332"
+        }
+      ],
+      "DDSahyadri.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_DD_SAHYADRI"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142803"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "209541"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "336"
+        }
+      ],
+      "DDSaptagiri.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_DD_SAPTAGIRI"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142804"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "337"
+        }
+      ],
       "DDSports.in": [
         {
           "site": "airtelxstream.in",
@@ -1696,6 +2666,108 @@
           "site_id": "1191"
         }
       ],
+      "DDTamil.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_DD_TAMIL"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142797"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "209540"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "334"
+        }
+      ],
+      "DDTripura.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_DD_TRIPURA"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "1210"
+        }
+      ],
+      "DDUrdu.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_DD_URDU"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142808"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "338"
+        },
+        {
+          "site": "tvpassport.com",
+          "lang": "en",
+          "site_id": "dd-urdu-doordarshan/13648"
+        }
+      ],
+      "DDUttarPradesh.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_DD_UP"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142807"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "339"
+        }
+      ],
+      "DDYadagiri.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_DD_YADAGIRI"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142810"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "548"
+        }
+      ],
+      "DhoomMusic.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_DHOOM_MUSIC"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142882"
+        }
+      ],
       "DisneyInternationalHD.in": [
         {
           "site": "airtelxstream.in",
@@ -1711,6 +2783,88 @@
           "site": "tataplay.com",
           "lang": "en",
           "site_id": "265"
+        }
+      ],
+      "DivyavaniTV.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_DIVYAVANI_TV"
+        }
+      ],
+      "DY365.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_DY365"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "143015"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "353"
+        }
+      ],
+      "E24.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_E24"
+        }
+      ],
+      "Enterr10Bangla.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_ENTERR10_BANGLA"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "143018"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "788"
+        }
+      ],
+      "EpicTV.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_EPIC"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "159013"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "126"
+        }
+      ],
+      "ETVAndhraPradesh.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_ETV_ANDHRA_PRADESH"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "143024"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "146"
         }
       ],
       "ETVBalBharat.in": [
@@ -1757,6 +2911,111 @@
           "site_id": "1341"
         }
       ],
+      "ETVLife.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_ETV_LIFE"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "143029"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "268"
+        }
+      ],
+      "ETVPlus.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_ETV_PLUS"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "143030"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "352"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "1342"
+        }
+      ],
+      "ETVTelangana.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_ETV_TELANGANA"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "143032"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "83"
+        }
+      ],
+      "ETVTelugu.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_ETV_HD"
+        },
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_ETV_TELUGU"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "143028"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "143033"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "359"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "145"
+        }
+      ],
+      "FaktMarathi.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_FAKT_MARATHI"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "143038"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "192"
+        }
+      ],
       "EpicBhojpuri.in": [
         {
           "site": "airtelxstream.in",
@@ -1791,36 +3050,403 @@
           "site_id": "823"
         }
       ],
-      "JalshaMovies.in": [
+      "GoodnessTV.in": [
         {
           "site": "airtelxstream.in",
           "lang": "en",
-          "site_id": "LIVETV_LIVETVCHANNEL_JALSHA_MOVIES_HD"
-        },
-        {
-          "site": "airtelxstream.in",
-          "lang": "en",
-          "site_id": "LIVETV_LIVETVCHANNEL_JALSHA_MOVIES"
+          "site_id": "LIVETV_LIVETVCHANNEL_GOODNESS_TV"
         },
         {
           "site": "dishtv.in",
           "lang": "en",
-          "site_id": "143218"
+          "site_id": "143091"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "269"
+        }
+      ],
+      "GoodNewsToday.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_GOOD_NEWS_TODAY"
         },
         {
           "site": "dishtv.in",
           "lang": "en",
-          "site_id": "143219"
+          "site_id": "143090"
         },
         {
           "site": "tataplay.com",
           "lang": "en",
-          "site_id": "572"
+          "site_id": "278"
+        },
+        {
+          "site": "zee5.com",
+          "lang": "en",
+          "site_id": "0-9-255"
+        }
+      ],
+      "GoodNewsTV.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_GOODNEWS_TV"
+        }
+      ],
+      "EpicKids.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_GUBBARE"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "159014"
         },
         {
           "site": "tataplay.com",
           "lang": "en",
-          "site_id": "537"
+          "site_id": "867"
+        }
+      ],
+      "Gyandarshan.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_GYANDARSHAN"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "143100"
+        }
+      ],
+      "HarvestTV.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_HARVEST_TV_24X7"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "348"
+        }
+      ],
+      "HindiKhabar.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_HINDI_KHABAR"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "344"
+        }
+      ],
+      "HNN24x7.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_HNN"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "1267"
+        }
+      ],
+      "HornbillTV.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_HORNBILL"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "898"
+        }
+      ],
+      "HungamaTV.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_HUNGAMA"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "143150"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "345"
+        }
+      ],
+      "IBC24.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_IBC24"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "143156"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "27"
+        }
+      ],
+      "IndiaAhead.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_INDIA_AHEAD"
+        }
+      ],
+      "IndiaToday.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_INDIA_TODAY"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "143197"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "1"
+        },
+        {
+          "site": "zee5.com",
+          "lang": "en",
+          "site_id": "0-9-indiatoday"
+        }
+      ],
+      "IndiaTV.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_INDIA_TV"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "143199"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "104"
+        }
+      ],
+      "IndiaTVSpeedNews.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_INDIA_TV_SPEED_NEWS"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "1407"
+        }
+      ],
+      "INH24x7.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_INH_24X7"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "698"
+        }
+      ],
+      "IsaiAruvi.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_ISAI_ARUVI"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "143212"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "647"
+        }
+      ],
+      "IshwarBhaktiTV.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_ISHWAR_TV"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "143213"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "594"
+        }
+      ],
+      "JaihindTV.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_JAIHIND_TV"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "143217"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "370"
+        }
+      ],
+      "JaiMaharashtra.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_JAI_MAHARASHTRA"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "233"
+        }
+      ],
+      "JanamTV.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_JANAM_TV"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "143221"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "270"
+        }
+      ],
+      "JantaTV.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_JANTA_TV"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "371"
+        }
+      ],
+      "JanTV.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_JAN_TV"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "870"
+        }
+      ],
+      "JayaPlus.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_JAYA_PLUS"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "143227"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "198"
+        },
+        {
+          "site": "tvtv.us",
+          "lang": "en",
+          "site_id": "67068"
+        }
+      ],
+      "Jonack.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_JONACK"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "143238"
+        }
+      ],
+      "KairaliNews.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_KAIRALI_NEWS"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "143246"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "211"
+        }
+      ],
+      "KairaliTV.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_KAIRALI_TV"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "143247"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "25"
         }
       ],
       "KairaliWe.in": [
@@ -1838,6 +3464,106 @@
           "site": "tataplay.com",
           "lang": "en",
           "site_id": "553"
+        }
+      ],
+      "KalaignarMurasu.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_MURASU"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "143561"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "411"
+        }
+      ],
+      "KalaignarTV.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_KALAIGNAR_TV"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "143249"
+        },
+        {
+          "site": "mewatch.sg",
+          "lang": "en",
+          "site_id": "572360"
+        },
+        {
+          "site": "starhubtvplus.com",
+          "lang": "en",
+          "site_id": "6ffaeb9f-2388-4f27-bd04-a71dba7c55a9"
+        },
+        {
+          "site": "starhubtvplus.com",
+          "lang": "zh",
+          "site_id": "6ffaeb9f-2388-4f27-bd04-a71dba7c55a9"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "200"
+        }
+      ],
+      "KalingaTV.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_KALINGA_TV"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "143250"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "375"
+        }
+      ],
+      "KanakNews.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_KANAK_NEWS"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "143252"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "376"
+        }
+      ],
+      "KaumudyTV.in": [
+        {
+          "site": "airtelxstream.in",
+          "lang": "en",
+          "site_id": "LIVETV_LIVETVCHANNEL_KAUMUDY_TV"
+        },
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "143259"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "378"
         }
       ],
       "MNX.in": [
@@ -2078,48 +3804,6 @@
           "site": "tataplay.com",
           "lang": "en",
           "site_id": "15"
-        }
-      ],
-      "SonyMax.in": [
-        {
-          "site": "airtelxstream.in",
-          "lang": "en",
-          "site_id": "LIVETV_LIVETVCHANNEL_SONY_MAX_HD"
-        },
-        {
-          "site": "airtelxstream.in",
-          "lang": "en",
-          "site_id": "LIVETV_LIVETVCHANNEL_SONY_MAX"
-        },
-        {
-          "site": "dishtv.in",
-          "lang": "en",
-          "site_id": "157590"
-        },
-        {
-          "site": "dishtv.in",
-          "lang": "en",
-          "site_id": "159098"
-        },
-        {
-          "site": "nowplayer.now.com",
-          "lang": "en",
-          "site_id": "772"
-        },
-        {
-          "site": "nowplayer.now.com",
-          "lang": "zh",
-          "site_id": "772"
-        },
-        {
-          "site": "tataplay.com",
-          "lang": "en",
-          "site_id": "132"
-        },
-        {
-          "site": "tataplay.com",
-          "lang": "en",
-          "site_id": "80"
         }
       ],
       "SonyPal.in": [
@@ -5239,6 +6923,30 @@
           "site_id": "cl#tvn-24-h"
         }
       ],
+      "9XJhakaas.in": [
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "90012"
+        }
+      ],
+      "AasthaBhajan.in": [
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142514"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "283"
+        },
+        {
+          "site": "tvtv.us",
+          "lang": "en",
+          "site_id": "71402"
+        }
+      ],
       "ABNAndhraJyoti.in": [
         {
           "site": "dishtv.in",
@@ -5261,6 +6969,54 @@
           "site": "tataplay.com",
           "lang": "en",
           "site_id": "178"
+        }
+      ],
+      "AsianetSuvarnaNews.in": [
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142682"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "555"
+        },
+        {
+          "site": "zee5.com",
+          "lang": "en",
+          "site_id": "0-9-201"
+        }
+      ],
+      "AyushTV.in": [
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142692"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "660"
+        }
+      ],
+      "BalleBalle.in": [
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142697"
+        }
+      ],
+      "BhakthiTV.in": [
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142709"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "290"
         }
       ],
       "AKDCalcuttaNews.in": [
@@ -5287,6 +7043,85 @@
           "site_id": "1166"
         }
       ],
+      "CTVNAKDPlus.in": [
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142754"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "311"
+        }
+      ],
+      "DarshanaTV.in": [
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142774"
+        }
+      ],
+      "DDGoa.in": [
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142783"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "1215"
+        }
+      ],
+      "DDHaryana.in": [
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142784"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "1212"
+        }
+      ],
+      "DDMizoram.in": [
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142794"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "1211"
+        }
+      ],
+      "DDNagaland.in": [
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142795"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "1214"
+        }
+      ],
+      "DDUttarakhand.in": [
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "142809"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "1213"
+        }
+      ],
       "GoldminesMovies.in": [
         {
           "site": "dishtv.in",
@@ -5299,6 +7134,18 @@
           "site_id": "1499"
         }
       ],
+      "ChannelDivya.in": [
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "143010"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "775"
+        }
+      ],
       "GoldminesBollywood.in": [
         {
           "site": "dishtv.in",
@@ -5309,6 +7156,68 @@
           "site": "tataplay.com",
           "lang": "en",
           "site_id": "1050"
+        }
+      ],
+      "GujaratFirst.in": [
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "143096"
+        }
+      ],
+      "HareKrsnaTV.in": [
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "143102"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "837"
+        }
+      ],
+      "HinduDharmam.in": [
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "143131"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "630"
+        }
+      ],
+      "HMTV.in": [
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "143136"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "349"
+        }
+      ],
+      "JinvaniChannel.in": [
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "143230"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "373"
+        }
+      ],
+      "KNewsIndia.in": [
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "143244"
         }
       ],
       "ManoranjanGrand.in": [
@@ -5361,6 +7270,49 @@
           "site_id": "143757"
         }
       ],
+      "Aastha.in": [
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "158133"
+        },
+        {
+          "site": "sky.com",
+          "lang": "en",
+          "site_id": "GB#3594"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "38"
+        }
+      ],
+      "AasthaKannada.in": [
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "158134"
+        }
+      ],
+      "AasthaTelugu.in": [
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "158136"
+        }
+      ],
+      "EpicBharat.in": [
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "158303"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "1184"
+        }
+      ],
       "SonyMax1.in": [
         {
           "site": "dishtv.in",
@@ -5371,6 +7323,30 @@
           "site": "tataplay.com",
           "lang": "en",
           "site_id": "1717"
+        }
+      ],
+      "GTCPunjabi.in": [
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "202704"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "1836"
+        }
+      ],
+      "GTCNews.in": [
+        {
+          "site": "dishtv.in",
+          "lang": "en",
+          "site_id": "202705"
+        },
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "1850"
         }
       ],
       "WorldPokerTour.us": [
@@ -10713,6 +12689,33 @@
           "site_id": "5c5c2e9d8002db3c3e0b1c72"
         }
       ],
+      "InWonder.nl": [
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "Plex/us#5e20b730f2f8d5003d739db7-6668b2b5e4f56766e556a413"
+        },
+        {
+          "site": "i.mjh.nz",
+          "lang": "en",
+          "site_id": "SamsungTVPlus/us#USBA300023G8"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "de",
+          "site_id": "6674c240f04cf4bb9233c91d"
+        },
+        {
+          "site": "plex.tv",
+          "lang": "en",
+          "site_id": "6668b2b5e4f56766e556a413"
+        },
+        {
+          "site": "watch.whaletvplus.com",
+          "lang": "en",
+          "site_id": "878089883754168603"
+        }
+      ],
       "ITVDeportes.mx": [
         {
           "site": "i.mjh.nz",
@@ -14350,6 +16353,18 @@
           "site_id": "644874236e1dc0bf5664a674"
         }
       ],
+      "INFAST.nl": [
+        {
+          "site": "plex.tv",
+          "lang": "de",
+          "site_id": "6674c3c0a9c715b93ca6ca94"
+        },
+        {
+          "site": "watch.whaletvplus.com",
+          "lang": "en",
+          "site_id": "878085677857115004"
+        }
+      ],
       "PlutoTVBudTerence.de": [
         {
           "site": "pluto.tv",
@@ -14461,6 +16476,18 @@
           "site": "sat.tv",
           "lang": "en",
           "site_id": "1#33#Al Ghad"
+        }
+      ],
+      "AngelTV.in": [
+        {
+          "site": "sat.tv",
+          "lang": "en",
+          "site_id": "1#33#Angel TV Arabia"
+        },
+        {
+          "site": "tv.mail.ru",
+          "lang": "ru",
+          "site_id": "2885"
         }
       ],
       "Aflam.sa": [
@@ -14659,6 +16686,20 @@
           "site_id": "GB#3914"
         }
       ],
+      "MadaniChannelEnglish.pk": [
+        {
+          "site": "sky.com",
+          "lang": "en",
+          "site_id": "GB#4460"
+        }
+      ],
+      "MasalaTV.pk": [
+        {
+          "site": "sky.com",
+          "lang": "en",
+          "site_id": "GB#1069"
+        }
+      ],
       "AlAlam.ir": [
         {
           "site": "sky.com",
@@ -14701,11 +16742,116 @@
           "site_id": "774"
         }
       ],
+      "AnandTV.in": [
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "1486"
+        }
+      ],
       "AnjanTV.in": [
         {
           "site": "tataplay.com",
           "lang": "en",
           "site_id": "180"
+        }
+      ],
+      "APN.in": [
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "286"
+        }
+      ],
+      "AwakeningTV.in": [
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "935"
+        }
+      ],
+      "CnewsBharat.in": [
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "910"
+        }
+      ],
+      "DDChhattisgarh.in": [
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "1216"
+        }
+      ],
+      "DDJharkhand.in": [
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "1188"
+        }
+      ],
+      "FatehTV.in": [
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "791"
+        }
+      ],
+      "FirstIndiaNews.in": [
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "650"
+        }
+      ],
+      "FoodFood.in": [
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "117"
+        }
+      ],
+      "IndiaDailyLive.in": [
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "1084"
+        }
+      ],
+      "IndiaVoice.in": [
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "685"
+        }
+      ],
+      "JantantraTV.in": [
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "701"
+        }
+      ],
+      "JeevanTV.in": [
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "372"
+        }
+      ],
+      "KappaTV.in": [
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "377"
+        }
+      ],
+      "KashishNews.in": [
+        {
+          "site": "tataplay.com",
+          "lang": "en",
+          "site_id": "838"
         }
       ],
       "Carac1.ch": [
@@ -15463,6 +17609,13 @@
           "site": "tvtv.us",
           "lang": "en",
           "site_id": "35401"
+        }
+      ],
+      "HumTV.pk": [
+        {
+          "site": "tvtv.us",
+          "lang": "en",
+          "site_id": "66899"
         }
       ],
       "Willow.us": [
@@ -16335,6 +18488,10 @@
       {
         "id": "ch-0e69bc15ca",
         "name": "Best of MTV NO"
+      },
+      {
+        "id": "ch-98183ef6e8",
+        "name": "ETV Beats"
       },
       {
         "id": "ch-a595778b0e",
@@ -17231,6 +19388,10 @@
         "name": "Xtrema Cine Clasico"
       },
       {
+        "id": "ch-3e4c04102a",
+        "name": "ARY Musik"
+      },
+      {
         "id": "ch-baa2030749",
         "name": "MTV"
       },
@@ -17273,6 +19434,14 @@
       {
         "id": "ch-2c86594ccb",
         "name": "History (Czech Republic)"
+      },
+      {
+        "id": "ch-8b8211a255",
+        "name": "Aastha"
+      },
+      {
+        "id": "ch-1b24ad9658",
+        "name": "Aastha Bhajan"
       },
       {
         "id": "ch-306579e09b",
@@ -17365,6 +19534,10 @@
     ],
     "status_degraded": [
       {
+        "id": "ch-94b448be45",
+        "name": "ATN Music"
+      },
+      {
         "id": "ch-5cc55e1ac4",
         "name": "Channel S"
       },
@@ -17379,10 +19552,6 @@
       {
         "id": "ch-8fd784bf92",
         "name": "Ekushe TV"
-      },
-      {
-        "id": "ch-ab2d394907",
-        "name": "Enter TV"
       },
       {
         "id": "ch-d429a5c212",
@@ -17413,12 +19582,60 @@
         "name": "365 days TV"
       },
       {
-        "id": "ch-0c3c181019",
-        "name": "ClickTV Chile"
+        "id": "ch-2000529c68",
+        "name": "E-Vidya 10"
+      },
+      {
+        "id": "ch-2814a70647",
+        "name": "E-Vidya 11"
+      },
+      {
+        "id": "ch-2de0ea1e11",
+        "name": "E-Vidya 12"
+      },
+      {
+        "id": "ch-83ddc6239b",
+        "name": "E-Vidya 4"
+      },
+      {
+        "id": "ch-ae8dfcd47e",
+        "name": "E-Vidya 5"
+      },
+      {
+        "id": "ch-9f0ab097ba",
+        "name": "E-Vidya 6"
+      },
+      {
+        "id": "ch-de66bd472b",
+        "name": "E-Vidya 7"
+      },
+      {
+        "id": "ch-f7336f3ab6",
+        "name": "E-Vidya 8"
+      },
+      {
+        "id": "ch-06927f3f87",
+        "name": "E-Vidya 9"
       },
       {
         "id": "ch-2ade37a728",
         "name": "Francophonie24"
+      },
+      {
+        "id": "ch-13db608f00",
+        "name": "HarPal Geo"
+      },
+      {
+        "id": "ch-e85b2544d2",
+        "name": "Jaya Plus"
+      },
+      {
+        "id": "ch-45e893b031",
+        "name": "JTBS Classic"
+      },
+      {
+        "id": "ch-0f5c693d95",
+        "name": "Mehran TV"
       },
       {
         "id": "ch-9e0b4136d7",
@@ -17433,12 +19650,12 @@
         "name": "13E"
       },
       {
-        "id": "ch-f234144150",
-        "name": "30A Sidewalks"
-      },
-      {
         "id": "ch-25df410ee2",
         "name": "4ever Theater"
+      },
+      {
+        "id": "ch-8fa9a6996c",
+        "name": "Apna Channel"
       },
       {
         "id": "ch-0fae458042",
@@ -17449,8 +19666,48 @@
         "name": "ArubaTV +"
       },
       {
-        "id": "ch-6b73c7e571",
-        "name": "Balapan HD"
+        "id": "ch-4beb7120f3",
+        "name": "Belarus-2 HD"
+      },
+      {
+        "id": "ch-24219d2719",
+        "name": "Colors Bangla HD"
+      },
+      {
+        "id": "ch-093d4671fe",
+        "name": "DD Bihar"
+      },
+      {
+        "id": "ch-bc87a9fd90",
+        "name": "ETV Plus"
+      },
+      {
+        "id": "ch-9483b226b6",
+        "name": "ETV Plus HD"
+      },
+      {
+        "id": "ch-a1d6aeb00e",
+        "name": "ETV Telugu HD"
+      },
+      {
+        "id": "ch-fe7b3be6e4",
+        "name": "Express Entertainment"
+      },
+      {
+        "id": "ch-0a127852e5",
+        "name": "Kay2 HD"
+      },
+      {
+        "id": "ch-18deb16eaa",
+        "name": "Pashto 1"
+      },
+      {
+        "id": "ch-16f5d2b26d",
+        "name": "Play Entertainment"
+      },
+      {
+        "id": "ch-9c7db7f671",
+        "name": "SAB TV"
       },
       {
         "id": "ch-fca83f2c07",
@@ -17465,28 +19722,36 @@
         "name": "Clan Internacional"
       },
       {
+        "id": "ch-fcaaacd1ff",
+        "name": "Kids Zone"
+      },
+      {
+        "id": "ch-8adcff870d",
+        "name": "LTN Family SD"
+      },
+      {
         "id": "ch-1dc86506e9",
         "name": "Sony Yay!"
       },
       {
-        "id": "ch-6359a66294",
-        "name": "Fashion&LifeStyle"
+        "id": "ch-69046f7ab8",
+        "name": "ETV Life"
+      },
+      {
+        "id": "ch-71660af211",
+        "name": "Fashion TV"
+      },
+      {
+        "id": "ch-f5cba70554",
+        "name": "Masala TV"
       },
       {
         "id": "ch-9fa4274ece",
         "name": "4ever Cinema"
       },
       {
-        "id": "ch-17a477efe4",
-        "name": "All Time Movies"
-      },
-      {
         "id": "ch-5154184968",
         "name": "AMC (United States) East"
-      },
-      {
-        "id": "ch-15055bf00d",
-        "name": "Amedia Hit"
       },
       {
         "id": "ch-f1fb2a0e8c",
@@ -17501,6 +19766,10 @@
         "name": "Blokbaster HD"
       },
       {
+        "id": "ch-c51ba768dd",
+        "name": "Bollywood HD"
+      },
+      {
         "id": "ch-21201d50ab",
         "name": "Canal+ Action Europe Czechia"
       },
@@ -17511,10 +19780,6 @@
       {
         "id": "ch-d67ccf4fbd",
         "name": "City Eden KinoArt"
-      },
-      {
-        "id": "ch-5657438d41",
-        "name": "City Eden KinoAsia"
       },
       {
         "id": "ch-e373f4745e",
@@ -17553,6 +19818,10 @@
         "name": "ETV Cinema"
       },
       {
+        "id": "ch-85c1ff7687",
+        "name": "Evrokino HD"
+      },
+      {
         "id": "ch-3b587c8865",
         "name": "FilmBox"
       },
@@ -17563,6 +19832,10 @@
       {
         "id": "ch-571d8f3046",
         "name": "KinoHit"
+      },
+      {
+        "id": "ch-ea99680bd5",
+        "name": "Kinosemja"
       },
       {
         "id": "ch-e57682633d",
@@ -17581,28 +19854,40 @@
         "name": "NEW K.MOVIES"
       },
       {
-        "id": "ch-2f0b4e0b11",
-        "name": "Paramount Network"
+        "id": "ch-1d9f94886a",
+        "name": "Ostrosyuzhetnoye HD"
+      },
+      {
+        "id": "ch-7ba80413db",
+        "name": "Retro"
+      },
+      {
+        "id": "ch-c7c9a94f9e",
+        "name": "Silver Screen"
       },
       {
         "id": "ch-470aba2a6c",
         "name": "Smotrim 100% Klassika"
       },
       {
-        "id": "ch-7ccfcd9b22",
-        "name": "Sony Max"
-      },
-      {
         "id": "ch-10c20c99d4",
         "name": "The Carol Burnett Show"
       },
       {
-        "id": "ch-adc2aa57c3",
-        "name": "2GB"
+        "id": "ch-9ea9fd5289",
+        "name": "8XM"
       },
       {
-        "id": "ch-ad4828415e",
-        "name": "30A Georgia Hollywood Review"
+        "id": "ch-ccb038c3c2",
+        "name": "ETV Music"
+      },
+      {
+        "id": "ch-8fccf9bc4a",
+        "name": "Jalwa TV"
+      },
+      {
+        "id": "ch-adc2aa57c3",
+        "name": "2GB"
       },
       {
         "id": "ch-e5afc9bf90",
@@ -17617,24 +19902,12 @@
         "name": "3AW"
       },
       {
-        "id": "ch-1624424f71",
-        "name": "4 SiDES TV"
-      },
-      {
         "id": "ch-f23b2c288c",
         "name": "6PR"
       },
       {
-        "id": "ch-fd4c04f128",
-        "name": "9 Plus News"
-      },
-      {
         "id": "ch-01dbb241d9",
         "name": "92 News HD"
-      },
-      {
-        "id": "ch-ad78b9e2e0",
-        "name": "Aaj Ki Khabar"
       },
       {
         "id": "ch-a7d0f94bf4",
@@ -17681,6 +19954,94 @@
         "name": "Al Jazeera English HD"
       },
       {
+        "id": "ch-a6c7c5da83",
+        "name": "Bada Khabar"
+      },
+      {
+        "id": "ch-0de1bb97fd",
+        "name": "Bansal News"
+      },
+      {
+        "id": "ch-6cde2b71f2",
+        "name": "City 41"
+      },
+      {
+        "id": "ch-7149a17ab8",
+        "name": "DY 365"
+      },
+      {
+        "id": "ch-95569b4d17",
+        "name": "ETV Andhra Pradesh"
+      },
+      {
+        "id": "ch-115674a5fa",
+        "name": "ETV Telangana"
+      },
+      {
+        "id": "ch-530a5931a4",
+        "name": "Hum News"
+      },
+      {
+        "id": "ch-d1755d8ef2",
+        "name": "K News India"
+      },
+      {
+        "id": "ch-b1b438ac85",
+        "name": "Kanak News"
+      },
+      {
+        "id": "ch-ca07082133",
+        "name": "Kohenoor News"
+      },
+      {
+        "id": "ch-1f2f22f349",
+        "name": "Lahore Rang"
+      },
+      {
+        "id": "ch-af4c1a754a",
+        "name": "Mashriq TV"
+      },
+      {
+        "id": "ch-ea394e9d1e",
+        "name": "Metro1 News"
+      },
+      {
+        "id": "ch-48f53c4141",
+        "name": "Neo News"
+      },
+      {
+        "id": "ch-b096bdeceb",
+        "name": "ON News HD"
+      },
+      {
+        "id": "ch-84afea16af",
+        "name": "PTV News"
+      },
+      {
+        "id": "ch-2209710aa1",
+        "name": "Public News"
+      },
+      {
+        "id": "ch-521ecd284d",
+        "name": "Roze News"
+      },
+      {
+        "id": "ch-a96757f1c9",
+        "name": "Sindh TV News"
+      },
+      {
+        "id": "ch-dabe2d843c",
+        "name": "Suno News HD"
+      },
+      {
+        "id": "ch-395d935c4c",
+        "name": "VSH News"
+      },
+      {
+        "id": "ch-b5cca1e8a4",
+        "name": "Ananda TV"
+      },
+      {
         "id": "ch-f47172f491",
         "name": "Makkah Live"
       },
@@ -17689,12 +20050,84 @@
         "name": "Medina Live"
       },
       {
+        "id": "ch-e4b1e53d2c",
+        "name": "Raavi TV"
+      },
+      {
+        "id": "ch-678cb36eec",
+        "name": "Rohi"
+      },
+      {
+        "id": "ch-980c28f678",
+        "name": "Samaa TV"
+      },
+      {
+        "id": "ch-0bb1c7b047",
+        "name": "Shine Star TV"
+      },
+      {
+        "id": "ch-96ba89f05b",
+        "name": "Sindh TV"
+      },
+      {
+        "id": "ch-b49f95322a",
+        "name": "Star Asia"
+      },
+      {
+        "id": "ch-ff8e17e1df",
+        "name": "TV One Global"
+      },
+      {
+        "id": "ch-a436574114",
+        "name": "TV Today"
+      },
+      {
+        "id": "ch-c82f7491e9",
+        "name": "Venus HD"
+      },
+      {
+        "id": "ch-41f43e4603",
+        "name": "Waseb TV"
+      },
+      {
+        "id": "ch-f1c930e2e0",
+        "name": "Aradana TV"
+      },
+      {
+        "id": "ch-d2df50cddf",
+        "name": "Bhakthi Siri"
+      },
+      {
+        "id": "ch-dbb24a5985",
+        "name": "Dharsan TV"
+      },
+      {
+        "id": "ch-def518a148",
+        "name": "Dheeran TV"
+      },
+      {
+        "id": "ch-c098c24655",
+        "name": "Harvest TV"
+      },
+      {
+        "id": "ch-7310a79585",
+        "name": "Hindu Dharmam"
+      },
+      {
+        "id": "ch-63ac727811",
+        "name": "Hosanna TV Hindi"
+      },
+      {
         "id": "ch-b55bcca7df",
         "name": "Islamic TV"
       },
       {
-        "id": "ch-a3769a7dcc",
-        "name": "4ever Drama"
+        "id": "ch-6f72b4acde",
+        "name": "Paighan TV"
+      },
+      {
+        "id": "ch-3bb90f035f",
+        "name": "Quran TV (Pakistan)"
       },
       {
         "id": "ch-a998c3896b",
@@ -17705,16 +20138,12 @@
         "name": "Balabol"
       },
       {
-        "id": "ch-eba583a096",
-        "name": "City Eden KinoDok"
-      },
-      {
         "id": "ch-74c584d077",
         "name": "City Eden TeleNovella"
       },
       {
-        "id": "ch-419b2f59e4",
-        "name": "Fox Life"
+        "id": "ch-fb1b0ff166",
+        "name": "30A Golf Kingdom"
       },
       {
         "id": "ch-1730026f5a",
@@ -17729,20 +20158,24 @@
         "name": "Esport3 Originals"
       },
       {
-        "id": "ch-c08d141550",
-        "name": "KTV Sport Plus"
-      },
-      {
         "id": "ch-4164593686",
         "name": "LRT Plius"
       },
       {
-        "id": "ch-689abd643f",
-        "name": "Maincast Cybersport"
-      },
-      {
         "id": "ch-75237e4624",
         "name": "Match! Boets"
+      },
+      {
+        "id": "ch-0c7106d966",
+        "name": "One Golf"
+      },
+      {
+        "id": "ch-019211a842",
+        "name": "PTV Sports"
+      },
+      {
+        "id": "ch-84a723bf01",
+        "name": "Ten Sports Pakistan"
       }
     ],
     "status_invalid": [
@@ -18023,6 +20456,10 @@
       {
         "id": "ch-474083eebb",
         "name": "BabyTV Latin America"
+      },
+      {
+        "id": "ch-8b7673f626",
+        "name": "Balapan International"
       },
       {
         "id": "ch-5aebebb52e",
@@ -18581,10 +21018,6 @@
         "name": "&TV HD"
       },
       {
-        "id": "ch-b5cca1e8a4",
-        "name": "Ananda TV"
-      },
-      {
         "id": "ch-24219d2719",
         "name": "Colors Bangla HD"
       },
@@ -18791,12 +21224,8 @@
         "name": "Love Natural"
       },
       {
-        "id": "ch-4beb7120f3",
-        "name": "Belarus-2 HD"
-      },
-      {
-        "id": "ch-8b7673f626",
-        "name": "Balapan International"
+        "id": "ch-17a477efe4",
+        "name": "All Time Movies"
       },
       {
         "id": "ch-976a881e50",
@@ -18821,12 +21250,12 @@
     ]
   },
   "withheld_counts": {
-    "denied_host": 308,
-    "requires_custom_http_headers": 128,
-    "status_degraded": 95,
+    "denied_host": 309,
+    "requires_custom_http_headers": 131,
+    "status_degraded": 161,
     "status_invalid": 10,
     "status_offline": 248,
-    "unreliable": 9
+    "unreliable": 8
   },
   "broken_urls": [
     {
@@ -19352,6 +21781,13 @@
       "name": "BabyTV Latin America",
       "status": "OFFLINE",
       "host": "cdn1tlinkgo.tlink.cl",
+      "note": "source claimed quality '1080p' (unverified)"
+    },
+    {
+      "id": "ch-8b7673f626",
+      "name": "Balapan International",
+      "status": "OFFLINE",
+      "host": "live-3.otcnet.ru",
       "note": "source claimed quality '1080p' (unverified)"
     },
     {
@@ -20104,6 +22540,13 @@
       "note": "source claimed quality '1080p' (unverified)"
     },
     {
+      "id": "ch-d5e31b61db",
+      "name": "Kinowood",
+      "status": "INVALID",
+      "host": "stream.mcquack.net",
+      "note": "source claimed quality '1080p' (unverified); source required custom HTTP headers"
+    },
+    {
       "id": "ch-9fcb18165a",
       "name": "Klasik",
       "status": "OFFLINE",
@@ -20461,13 +22904,6 @@
       "note": "source claimed quality '1080p' (unverified)"
     },
     {
-      "id": "ch-b5cca1e8a4",
-      "name": "Ananda TV",
-      "status": "OFFLINE",
-      "host": "app24.jagobd.com.bd",
-      "note": ""
-    },
-    {
       "id": "ch-24219d2719",
       "name": "Colors Bangla HD",
       "status": "OFFLINE",
@@ -20543,6 +22979,13 @@
       "status": "OFFLINE",
       "host": "jmp2.uk",
       "note": ""
+    },
+    {
+      "id": "ch-306579e09b",
+      "name": "HOT Drama",
+      "status": "INVALID",
+      "host": "stream.mcquack.net",
+      "note": "source claimed quality '1080p' (unverified); source required custom HTTP headers"
     },
     {
       "id": "ch-ac20082f05",
@@ -21479,47 +23922,455 @@
       "kept": "(earlier source)",
       "dropped": "Disney Jr. Latin America South HD",
       "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "4 SiDES TV",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "4TV News",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "6 TV Telugu",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "9 Plus News",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "9X Jalwa",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "9XM",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "10 TV",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "22Scope News",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "24 News",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "99TV",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "&TV HD",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Aaj Ki Khabar",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Aaj Tak",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Aaj Tak HD",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Aakaash Aath",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Aamar Bangla",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "ABN Andhra Jyoti",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "ABP Ananda",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "ABP Asmita",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "ABP Ganga",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "ABP Majha",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "ABP News",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "AKD Calcutta News",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Akhon Kolkata",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Alankar TV",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "All Time Movies",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Amrita TV",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Anjan TV",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Apna Punjab TV",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Asianet HD",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Asianet Movies HD",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "B4U Bhojpuri",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "B4U Kadak",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "B4U Movies",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Bhojpuri Cinema",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Bollygold",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Captain",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "CBeebies Asia India",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Chithiram",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Colors HD",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Colors Cineplex Bollywood",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "DD Sports",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "DD Sports SD",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Disney Channel (India)",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Disney Channel (India) HD",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Disney International HD",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "DocuBay TV",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Epic Bhojpuri",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Epic Bhojpuri Digital",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Epic Crimes",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Epic Music",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "ETV Bal Bharat",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "ETV Cinema",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "ETV Cinema HD",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Goldmines 2",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Goldmines",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Goldmines Action",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Goldmines Bollywood",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Goldmines Movies",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Indywood TV",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "INWILD",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Kabaddi 24x7",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Kairali We",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "7 News",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "24 News HD",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "92 News HD",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "365 News",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "A-Plus TV",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Aaj Entertainment",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Aaj News",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Abb Takk",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "ABN News",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Aik News SD",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "ATV (Pakistan)",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "AVT Khyber",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Bol Entertainment HD",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Discover Pakistan",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Filmax",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "Filmazia",
+      "on": "url across sources"
+    },
+    {
+      "kept": "(earlier source)",
+      "dropped": "M Sports",
+      "on": "url across sources"
     }
   ],
   "ingest": {
-    "entries_parsed": 4660,
-    "channels_accepted": 1478,
-    "needs_custom_headers": 128
+    "entries_parsed": 5504,
+    "channels_accepted": 1798,
+    "needs_custom_headers": 131
   },
   "playlists": {
     "files": {
-      "live/bangladesh.m3u": 8601,
-      "live/documentary/documentary.m3u": 12698,
-      "live/documentary/other.m3u": 1672,
-      "live/documentary.m3u": 434,
+      "live/bangladesh.m3u": 8438,
+      "live/business.m3u": 1223,
+      "live/documentary/documentary.m3u": 12904,
+      "live/documentary/education.m3u": 952,
+      "live/documentary/culture.m3u": 801,
+      "live/documentary/other.m3u": 2215,
+      "live/documentary.m3u": 808,
       "live/entertainment/region-ru.m3u": 782,
-      "live/entertainment/region-us.m3u": 4158,
-      "live/entertainment/region-in.m3u": 2544,
+      "live/entertainment/region-us.m3u": 4350,
+      "live/entertainment/region-ca.m3u": 759,
+      "live/entertainment/region-in.m3u": 20040,
       "live/entertainment/region-do.m3u": 807,
       "live/entertainment/region-pl.m3u": 1126,
       "live/entertainment/region-co.m3u": 743,
-      "live/entertainment/region-other.m3u": 8452,
+      "live/entertainment/region-other.m3u": 7819,
+      "live/entertainment/region-pk.m3u": 1358,
       "live/entertainment/region-ar.m3u": 905,
       "live/entertainment/region-ch.m3u": 996,
-      "live/entertainment.m3u": 1859,
-      "live/kids.m3u": 20328,
-      "live/lifestyle.m3u": 2622,
-      "live/movies/lang-others.m3u": 21367,
-      "live/movies/lang-english.m3u": 16133,
-      "live/movies/lang-indian.m3u": 8717,
-      "live/movies/lang-bangla.m3u": 382,
-      "live/movies.m3u": 838,
-      "live/music.m3u": 3922,
-      "live/news/news.m3u": 13206,
+      "live/entertainment.m3u": 2257,
+      "live/kids.m3u": 22469,
+      "live/lifestyle.m3u": 3847,
+      "live/movies/lang-others.m3u": 21169,
+      "live/movies/lang-english.m3u": 16440,
+      "live/movies/lang-indian.m3u": 8918,
+      "live/movies.m3u": 646,
+      "live/music.m3u": 8400,
+      "live/news/news/01.m3u": 15458,
+      "live/news/news/02.m3u": 17048,
+      "live/news/news.m3u": 445,
       "live/news/news-public.m3u": 843,
       "live/news/international-news.m3u": 1009,
-      "live/news/other.m3u": 2012,
-      "live/news.m3u": 777,
-      "live/other.m3u": 3565,
-      "live/religious.m3u": 1683,
-      "live/series.m3u": 8953,
-      "live/sports.m3u": 21903,
-      "live/live-tv.m3u": 2227,
+      "live/news/other.m3u": 2773,
+      "live/news.m3u": 781,
+      "live/other.m3u": 4904,
+      "live/religious/religious.m3u": 13592,
+      "live/religious/other.m3u": 1286,
+      "live/religious.m3u": 419,
+      "live/series.m3u": 9545,
+      "live/sports.m3u": 22411,
+      "live/live-tv.m3u": 2415,
       "movies/drama.m3u": 28715,
       "movies/romance.m3u": 8124,
       "movies/adventure.m3u": 9546,
@@ -21540,12 +24391,12 @@
       "movies/recently-added.m3u": 7612,
       "movies/trending.m3u": 8270,
       "movies/movies.m3u": 3506,
-      "master.m3u": 1550
+      "master.m3u": 1542
     },
-    "total_bytes": 329113,
+    "total_bytes": 396942,
     "structure_ok": true,
     "structure_errors": 0,
-    "structure_warnings": 6,
+    "structure_warnings": 5,
     "circular_references": [],
     "unreachable": [],
     "issues": [
@@ -21559,37 +24410,30 @@
       {
         "severity": "warning",
         "file": "live/entertainment.m3u",
-        "line": 18,
+        "line": 26,
         "code": "DUP_TITLE",
-        "message": "title '🌐 Other regions (3)' already used on line 14"
-      },
-      {
-        "severity": "warning",
-        "file": "live/entertainment.m3u",
-        "line": 22,
-        "code": "DUP_TITLE",
-        "message": "title '🌐 Other regions (3)' already used on line 14"
+        "message": "title '🌐 Other regions (3)' already used on line 22"
       },
       {
         "severity": "warning",
         "file": "live/entertainment.m3u",
         "line": 30,
         "code": "DUP_TITLE",
-        "message": "title '🌐 Other regions (3)' already used on line 14"
+        "message": "title '🌐 Other regions (3)' already used on line 22"
+      },
+      {
+        "severity": "warning",
+        "file": "live/entertainment.m3u",
+        "line": 38,
+        "code": "DUP_TITLE",
+        "message": "title '🌐 Other regions (3)' already used on line 22"
       },
       {
         "severity": "warning",
         "file": "live/music.m3u",
-        "line": 34,
+        "line": 70,
         "code": "DUP_TITLE",
-        "message": "title 'Zoom' already used on line 32"
-      },
-      {
-        "severity": "warning",
-        "file": "live/religious.m3u",
-        "line": 12,
-        "code": "DUP_TITLE",
-        "message": "title 'Peace TV Bangla' already used on line 10"
+        "message": "title 'Zoom' already used on line 68"
       }
     ]
   }
