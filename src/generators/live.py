@@ -14,6 +14,7 @@ playlist says so in a comment line rather than pretending the streams are known 
 
 from __future__ import annotations
 
+import json
 import re
 from dataclasses import dataclass
 from pathlib import Path
@@ -95,6 +96,25 @@ class LiveGenerator:
 
     # --- gating --------------------------------------------------------------
 
+    def load_home_probe(self, path) -> int:
+        """Adopt measurements taken on the owner's own network.
+
+        These outrank every verdict this pipeline can reach on its own. CI
+        probes from a US datacentre and the television is in Bangladesh; where
+        the two disagree, the one standing in the right country wins. Returns
+        how many verdicts were loaded.
+        """
+        self.home_probe = {}
+        try:
+            payload = json.loads(Path(path).read_text())
+        except (OSError, ValueError):
+            return 0
+        for cid, row in (payload.get("results") or {}).items():
+            status = str(row.get("status", "")).upper()
+            if status:
+                self.home_probe[cid] = status
+        return len(self.home_probe)
+
     def _partition(self, channels: list[Channel], allow_unverified: bool):
         allowed = set(self.publish_statuses)
         if allow_unverified:
@@ -105,6 +125,8 @@ class LiveGenerator:
 
         def hold(reason: str, ch: Channel) -> None:
             withheld.setdefault(reason, []).append(ch)
+
+        home = getattr(self, "home_probe", {}) or {}
 
         for ch in channels:
             if ch.rights_status == "EXCLUDED":
@@ -137,6 +159,20 @@ class LiveGenerator:
                           else "unsafe_url")
                 hold(reason, ch)
                 continue
+            # The owner's own network has the last word on reachability. Note
+            # what this does NOT override: the rules above it. A stream needing
+            # HTTP headers SS IPTV cannot send, one carrying somebody's
+            # subscription credentials, and adult material are all still out,
+            # because none of those is a question about whether the packets
+            # arrive.
+            verdict_at_home = home.get(ch.id)
+            if verdict_at_home:
+                if verdict_at_home in ("ACTIVE", "DEGRADED"):
+                    published.append(ch)
+                else:
+                    hold("offline_from_your_network", ch)
+                continue
+
             if ch.status not in allowed and not (
                     ch.status == "DEGRADED" and self._slow_but_working(ch)):
                 if self._blocked_from_here_only(ch):
@@ -178,19 +214,20 @@ class LiveGenerator:
     def _blocked_from_here_only(self, ch) -> bool:
         """True when the probe's failure says more about the runner than the stream.
 
-        Both halves are required. The channel must be in the viewer's own region,
-        and the failure must look like a refusal rather than an absence: an
-        explicit 403/451, or a source that marks the channel fenced to its home
-        territory. A DNS failure, a refused connection or a 404 is a dead stream
-        everywhere and stays withheld.
-
-        Nothing outside the viewer's region is relaxed: there a 403 means the
-        owner cannot play it either.
+        The failure must be a refusal rather than an absence: an explicit
+        403/451, or a source that marks the channel fenced to its home
+        territory. A DNS failure, a refused connection or a 404 is a dead
+        stream from everywhere and stays withheld - that is a measurement of
+        the stream, not of where we stood when we took it.
         """
-        if not self.publish_region_blocked or not self.viewer_region:
+        if not self.publish_region_blocked:
             return False
-        if (ch.country or "").lower() not in self.viewer_region:
-            return False
+        # Geography is never itself a reason to withhold a channel: the owner
+        # said so, and the reasoning behind the old regional limit - that a US
+        # channel refusing a US probe would refuse Dhaka too - was a guess about
+        # somebody else's CDN, not a measurement. A refusal means the origin
+        # would not serve THIS vantage point, which is the one place we know the
+        # owner is not watching from.
         if ch.last_http_status in (403, 451):
             return True
         return "geo-blocked" in (ch.tags or [])

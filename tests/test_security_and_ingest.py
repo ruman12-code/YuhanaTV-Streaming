@@ -1,4 +1,5 @@
 """URL safety, ingest, de-duplication and publication-gate tests."""
+import json
 import sys, tempfile, unittest
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -490,11 +491,30 @@ class TestRegionBlockedChannels(unittest.TestCase):
                                      allow_unverified=False)
         self.assertEqual(len(pub), 1)
 
-    def test_the_same_refusal_outside_the_region_is_not(self):
-        # A US channel that refuses a US runner will refuse Dhaka too.
-        pub, held = self.gen._partition([self._ch("us", http=403)], allow_unverified=False)
-        self.assertEqual(pub, [])
-        self.assertIn("status_offline", held)
+    def test_a_refusal_outside_the_region_is_published_too(self):
+        """No channel is withheld for where it is - the owner's instruction.
+
+        The old rule re-admitted South Asian channels only, reasoning that a US
+        channel refusing a US probe would refuse Dhaka too. That is a guess
+        about somebody else's CDN. The refusal tells us the origin would not
+        serve the runner, which is the one place the owner is certainly not
+        watching from.
+        """
+        pub, _ = self.gen._partition([self._ch("us", http=403)], allow_unverified=False)
+        self.assertEqual(len(pub), 1)
+        pub, _ = self.gen._partition([self._ch("gb", http=451)], allow_unverified=False)
+        self.assertEqual(len(pub), 1)
+
+    def test_an_absence_is_still_an_absence_anywhere(self):
+        """A refusal is not a failure; a 404 or a dead host is. Those are
+        measurements of the stream, not of where we stood."""
+        for country in ("us", "bd", "gb"):
+            pub, _ = self.gen._partition([self._ch(country, http=404)],
+                                         allow_unverified=False)
+            self.assertEqual(pub, [], country)
+            pub, _ = self.gen._partition([self._ch(country, http=0)],
+                                         allow_unverified=False)
+            self.assertEqual(pub, [], country)
 
     def test_a_dead_host_in_the_region_is_still_withheld(self):
         # No HTTP status at all means nothing answered: DNS failure, refused
@@ -549,3 +569,62 @@ class TestIngestRetentionGuard(unittest.TestCase):
         self.assertLess(4600, floor * existing)
         # Ordinary churn as channels come and go between runs.
         self.assertGreaterEqual(11500, floor * existing)
+
+
+class TestHomeProbeOverridesCI(unittest.TestCase):
+    """The owner's own network has the last word on reachability.
+
+    Every verdict this pipeline produces on its own means "an origin served a
+    US datacentre". The television is in Bangladesh. Where the two disagree,
+    the instrument standing in the right country wins.
+    """
+
+    def setUp(self):
+        self.dir = Path(tempfile.mkdtemp())
+        self.gen = LiveGenerator(config.load(use_cache=False), self.dir)
+
+    def _probe(self, rows):
+        p = self.dir / "home-probe.json"
+        p.write_text(json.dumps({"results": rows}))
+        return self.gen.load_home_probe(p)
+
+    def _ch(self, cid, status, **kw):
+        return Channel(id=cid, name=cid, category="news", status=status,
+                       stream_url="https://h/a.m3u8", checks_total=10,
+                       checks_ok=0 if status == "OFFLINE" else 10, **kw)
+
+    def test_a_channel_dead_to_ci_but_alive_at_home_is_published(self):
+        self._probe({"a": {"status": "ACTIVE"}})
+        pub, _ = self.gen._partition([self._ch("a", "OFFLINE")], allow_unverified=False)
+        self.assertEqual([c.id for c in pub], ["a"])
+
+    def test_a_channel_alive_to_ci_but_dead_at_home_is_withheld(self):
+        self._probe({"a": {"status": "OFFLINE"}})
+        pub, held = self.gen._partition([self._ch("a", "ACTIVE")], allow_unverified=False)
+        self.assertEqual(pub, [])
+        self.assertIn("offline_from_your_network", held)
+
+    def test_channels_the_home_probe_has_not_reached_use_the_ci_verdict(self):
+        self._probe({"a": {"status": "ACTIVE"}})
+        pub, _ = self.gen._partition(
+            [self._ch("a", "OFFLINE"), self._ch("b", "ACTIVE"), self._ch("c", "OFFLINE")],
+            allow_unverified=False)
+        self.assertEqual(sorted(c.id for c in pub), ["a", "b"])
+
+    def test_it_does_not_override_the_policy_gates(self):
+        """Reachability is the only question it answers. A stream needing
+        headers SS IPTV cannot send, or carrying somebody's subscription, is
+        still out however well it plays at home."""
+        self._probe({"a": {"status": "ACTIVE"}, "b": {"status": "ACTIVE"}})
+        needs_headers = self._ch("a", "ACTIVE", http_referrer="https://x/")
+        credentialed = Channel(id="b", name="b", category="news", status="ACTIVE",
+                               stream_url="http://h/live/user/pass/1.ts",
+                               checks_total=10, checks_ok=10)
+        pub, held = self.gen._partition([needs_headers, credentialed],
+                                        allow_unverified=False)
+        self.assertEqual(pub, [])
+        self.assertIn("requires_custom_http_headers", held)
+        self.assertIn("subscriber_credentials", held)
+
+    def test_a_missing_file_is_not_an_error(self):
+        self.assertEqual(self.gen.load_home_probe(self.dir / "nope.json"), 0)

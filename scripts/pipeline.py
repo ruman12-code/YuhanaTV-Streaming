@@ -18,6 +18,7 @@ import argparse
 import json
 import sys
 import time
+from datetime import timedelta
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
@@ -193,6 +194,34 @@ def cmd_ingest(args) -> int:
             ch.status_reason = prev.status_reason
             ch.last_http_status = prev.last_http_status
             ch.final_url = prev.final_url
+            ch.tls_unverified = prev.tls_unverified
+
+    # A channel that disappears from its source is not thereby proven dead, and
+    # the owner asked that nothing be dropped without being checked for itself.
+    # Aggregator lists churn: an entry is removed when a curator cannot reach it
+    # from wherever they are, which is not a verdict on whether it plays in
+    # Dhaka. Such a channel is retained and keeps being probed on the normal
+    # rotation, and is only let go once it has been given a real chance to come
+    # back and has failed throughout - see ingest.orphan_grace_days.
+    seen_ids = {c.id for c in channels}
+    grace_days = float(cfg.get_path("ingest.orphan_grace_days", 30) or 0)
+    kept_orphans = 0
+    if grace_days:
+        cutoff = _now() - timedelta(days=grace_days)
+        for cid, prev in existing.items():
+            if cid in seen_ids:
+                continue
+            last = _parse_iso(prev.last_verified) or _parse_iso(prev.first_seen)
+            # Keep it while it is inside the grace window, and keep it
+            # indefinitely while it is still answering: a channel that plays is
+            # never dropped for administrative reasons.
+            if prev.status in ("ACTIVE", "DEGRADED") or (last and last > cutoff):
+                if "orphaned" not in prev.tags:
+                    prev.tags = list(prev.tags) + ["orphaned"]
+                channels.append(prev)
+                kept_orphans += 1
+    if kept_orphans:
+        print(f"  retained {kept_orphans} channels no longer listed by their source")
 
     # An ingest that collapses is a fetch failure, not news about the world.
     # save_channels REPLACES the registry, so a source that fails to download
@@ -215,6 +244,22 @@ def cmd_ingest(args) -> int:
     if stats["duplicates"]:
         print(f"  dropped {len(stats['duplicates'])} duplicates")
     return 0
+
+
+def _now():
+    from datetime import datetime, timezone
+    return datetime.now(timezone.utc)
+
+
+def _parse_iso(value: str):
+    """Lenient ISO-8601 parse; None when absent or unparseable."""
+    if not value:
+        return None
+    try:
+        from datetime import datetime
+        return datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+    except ValueError:
+        return None
 
 
 def _check_order(channels: list) -> list:
@@ -314,6 +359,7 @@ def cmd_check(args) -> int:
         ch.status_reason = r.error or ""
         ch.last_http_status = int(r.http_status or 0)
         ch.final_url = r.final_url or ""
+        ch.tls_unverified = bool(getattr(r, "tls_unverified", False))
         if ch.status != previous:
             ch.last_status_change = now
         ch.last_verified = r.checked_at
@@ -421,6 +467,10 @@ def cmd_build(args) -> int:
 
     channels = load_channels(CHANNELS_DIR)
     gen = LiveGenerator(cfg, PLAYLISTS)
+    n = gen.load_home_probe(STATUS_DIR / "home-probe.json")
+    if n:
+        print(f"  using {n} verdicts measured on the owner's own network; "
+              f"these override this runner's")
     result = gen.build(channels, allow_unverified=args.seed)
 
     if not result.published:
@@ -489,6 +539,7 @@ def cmd_report(args) -> int:
     ingest_stats = read_json(STATUS_DIR / "ingest-stats.json", {}) or {}
 
     gen = LiveGenerator(cfg, PLAYLISTS)
+    gen.load_home_probe(STATUS_DIR / "home-probe.json")
     _, withheld = gen._partition(channels, args.seed)
 
     report = build_report(

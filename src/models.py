@@ -102,6 +102,10 @@ class Channel:
     # publication gate can apply its safety rules to the real endpoint: a link
     # shortener otherwise hides its target from every check we make.
     final_url: str = ""
+    # The origin answered only with certificate verification skipped. Surfaced
+    # in the report and carried across ingest, so it is a visible property of
+    # the channel rather than a silent exception.
+    tls_unverified: bool = False
     # Reliability history, accumulated across validation runs. A channel that
     # passes once and fails four times is not the same asset as one that always
     # passes, and the difference has to survive into the published playlist.

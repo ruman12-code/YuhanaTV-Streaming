@@ -97,10 +97,13 @@
     "slow_degraded_min_reliability": 0.7,
     "$comment_slow_degraded": "DEGRADED covers three unrelated conditions: a slow origin (plays, just starts slower), an unfetchable segment or variant (black screen), and the holding state for a channel that failed once but not enough times to be condemned. Publishing only ACTIVE conflated them and dropped T Sports HD from the Bangladesh screen on 38 of 46 successful probes. A channel is re-admitted only when the recorded reason is latency, consecutive_failures is 0, and reliability is at least slow_degraded_min_reliability.",
     "publish_region_blocked": true,
-    "$comment_region_blocked": "A channel in the viewer's region that answers the probe with 403 or 451, or that its source marks geo-restricted, is published even though the US probe could not play it. The probe's verdict carries no information about the viewer's own network in that case, and the owner asked not to have playable channels withheld. It does NOT relax anything for channels outside the viewer's region, where a 403 means the owner cannot play it either.",
+    "$comment_region_blocked": "No channel is excluded for where it is - the owner's explicit instruction. A refusal (403/451) or a source geo tag is published wherever the channel is, not only inside the viewer's region. The previous rule re-admitted South Asian channels only, on the reasoning that a US channel refusing a US probe would refuse Dhaka too. That reasoning is a guess about somebody else's CDN, and a guess is not a measurement. The owner's TV is the only instrument that can settle it.",
     "$comment_concurrency": "Raised from 8 for the full iptv-org catalogue - roughly 10,000 channels instead of 1,800. per_host_concurrency and per_host_delay_seconds are unchanged, so no single origin is probed any harder than before; only the number of DIFFERENT hosts in flight goes up.",
     "max_check_seconds": 2400,
-    "$comment_check_budget": "40 minutes. The full aggregator index does not fit in one CI run, so a run probes never-checked channels first, then the least recently verified, and stops at the first chunk boundary past the budget. The next run continues where it stopped, so the whole catalogue is covered over a few passes and no channel is starved. Chunked rather than cancelled mid-probe: an interrupted probe would count as a failure and push a working channel towards OFFLINE on nothing but a clock."
+    "$comment_check_budget": "40 minutes. The full aggregator index does not fit in one CI run, so a run probes never-checked channels first, then the least recently verified, and stops at the first chunk boundary past the budget. The next run continues where it stopped, so the whole catalogue is covered over a few passes and no channel is starved. Chunked rather than cancelled mid-probe: an interrupted probe would count as a failure and push a working channel towards OFFLINE on nothing but a clock.",
+    "allow_unverified_tls_fallback": true,
+    "$comment_tls": "Verification is always tried first. Only a certificate-verification failure - the host answered, its chain is untrusted - is retried without verification, and the channel is flagged tls_unverified. This is consistency, not indifference: the playlist already carries 902 plain-http streams with no certificate and no encryption at all, and the owner's own working playlist was 31% http. Holding https streams to a standard the rest of the list is not held to withheld 195 channels for nothing. These streams carry no credentials, because a URL that does is excluded outright.",
+    "publish_foreign_refusals": true
   },
   "security": {
     "allowed_url_schemes": [
@@ -154,6 +157,8 @@
   },
   "ingest": {
     "min_retention_fraction": 0.6,
-    "$comment_retention": "Circuit breaker for the ingest step, the counterpart to validation's health gate. save_channels replaces the registry, so one source failing to download would delete every channel it carries - and with the full aggregator index that is most of the catalogue. An ingest that returns less than this fraction of what is already on disk is refused, the registry is left untouched and the run fails loudly."
+    "$comment_retention": "Circuit breaker for the ingest step, the counterpart to validation's health gate. save_channels replaces the registry, so one source failing to download would delete every channel it carries - and with the full aggregator index that is most of the catalogue. An ingest that returns less than this fraction of what is already on disk is refused, the registry is left untouched and the run fails loudly.",
+    "orphan_grace_days": 30,
+    "$comment_orphans": "A channel removed from its source list is kept and keeps being probed. Aggregator lists churn, and a curator dropping an entry they could not reach is not a verdict on whether it plays in Dhaka. A channel still answering is kept indefinitely; one that has stopped is kept for this many days from its last successful verification, so it has a real chance to come back before it is let go."
   }
 }

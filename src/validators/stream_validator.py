@@ -112,6 +112,10 @@ class ValidationResult:
     bitrate_bps: int = 0
     variant_url: str = ""
     segment_ok: bool | None = None
+    # True when the origin answered only after certificate verification was
+    # skipped. Recorded per channel rather than hidden, so the report can say
+    # exactly which streams are on an untrusted chain.
+    tls_unverified: bool = False
     error: str = ""
     checked_at: str = field(default_factory=_now_iso)
     stages: list[dict] = field(default_factory=list)
@@ -149,12 +153,34 @@ class StreamValidator:
         self.denied_schemes = tuple(s.get("denied_url_schemes", ()))
         self.block_private = bool(s.get("block_private_ip_targets", True))
 
+        # Set by _fetch_retry for the call that just returned. Read immediately
+        # after, on the same thread, before any other fetch on this validator.
+        self._tls_local = threading.local()
         self._host_locks: dict[str, threading.Lock] = defaultdict(threading.Lock)
         self._host_last: dict[str, float] = defaultdict(float)
 
-        # TLS: verify normally. Many IPTV origins have imperfect chains; those are
-        # reported as failures rather than silently trusted.
+        # TLS: verify first, always.
         self._ssl_ctx = ssl.create_default_context()
+        # Then, only for a certificate-verification failure, probe again without
+        # verification and record that we did.
+        #
+        # The reason is consistency, not indifference. This playlist already
+        # carries 902 plain-http streams, which have no certificate and no
+        # encryption at all, and the owner's own working playlist was 31% http.
+        # Refusing an https stream because its chain is untrusted, while
+        # publishing an unencrypted one beside it, withheld 195 channels on a
+        # standard the rest of the list was never held to. The residual risk -
+        # an interposed server serving different video - is identical for every
+        # plain-http channel already published, and these streams carry no
+        # credentials, because a URL that does is excluded outright.
+        #
+        # This is a fallback, never the first attempt: a channel that verifies
+        # normally is never probed this way, and the exception is recorded per
+        # channel rather than turned into a blanket setting.
+        self.tls_fallback = bool(v.get("allow_unverified_tls_fallback", True))
+        self._ssl_ctx_unverified = ssl.create_default_context()
+        self._ssl_ctx_unverified.check_hostname = False
+        self._ssl_ctx_unverified.verify_mode = ssl.CERT_NONE
 
     # --- low level -----------------------------------------------------------
 
@@ -166,12 +192,13 @@ class StreamValidator:
             self._host_last[host] = time.monotonic()
 
     def _fetch(self, url: str, *, max_bytes: int, referrer: str = "", agent: str = "",
-               range_bytes: int = 0):
+               range_bytes: int = 0, verify_tls: bool = True):
         """Return (http_status, final_url, headers, body_bytes, redirect_count)."""
         recorder = _RedirectRecorder()
         recorder.max_redirections = self.max_redirects
+        ctx = self._ssl_ctx if verify_tls else self._ssl_ctx_unverified
         opener = urllib.request.build_opener(
-            recorder, urllib.request.HTTPSHandler(context=self._ssl_ctx)
+            recorder, urllib.request.HTTPSHandler(context=ctx)
         )
         headers = {
             "User-Agent": agent or self.user_agent,
@@ -194,15 +221,27 @@ class StreamValidator:
         each one opens a fresh TLS session, and an origin with an unstable chain
         fails some handshakes while serving the very next request fine."""
         last = None
+        verify = True
         for attempt in range(max(1, attempts)):
             if attempt:
                 time.sleep(self.backoff[min(attempt - 1, len(self.backoff) - 1)])
             try:
                 self._throttle(host_of(url))
-                return self._fetch(url, max_bytes=max_bytes, referrer=referrer,
-                                   agent=agent, range_bytes=range_bytes)
+                body = self._fetch(url, max_bytes=max_bytes, referrer=referrer,
+                                   agent=agent, range_bytes=range_bytes,
+                                   verify_tls=verify)
+                self._tls_local.unverified = not verify
+                return body
+            except ssl.SSLCertVerificationError as exc:
+                last = exc
+                if self.tls_fallback and verify:
+                    # Untrusted chain, not an unreachable host. Try once more
+                    # without verification; see __init__ for why.
+                    verify = False
+                    attempts = max(attempts, attempt + 2)
             except Exception as exc:  # noqa: BLE001
                 last = exc
+        self._tls_local.unverified = False
         raise last
 
     # --- manifest analysis ---------------------------------------------------
@@ -318,7 +357,13 @@ class StreamValidator:
 
         body = b""
         last_error = ""
-        for attempt in range(self.retries + 1):
+        verify_tls = True
+        attempts_allowed = self.retries + 1
+        attempt = -1
+        while True:
+            attempt += 1
+            if attempt >= attempts_allowed:
+                break
             if attempt:
                 time.sleep(self.backoff[min(attempt - 1, len(self.backoff) - 1)])
             self._throttle(host)
@@ -329,7 +374,9 @@ class StreamValidator:
                     max_bytes=self.max_manifest_bytes,
                     referrer=channel.http_referrer,
                     agent=channel.http_user_agent,
+                    verify_tls=verify_tls,
                 )
+                result.tls_unverified = not verify_tls
                 result.latency_ms = round((time.monotonic() - t0) * 1000, 1)
                 result.http_status = status
                 result.final_url = final_url
@@ -340,6 +387,13 @@ class StreamValidator:
             except urllib.error.HTTPError as exc:
                 result.http_status = exc.code
                 last_error = f"HTTP {exc.code} {exc.reason}"
+            except ssl.SSLCertVerificationError as exc:
+                last_error = f"TLS certificate not trusted: {exc}"
+                if self.tls_fallback and verify_tls:
+                    # The host answered; its chain is untrusted. Retry once
+                    # without verification and record it. See __init__.
+                    verify_tls = False
+                    attempts_allowed = max(attempts_allowed, attempt + 2)
             except ssl.SSLError as exc:
                 last_error = f"TLS error: {exc}"
             except urllib.error.URLError as exc:
