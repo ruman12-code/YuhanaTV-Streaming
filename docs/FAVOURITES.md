@@ -45,11 +45,20 @@ comes back by itself when the origin does.
 
 Three ways, in order of convenience:
 
-**The companion page.** A web page listing every channel with a ♥ button,
-opened on a phone or laptop while watching. Marking a channel there records it,
-and the next build picks it up. This is the closest thing to the button you
-wanted, and the reason it lives on a second screen rather than on the TV is the
-constraint at the top of this file.
+**The companion page — "YuhanaTV Remote".** A web page listing every published
+channel with a ♥ beside it, meant to be open on a phone or laptop while you
+watch. Search by name, filter by country or genre, tap the heart. Marks are
+saved in the page's own store, so they survive closing the tab, and they are
+read back from there into `data/favourites.json`.
+
+"Phone page" just means a second screen. The TV shows the channels; the phone
+holds the button, because the TV app has nowhere to put one. Nothing is
+installed — it is a link you open in the phone's browser.
+
+One honest seam: moving marks from that page into this repository is a step
+somebody has to run. Ask and it is done, or it can be put on the same schedule
+as everything else. The page's "Copy ids" button is the manual path if you would
+rather paste them.
 
 **Ask.** Name the channels in a message and they are added.
 
