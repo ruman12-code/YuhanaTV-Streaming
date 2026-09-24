@@ -23,7 +23,8 @@ from ..models import Channel
 from ..util.urls import check_url
 from .m3u import M3UBuilder
 from .catalog import live_meta, subgroup_meta, region_meta, LIVE_CATEGORY_META
-from ..classify import movie_language_bucket, display_key
+from .countries import continent_of, continent_meta
+from ..classify import movie_language_bucket, display_key, clean_display_name
 
 # The validator's wording for the one DEGRADED cause that still plays on a TV.
 # Anchored, so "manifest served but the first segment was not fetchable" can
@@ -91,6 +92,11 @@ class LiveGenerator:
         # where the viewer is.
         self.publish_region_blocked = bool(
             cfg.get_path("validation.publish_region_blocked", True))
+        self.min_country_folder = int(cfg.get_path("ssiptv.min_country_folder", 4))
+        self.pinned_countries = [str(c).lower() for c in
+                                 cfg.get_path("ssiptv.pinned_countries", []) or ()]
+        self.min_bucket = int(cfg.get_path("ssiptv.min_bucket_size", 3))
+        self.owner_source = cfg.get_path("ssiptv.owner_source_id", "src-user-m3u")
         self.viewer_region = {
             str(c).lower() for c in cfg.get_path("site.viewer_region_countries", []) or ()}
 
@@ -337,17 +343,22 @@ class LiveGenerator:
         chunks = [ordered[i:i + per] for i in range(0, len(ordered), per)]
         stem = rel[:-4]                      # strip ".m3u"
 
+        # A-Z pages are all one letter, so the first-to-last label reads "A A"
+        # on every page and no tile can be told from its neighbour. Fall back to
+        # numbering whenever the labels do not actually distinguish the pages.
+        live_chunks = [c for c in chunks if c]
+        labels = [self._page_label(c) for c in live_chunks]
+        if len(set(labels)) < len(labels):
+            labels = [f"{n} of {len(live_chunks)}" for n in range(1, len(live_chunks) + 1)]
+
         index = M3UBuilder(default_size=self.size_cat, default_description=title,
                            header_comment=seed_note)
-        for n, chunk in enumerate(chunks, start=1):
-            if not chunk:
-                continue
+        for n, (label, chunk) in enumerate(zip(labels, live_chunks), start=1):
             page_rel = f"{stem}/{n:02d}.m3u"
-            label = self._page_label(chunk)
             files[page_rel] = self._channel_playlist(
                 chunk, title=f"{title} {label}", seed_note=seed_note).write(
                 self.root / page_rel)
-            index.add_playlist(f"{title} {label} ({len(chunk)})",
+            index.add_playlist(f"{label} ({len(chunk)})",
                                self.cfg.playlist_url(page_rel),
                                description=f"{len(chunk)} channels",
                                size=self.size_cat, background=bg)
@@ -433,7 +444,214 @@ class LiveGenerator:
         index = self._index_of_categories(by_category, title="📺 Live TV", seed_note=seed_note)
         files["live/live-tv.m3u"] = index.write(self.live_dir / "live-tv.m3u")
 
+        # 4-6. The other two doors to the same rooms, plus the owner's own list.
+        #
+        # One hierarchy cannot serve eight thousand channels. Genre-first asks
+        # the viewer to guess whether Zee Bangla is Entertainment, General or
+        # Movies, and guessing wrong means starting over. Every channel is
+        # therefore reachable three ways - by country, by genre, and by first
+        # letter - so a wrong guess costs a click instead of a search.
+        self._build_by_country(published, files, seed_note)
+        self._build_alphabetical(published, files, seed_note)
+        self._build_my_channels(published, files, seed_note)
+        self._build_favourites(published, files, seed_note)
+
         return BuildResult(files=files, published=published, withheld=withheld)
+
+    # --- the other two doors --------------------------------------------------
+
+    def _build_by_country(self, published: list[Channel], files: dict, seed_note: str) -> None:
+        """Every country a folder, every folder its genres when it is large."""
+        by_country: dict[str, list[Channel]] = {}
+        for ch in published:
+            by_country.setdefault((ch.country or "").lower() or "other", []).append(ch)
+
+        rows = []
+        spill: list[Channel] = []
+        for code, items in by_country.items():
+            # A country with a handful of channels does not earn a screen; it
+            # joins the single Others folder at the end.
+            if code == "other" or len(items) < self.min_country_folder:
+                spill.extend(items)
+                continue
+            rows.append((code, items))
+
+        def write_country(code, items):
+            """One country's screen; returns its path and label metadata."""
+            meta = region_meta(code)
+            rel = f"live/country/{code}.m3u"
+            if len(items) > self.subsplit_threshold:
+                self._write_genre_index(items, rel=rel, title=meta["label"],
+                                        sub_dir=f"live/country/{code}",
+                                        files=files, seed_note=seed_note)
+            else:
+                self._write_leaf(items, title=meta["label"], seed_note=seed_note,
+                                 rel=rel, files=files, bg=meta["bg"])
+            return rel, meta
+
+        # 167 countries will not fit on one screen, and a remote should not have
+        # to scroll a list that long. Continents hold them, with the countries
+        # that matter here pinned above so they are never more than one press
+        # away.
+        pinned = [r for r in rows if r[0] in self.pinned_countries]
+        pinned.sort(key=lambda r: region_meta(r[0])["order"])
+        rest = [r for r in rows if r[0] not in self.pinned_countries]
+
+        index = M3UBuilder(default_size=self.size_cat,
+                           default_description="🌏 By Country", header_comment=seed_note)
+        for code, items in pinned:
+            rel, meta = write_country(code, items)
+            index.add_playlist(f"{meta['label']} ({len(items)})",
+                               self.cfg.playlist_url(rel),
+                               description=f"{len(items)} channels",
+                               size=self.size_cat, background=meta["bg"])
+
+        by_cont: dict[str, list] = {}
+        for code, items in rest:
+            by_cont.setdefault(continent_of(code), []).append((code, items))
+
+        for key, members in sorted(by_cont.items(),
+                                   key=lambda kv: continent_meta(kv[0])["order"]):
+            cmeta = continent_meta(key)
+            sub = M3UBuilder(default_size=self.size_cat,
+                             default_description=cmeta["label"], header_comment=seed_note)
+            total = 0
+            for code, items in sorted(members,
+                                      key=lambda r: region_meta(r[0])["label"]):
+                rel, meta = write_country(code, items)
+                total += len(items)
+                sub.add_playlist(f"{meta['label']} ({len(items)})",
+                                 self.cfg.playlist_url(rel),
+                                 description=f"{len(items)} channels",
+                                 size=self.size_cat, background=meta["bg"])
+            crel = f"live/country/_{key}.m3u"
+            files[crel] = sub.write(self.root / crel)
+            index.add_playlist(f"{cmeta['label']} ({len(members)} countries)",
+                               self.cfg.playlist_url(crel),
+                               description=f"{total} channels",
+                               size=self.size_cat, background=cmeta["bg"])
+
+        if spill:
+            rel = "live/country/others.m3u"
+            self._write_leaf(spill, title="🌍 Others", seed_note=seed_note,
+                             rel=rel, files=files, bg="#5d6d7e")
+            index.add_playlist(f"🌍 Others ({len(spill)})", self.cfg.playlist_url(rel),
+                               description="Countries with only a few channels",
+                               size=self.size_cat, background="#5d6d7e")
+
+        files["live/by-country.m3u"] = index.write(self.live_dir / "by-country.m3u")
+
+    def _write_genre_index(self, items: list[Channel], *, rel: str, title: str,
+                           sub_dir: str, files: dict, seed_note: str) -> None:
+        """A screen of genre folders for one country."""
+        by_cat: dict[str, list[Channel]] = {}
+        for ch in items:
+            by_cat.setdefault(ch.category, []).append(ch)
+        index = M3UBuilder(default_size=self.size_cat, default_description=title,
+                           header_comment=seed_note)
+        small: list[Channel] = []
+        entries = []
+        for cat, members in by_cat.items():
+            (entries.append((cat, members)) if len(members) >= self.min_bucket
+             else small.extend(members))
+        for cat, members in sorted(entries,
+                                   key=lambda kv: live_meta(kv[0])["order"]):
+            meta = live_meta(cat)
+            leaf = f"{sub_dir}/{cat}.m3u"
+            self._write_leaf(members, title=f"{title} — {meta['label']}",
+                             seed_note=seed_note, rel=leaf, files=files,
+                             bg=meta.get("bg", "#444444"))
+            index.add_playlist(f"{meta['label']} ({len(members)})",
+                               self.cfg.playlist_url(leaf),
+                               description=f"{len(members)} channels",
+                               size=self.size_cat, background=meta["bg"])
+        if small:
+            leaf = f"{sub_dir}/others.m3u"
+            self._write_leaf(small, title=f"{title} — 🌍 Others", seed_note=seed_note,
+                             rel=leaf, files=files, bg="#5d6d7e")
+            index.add_playlist(f"🌍 Others ({len(small)})", self.cfg.playlist_url(leaf),
+                               description="Everything else from here",
+                               size=self.size_cat, background="#5d6d7e")
+        files[rel] = index.write(self.root / rel)
+
+    _AZ_BUCKETS = ("#",) + tuple("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+    def _build_alphabetical(self, published: list[Channel], files: dict,
+                            seed_note: str) -> None:
+        """One folder per first letter. The answer to "I know its name"."""
+        buckets: dict[str, list[Channel]] = {}
+        for ch in published:
+            first = (clean_display_name(ch.name)[:1] or "#").upper()
+            buckets.setdefault(first if first.isascii() and first.isalpha() else "#",
+                               []).append(ch)
+        # Within a letter, one tile per name. The genre tree keeps a channel
+        # separate per category, which is right there and wrong here: an A-Z
+        # screen showing "ADA TV" twice gives the viewer no way to choose.
+        for letter, items in buckets.items():
+            seen: dict[str, Channel] = {}
+            for ch in items:
+                key = display_key(ch.name)
+                if key not in seen or self._evidence(ch) > self._evidence(seen[key]):
+                    seen[key] = ch
+            buckets[letter] = list(seen.values())
+
+        index = M3UBuilder(default_size=self.size_cat, default_description="🔤 A–Z",
+                           header_comment=seed_note)
+        for letter in self._AZ_BUCKETS:
+            items = buckets.get(letter)
+            if not items:
+                continue
+            rel = f"live/az/{'sym' if letter == '#' else letter.lower()}.m3u"
+            label = "0–9 & symbols" if letter == "#" else letter
+            self._write_leaf(items, title=f"🔤 {label}", seed_note=seed_note,
+                             rel=rel, files=files, bg="#37474f")
+            index.add_playlist(f"{label} ({len(items)})", self.cfg.playlist_url(rel),
+                               description=f"{len(items)} channels",
+                               size=self.size_cat, background="#37474f")
+        files["live/a-z.m3u"] = index.write(self.live_dir / "a-z.m3u")
+
+    def _build_my_channels(self, published: list[Channel], files: dict,
+                           seed_note: str) -> None:
+        """The owner's own playlist, the one that was working before any of this.
+
+        These are the channels he curated for himself, so they are the ones he
+        reaches for daily. Everything else is a long tail he browses
+        occasionally. Putting them one click from home is the single biggest
+        thing this structure can do for daily use.
+        """
+        mine = [c for c in published if c.source == self.owner_source]
+        if not mine:
+            return
+        self._write_leaf(mine, title="⭐ My Channels", seed_note=seed_note,
+                         rel="live/my-channels.m3u", files=files, bg="#b8860b")
+
+    def _build_favourites(self, published: list[Channel], files: dict,
+                          seed_note: str) -> None:
+        """The owner's hand-picked list, from data/favourites.json.
+
+        A note on how a channel gets in here. SS IPTV is somebody else's
+        application: this project writes M3U files and has no way to add a
+        button to its screens or to hear about a press. So the list is kept in
+        the repository and the companion page writes to it - see
+        docs/FAVOURITES.md. Whatever the source, the rule below is the same: a
+        favourite is published if it is still publishable, and one that has gone
+        off the air is held with everything else rather than being deleted,
+        because the owner's choice should outlive a bad week for an origin.
+        """
+        rel_path = self.root.parent / "data" / "favourites.json"
+        try:
+            payload = json.loads(rel_path.read_text())
+        except (OSError, ValueError):
+            return
+        wanted = {str(x) for x in (payload.get("channel_ids") or [])}
+        if not wanted:
+            return
+        by_id = {c.id: c for c in published}
+        chosen = [by_id[cid] for cid in payload["channel_ids"] if cid in by_id]
+        if not chosen:
+            return
+        self._write_leaf(chosen, title="❤️ Favourites", seed_note=seed_note,
+                         rel="live/favourites.m3u", files=files, bg="#a8324a")
 
     def _subgroups(self, category: str, items: list[Channel]) -> dict[str, list[Channel]]:
         """Split an oversized category by its source sub-group, or return {} to keep it flat.
@@ -542,6 +760,16 @@ def _artwork(items, attr: str = "poster", *, used: set[str] | None = None) -> st
     return first
 
 
+def _favourite_ids(playlists_root: Path) -> list[str]:
+    """Channel ids the owner has marked, from data/favourites.json."""
+    try:
+        payload = json.loads((Path(playlists_root).parent / "data" /
+                              "favourites.json").read_text())
+    except (OSError, ValueError):
+        return []
+    return [str(x) for x in (payload.get("channel_ids") or [])]
+
+
 def build_master(cfg, playlists_root: Path, *, movies=None, channels=None,
                  seed_note: str = "") -> int:
     """The single URL the user configures in SS IPTV (spec sections 15 and 23).
@@ -586,25 +814,48 @@ def build_master(cfg, playlists_root: Path, *, movies=None, channels=None,
     movie_blurb = ", ".join(label for key, label in _LANG_LABEL.items()
                             if key in _present) or "By language"
 
-    # Six tiles, no more. The screen before this one had nine and the owner
-    # could not find what he was looking for; every extra tile costs more than
-    # the shortcut it provides. Everything still reachable, one level deeper.
+    # Six tiles, and three of them are the same catalogue entered by different
+    # doors. One hierarchy cannot serve eight thousand channels: genre-first
+    # made the owner guess whether Zee Bangla was Entertainment, General or
+    # Movies, and a wrong guess meant starting over. By Country, By Genre and
+    # A-Z each reach every channel, so a wrong guess now costs one click.
+    #
+    # My Channels is his own playlist, the one that worked before any of this.
+    # Those are the channels he reaches for daily; the other eight thousand are
+    # a long tail he browses occasionally, and putting the short list first is
+    # the single biggest thing this structure does for everyday use.
+    #
+    # Sports, Kids and Movie Channels lost their home tiles to make room. They
+    # are one level down under By Genre, where they were anyway, and they are
+    # now also under every country that has them.
     #
     #   (relative playlist, label, blurb, art key, fallback colour)
+    owner_source = cfg.get_path("ssiptv.owner_source_id", "src-user-m3u")
+    mine = [c for c in channels if c.source == owner_source]
+    favs = _favourite_ids(playlists_root)
+    countries = len({(c.country or "").lower() for c in channels if c.country})
+
     rows = [
-        ("live/live-tv.m3u",     "📡 All Live TV",
-         "Every channel by genre", "live-tv", "#1f3a93"),
+        ("live/favourites.m3u", "❤️ Favourites",
+         f"{len(favs)} you marked", "favourites", "#a8324a"),
+        ("live/my-channels.m3u", "⭐ My Channels",
+         f"{len(mine)} you chose yourself", "my-channels", "#b8860b"),
         ("live/bangladesh.m3u",  "🇧🇩 Bangladesh TV",
          f"{len(bd)} channels", "bangladesh", "#006a4e"),
-        ("live/sports.m3u",      "🏆 Sports",
-         f"{len(sports)} channels worldwide", "sports", "#0b5d3b"),
-        ("live/kids.m3u",        "🧸 Kids",
-         f"{len(kids)} channels worldwide", "kids", "#d4820a"),
-        ("live/movies.m3u",      "🍿 Movie Channels",
-         movie_blurb, "movie-channels", "#8e1b1b"),
+        ("live/by-country.m3u",  "🌏 By Country",
+         f"{countries} countries", "by-country", "#1f3a93"),
+        ("live/live-tv.m3u",     "🎭 By Genre",
+         "News, Sports, Kids, Movies…", "live-tv", "#5a2a82"),
+        ("live/a-z.m3u",         "🔤 A–Z",
+         "Every channel by name", "a-z", "#37474f"),
         ("movies/movies.m3u",    "🎬 Movies on Demand",
          "Watch any time, by genre", "movie-library", "#7d1128"),
     ]
+    # A tile that opens an empty screen is worse than no tile, so each of these
+    # appears only once it has something in it.
+    rows = [r for r in rows
+            if not (r[0] == "live/favourites.m3u" and not favs)
+            and not (r[0] == "live/my-channels.m3u" and not mine)]
     # No TV Series tile. It would have held live channels, and the owner asked
     # for an on-demand library; recent series are under copyright and no source
     # permits redistributing them. Series channels live inside All Live TV

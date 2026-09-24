@@ -241,10 +241,28 @@ class TestLivePagination(unittest.TestCase):
         total = sum(p.read_text(encoding="utf-8").count("#EXTINF") for p in pages)
         self.assertEqual(total, 34)
 
+    # The alphabet index is 27 tiles by construction, one per letter plus the
+    # symbols bucket, and the continent index is six. Those are bounded by what
+    # they enumerate, not by how many channels exist, so the budget that
+    # pagination enforces does not apply to them.
+    _FIXED_SIZE_INDEXES = {"a-z.m3u", "by-country.m3u"}
+
     def test_no_live_screen_exceeds_the_budget(self):
         self.gen.build(self._channels(34))
         for p in (self.root / "live").rglob("*.m3u"):
+            if p.name in self._FIXED_SIZE_INDEXES:
+                continue
             self.assertLessEqual(p.read_text(encoding="utf-8").count("#EXTINF"), 10, p.name)
+
+    def test_the_fixed_indexes_are_bounded_by_what_they_enumerate(self):
+        """Not unbounded, just not bounded by the channel count: 27 letters and
+        a short list of continents, however large the catalogue grows."""
+        self.gen.build(self._channels(34))
+        az = (self.root / "live" / "a-z.m3u").read_text(encoding="utf-8")
+        self.assertLessEqual(az.count("#EXTINF"), 27)
+        country = self.root / "live" / "by-country.m3u"
+        if country.exists():
+            self.assertLessEqual(country.read_text(encoding="utf-8").count("#EXTINF"), 20)
 
     def test_paginated_parent_is_an_index(self):
         self.gen.build(self._channels(34))
@@ -628,3 +646,48 @@ class TestHomeProbeOverridesCI(unittest.TestCase):
 
     def test_a_missing_file_is_not_an_error(self):
         self.assertEqual(self.gen.load_home_probe(self.dir / "nope.json"), 0)
+
+
+class TestFavourites(unittest.TestCase):
+    """A hand-picked list that outlives a bad week for an origin."""
+
+    def setUp(self):
+        self.root = Path(tempfile.mkdtemp())
+        (self.root / "playlists").mkdir()
+        (self.root / "data").mkdir()
+        cfg = config.load(use_cache=False)
+        cfg["site"]["base_url"] = "https://example.test"
+        self.gen = LiveGenerator(cfg, self.root / "playlists")
+
+    def _write(self, ids):
+        (self.root / "data" / "favourites.json").write_text(
+            json.dumps({"channel_ids": ids}))
+
+    def _ch(self, cid, status="ACTIVE"):
+        return Channel(id=cid, name=cid.upper(), category="news", status=status,
+                       stream_url=f"https://h/{cid}.m3u8", checks_total=10,
+                       checks_ok=10 if status == "ACTIVE" else 0)
+
+    def test_marked_channels_appear_in_the_order_they_were_marked(self):
+        self._write(["c", "a", "b"])
+        self.gen.build([self._ch("a"), self._ch("b"), self._ch("c")])
+        text = (self.root / "playlists" / "live" / "favourites.m3u").read_text(encoding="utf-8")
+        self.assertEqual(text.count("#EXTINF"), 3)
+
+    def test_a_favourite_that_is_off_the_air_is_skipped_not_dropped(self):
+        self._write(["a", "dead"])
+        self.gen.build([self._ch("a"), self._ch("dead", status="OFFLINE")])
+        text = (self.root / "playlists" / "live" / "favourites.m3u").read_text(encoding="utf-8")
+        self.assertEqual(text.count("#EXTINF"), 1)
+        # The mark itself survives, so the channel returns when its origin does.
+        stored = json.loads((self.root / "data" / "favourites.json").read_text())
+        self.assertIn("dead", stored["channel_ids"])
+
+    def test_no_favourites_means_no_empty_screen(self):
+        self._write([])
+        self.gen.build([self._ch("a")])
+        self.assertFalse((self.root / "playlists" / "live" / "favourites.m3u").exists())
+
+    def test_a_missing_file_is_not_an_error(self):
+        self.gen.build([self._ch("a")])
+        self.assertFalse((self.root / "playlists" / "live" / "favourites.m3u").exists())

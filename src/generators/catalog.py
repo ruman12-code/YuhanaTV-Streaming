@@ -26,7 +26,7 @@ LIVE_CATEGORY_META: dict[str, dict] = {
     "general":       {"order": 88, "label": "📺 General & Local TV", "bg": "#34495e"},
     "religious":     {"order": 120, "label": "🕌 Religious",    "bg": "#1e6b52"},
     "international": {"order": 130, "label": "🌐 International", "bg": "#2c3e75"},
-    "other":         {"order": 999, "label": "📺 Other",        "bg": "#444444"},
+    "other":         {"order": 999, "label": "🌍 Others",       "bg": "#5d6d7e"},
 }
 
 # Genres for the Movie Library root (spec section 13). Phase 3 populates them.
@@ -96,6 +96,8 @@ def subgroup_meta(slug: str) -> dict:
         return LANGUAGE_META.get(slug, {"order": 900, "label": "🌍 Others", "bg": "#5d6d7e"})
     if slug.startswith("region-"):
         return region_meta(slug[len("region-"):])
+    if slug in ("other", "others"):
+        return {"order": 900, "label": "🌍 Others", "bg": "#5d6d7e"}
     return SUBGROUP_META.get(slug, {"order": 900, "label": slug.replace("-", " ").title(),
                                     "bg": "#444444"})
 
@@ -108,6 +110,9 @@ REGION_META: dict[str, dict] = {
     "pk": {"order": 15, "label": "🇵🇰 Pakistan",   "bg": "#1e6b52"},
     "us": {"order": 20, "label": "🇺🇸 United States", "bg": "#1f3a93"},
     "gb": {"order": 25, "label": "🇬🇧 United Kingdom", "bg": "#2c3e75"},
+    # iptv-org writes "uk" in its tvg-ids; without this the United Kingdom sorted
+    # after every hand-placed country instead of beside the other big broadcasters.
+    "uk": {"order": 26, "label": "🇬🇧 United Kingdom", "bg": "#2c3e75"},
     "ca": {"order": 30, "label": "🇨🇦 Canada",     "bg": "#a93226"},
     "au": {"order": 35, "label": "🇦🇺 Australia",  "bg": "#117a65"},
     "br": {"order": 40, "label": "🇧🇷 Brazil",     "bg": "#1e8449"},
@@ -158,4 +163,4 @@ def region_meta(code: str) -> dict:
         # countries rather than in whatever order the channels were read.
         return {"order": 100, "label": label,
                 "bg": _AUTO_BG[sum(ord(x) for x in c) % len(_AUTO_BG)]}
-    return {"order": 900, "label": "🌐 Other regions", "bg": "#444444"}
+    return {"order": 900, "label": "🌍 Others", "bg": "#444444"}
