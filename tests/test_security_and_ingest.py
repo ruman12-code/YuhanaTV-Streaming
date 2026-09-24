@@ -691,3 +691,32 @@ class TestFavourites(unittest.TestCase):
     def test_a_missing_file_is_not_an_error(self):
         self.gen.build([self._ch("a")])
         self.assertFalse((self.root / "playlists" / "live" / "favourites.m3u").exists())
+
+
+class TestWatchlistAudit(unittest.TestCase):
+    """The owner asked why &TV and &Music were missing and had to ask. A build
+    should already know, for every name he cares about."""
+
+    def test_the_watchlist_is_well_formed(self):
+        p = Path(__file__).resolve().parent.parent / "data" / "watchlist.json"
+        names = json.loads(p.read_text())["names"]
+        self.assertGreater(len(names), 20)
+        self.assertEqual(len(names), len(set(names)), "duplicate names")
+        for n in names:
+            self.assertTrue(n.strip(), "empty name in the watchlist")
+
+    def test_every_verdict_is_one_of_the_four(self):
+        from scripts.audit_watchlist import audit
+        result = audit()
+        self.assertEqual(result["checked"], len(result["rows"]))
+        for row in result["rows"]:
+            self.assertIn(row["verdict"],
+                          {"published", "withheld", "rejected", "absent"})
+            self.assertTrue(row["detail"], row["name"])
+
+    def test_a_withheld_name_names_the_gate_that_stopped_it(self):
+        from scripts.audit_watchlist import audit
+        for row in audit()["rows"]:
+            if row["verdict"] == "withheld":
+                self.assertIn("best_variant", row, row["name"])
+                self.assertTrue(row["best_variant"]["status"])

@@ -13,6 +13,16 @@ def _iso() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
 
 
+def _read_watchlist_audit() -> dict:
+    from pathlib import Path
+    import json as _json
+    p = Path(__file__).resolve().parent.parent / "data" / "status" / "watchlist-audit.json"
+    try:
+        return _json.loads(p.read_text())
+    except (OSError, ValueError):
+        return {}
+
+
 def build_report(*, channels: list[Channel], movies: list[Movie],
                  playlist_result: dict, build_files: dict[str, int],
                  withheld: dict[str, list], ingest_stats: dict | None,
@@ -124,6 +134,9 @@ def build_report(*, channels: list[Channel], movies: list[Movie],
         "withheld_counts": {reason: len(items) for reason, items in sorted(withheld.items())},
         "broken_urls": broken,
         "duplicates": (ingest_stats or {}).get("duplicates", []),
+        # "Is this channel missing, and why?" answered on every run instead of
+        # waiting to be asked. See scripts/audit_watchlist.py.
+        "watchlist": _read_watchlist_audit(),
         "ingest": {
             k: v for k, v in (ingest_stats or {}).items()
             if k in ("entries_parsed", "channels_accepted", "needs_custom_headers")
