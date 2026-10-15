@@ -1,15 +1,15 @@
 {
  "checked": 70,
  "summary": {
-  "published": 54,
-  "absent": 6,
-  "withheld": 10
+  "published": 52,
+  "withheld": 12,
+  "absent": 6
  },
  "rows": [
   {
    "name": "&TV",
    "verdict": "published",
-   "detail": "3032 of 5035 variants on the TV",
+   "detail": "2932 of 5035 variants on the TV",
    "examples": [
     "&TV HD",
     "&TV International",
@@ -39,12 +39,12 @@
   {
    "name": "&xplor",
    "verdict": "published",
-   "detail": "6 of 13 variants on the TV",
+   "detail": "4 of 13 variants on the TV",
    "examples": [
-    "Pluto TV Explore",
-    "Polsat Viasat Explore",
     "Viasat Explore (Sweden)",
-    "Viasat Explore Classic"
+    "Viasat Explore Classic",
+    "Xplore",
+    "Xplore TV"
    ]
   },
   {
@@ -68,11 +68,15 @@
   },
   {
    "name": "Zee TV",
-   "verdict": "published",
-   "detail": "1 of 4 variants on the TV",
-   "examples": [
-    "Zee TV"
-   ]
+   "verdict": "withheld",
+   "detail": "status_degraded, status_offline",
+   "variants": 4,
+   "best_variant": {
+    "name": "Zee TV HD",
+    "status": "DEGRADED",
+    "checks": "70/77",
+    "reason": "live playlist is not advancing: the window did not move, so the encoder is down behind a CDN that is still serving - this plays as a black screen"
+   }
   },
   {
    "name": "Zee Cinema",
@@ -85,10 +89,8 @@
   {
    "name": "Zee Bangla",
    "verdict": "published",
-   "detail": "3 of 6 variants on the TV",
+   "detail": "1 of 6 variants on the TV",
    "examples": [
-    "Zee Bangla",
-    "Zee Bangla HD",
     "Zee Bangla HD"
    ]
   },
@@ -108,9 +110,8 @@
   {
    "name": "Star Plus",
    "verdict": "published",
-   "detail": "3 of 8 variants on the TV",
+   "detail": "2 of 8 variants on the TV",
    "examples": [
-    "Movistar Plus",
     "Star Plus HD",
     "StarPlus (United Kingdom)"
    ]
@@ -118,10 +119,9 @@
   {
    "name": "Star Movies",
    "verdict": "published",
-   "detail": "2 of 9 variants on the TV",
+   "detail": "1 of 9 variants on the TV",
    "examples": [
-    "Star Movies (India) HD",
-    "Star Movies Select HD"
+    "Star Movies (India) HD"
    ]
   },
   {
@@ -136,9 +136,8 @@
   {
    "name": "Star Sports",
    "verdict": "published",
-   "detail": "3 of 13 variants on the TV",
+   "detail": "2 of 13 variants on the TV",
    "examples": [
-    "Star Sports 2",
     "Star Sports 2",
     "Star Sports 2 Telugu HD"
    ]
@@ -146,9 +145,8 @@
   {
    "name": "Star Jalsha",
    "verdict": "published",
-   "detail": "2 of 3 variants on the TV",
+   "detail": "1 of 3 variants on the TV",
    "examples": [
-    "Star Jalsha",
     "Star Jalsha HD"
    ]
   },
@@ -164,9 +162,8 @@
   {
    "name": "Sony SAB",
    "verdict": "published",
-   "detail": "2 of 2 variants on the TV",
+   "detail": "1 of 2 variants on the TV",
    "examples": [
-    "Sony SAB",
     "Sony SAB HD"
    ]
   },
@@ -190,30 +187,33 @@
   {
    "name": "Sony Entertainment",
    "verdict": "published",
-   "detail": "2 of 2 variants on the TV",
+   "detail": "1 of 2 variants on the TV",
    "examples": [
-    "Sony Entertainment Television",
     "Sony Entertainment Television HD"
    ]
   },
   {
    "name": "Colors",
    "verdict": "published",
-   "detail": "12 of 31 variants on the TV",
+   "detail": "10 of 31 variants on the TV",
    "examples": [
     "Colors",
-    "Colors Bangla Cinema",
     "Colors Cineplex",
-    "Colors Cineplex Bollywood"
+    "Colors Cineplex Bollywood",
+    "Colors Gujarati"
    ]
   },
   {
    "name": "Colors Bangla",
-   "verdict": "published",
-   "detail": "1 of 5 variants on the TV",
-   "examples": [
-    "Colors Bangla Cinema"
-   ]
+   "verdict": "withheld",
+   "detail": "status_degraded, status_offline",
+   "variants": 5,
+   "best_variant": {
+    "name": "Colors Bangla Cinema",
+    "status": "OFFLINE",
+    "checks": "10/18",
+    "reason": "connection error: [Errno 111] Connection refused"
+   }
   },
   {
    "name": "Colors Cineplex",
@@ -227,7 +227,7 @@
   {
    "name": "AXN",
    "verdict": "published",
-   "detail": "11 of 54 variants on the TV",
+   "detail": "10 of 54 variants on the TV",
    "examples": [
     "AXN (Brazil)",
     "AXN Asia Malaysia",
@@ -238,7 +238,7 @@
   {
    "name": "HBO",
    "verdict": "published",
-   "detail": "18 of 34 variants on the TV",
+   "detail": "19 of 34 variants on the TV",
    "examples": [
     "HBO (Czech Republic)",
     "HBO (Poland)",
@@ -249,7 +249,7 @@
   {
    "name": "Cinemax",
    "verdict": "published",
-   "detail": "9 of 13 variants on the TV",
+   "detail": "10 of 13 variants on the TV",
    "examples": [
     "Cinemax (Czech Republic)",
     "Cinemax 2",
@@ -260,12 +260,12 @@
   {
    "name": "WB",
    "verdict": "published",
-   "detail": "10 of 18 variants on the TV",
+   "detail": "6 of 18 variants on the TV",
    "examples": [
     "ABC WBRZ-TV",
-    "BET Throwbacks",
-    "Dallas Cowboys Cheerleaders",
-    "Dallas Cowboys Cheerleaders DK"
+    "NBC WBAL-TV",
+    "NBC WBTS-CD",
+    "The Cowboy Channel Canada"
    ]
   },
   {
@@ -276,7 +276,7 @@
    "best_variant": {
     "name": "Lotus TV",
     "status": "DEGRADED",
-    "checks": "31/31",
+    "checks": "32/32",
     "reason": "manifest served but the first segment was not fetchable"
    }
   },
@@ -288,7 +288,7 @@
    "best_variant": {
     "name": "Ten Sports Pakistan",
     "status": "OFFLINE",
-    "checks": "0/31",
+    "checks": "0/32",
     "reason": "connection error: timed out"
    }
   },
@@ -333,7 +333,7 @@
   {
    "name": "NTV",
    "verdict": "published",
-   "detail": "226 of 356 variants on the TV",
+   "detail": "228 of 356 variants on the TV",
    "examples": [
     "1KZN TV",
     "4 Fun TV",
@@ -344,7 +344,7 @@
   {
    "name": "RTV",
    "verdict": "published",
-   "detail": "151 of 234 variants on the TV",
+   "detail": "154 of 234 variants on the TV",
    "examples": [
     "ABC WMAR-TV",
     "ABC WMUR-TV",
@@ -386,7 +386,7 @@
   {
    "name": "Channel S",
    "verdict": "published",
-   "detail": "8 of 11 variants on the TV",
+   "detail": "5 of 11 variants on the TV",
    "examples": [
     "Alalam News Channel Syria",
     "Channel S (Bangladesh)",
@@ -478,7 +478,7 @@
   {
    "name": "SA TV",
    "verdict": "published",
-   "detail": "15 of 19 variants on the TV",
+   "detail": "13 of 19 variants on the TV",
    "examples": [
     "Edessa TV",
     "Exitosa TV",
@@ -584,7 +584,7 @@
   {
    "name": "DW",
    "verdict": "published",
-   "detail": "12 of 21 variants on the TV",
+   "detail": "8 of 21 variants on the TV",
    "examples": [
     "Anand Wari TV",
     "DW Arabic",
@@ -606,7 +606,7 @@
   {
    "name": "Discovery",
    "verdict": "published",
-   "detail": "19 of 42 variants on the TV",
+   "detail": "18 of 42 variants on the TV",
    "examples": [
     "Asharq Discovery",
     "Discovery Channel",
@@ -628,18 +628,18 @@
   {
    "name": "Animal Planet",
    "verdict": "published",
-   "detail": "5 of 11 variants on the TV",
+   "detail": "6 of 11 variants on the TV",
    "examples": [
     "Animal Planet",
     "Animal Planet (Czech Republic)",
     "Animal Planet (Hungary)",
-    "Animal Planet East HD"
+    "Animal Planet (Russia)"
    ]
   },
   {
    "name": "History",
    "verdict": "published",
-   "detail": "19 of 41 variants on the TV",
+   "detail": "17 of 41 variants on the TV",
    "examples": [
     "Autentic History",
     "History (Brazil)",
@@ -661,7 +661,7 @@
   {
    "name": "Nickelodeon",
    "verdict": "published",
-   "detail": "8 of 29 variants on the TV",
+   "detail": "7 of 29 variants on the TV",
    "examples": [
     "Nickelodeon (Croatia)",
     "Nickelodeon (Germany)",
