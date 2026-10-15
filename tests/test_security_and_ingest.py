@@ -787,3 +787,61 @@ class TestSameStreamTwice(unittest.TestCase):
             self._ch("b", "Boishakhi TV", "https://two/x.m3u8"),
         ], allow_unverified=False)
         self.assertEqual(len(pub), 2)
+
+
+class TestLastProbeFailed(unittest.TestCase):
+    """A 404 should not sit on the TV while the strike count catches up.
+
+    The strike count exists so one bad probe cannot condemn a channel. It was
+    never meant to keep a definitively broken stream on the screen for a day,
+    which is the "it shows but does not play" the owner kept hitting: 355
+    published channels had failed their most recent probe.
+
+    Definitive and transient are kept apart because nine of the ten Bangladeshi
+    channels in that state were timing out from a US runner - the distance to
+    Dhaka, not a dead stream.
+    """
+
+    def setUp(self):
+        self.gen = LiveGenerator(config.load(use_cache=False), Path(tempfile.mkdtemp()))
+
+    def _ch(self, cid, reason, cf=1):
+        # ACTIVE, because the point is the new gate rather than the status gate:
+        # a channel can be ACTIVE from an earlier run and have just failed.
+        return Channel(id=cid, name=cid, category="bangladesh", country="bd",
+                       status="ACTIVE", stream_url=f"https://h/{cid}.m3u8",
+                       status_reason=reason, consecutive_failures=cf,
+                       checks_total=40, checks_ok=30)
+
+    def test_a_definitive_failure_is_withheld_at_once(self):
+        for reason in ("HTTP 404 Not Found",
+                       "body is not an HLS manifest (no #EXTM3U)",
+                       "manifest and segment served but the segment is not media",
+                       "live playlist is not advancing: the window did not move"):
+            pub, held = self.gen._partition([self._ch("x", reason)],
+                                            allow_unverified=False)
+            self.assertEqual(pub, [], reason)
+            self.assertIn("last_probe_failed", held, reason)
+
+    def test_a_transient_failure_keeps_its_tile(self):
+        for reason in ("connection error: timed out",
+                       "TimeoutError: The read operation timed out",
+                       "DNS failure: gaierror: [Errno -2] Name or service not known",
+                       "HTTP 523 <none>",
+                       "connection error: [SSL: CERTIFICATE_VERIFY_FAILED]"):
+            pub, _ = self.gen._partition([self._ch("x", reason)],
+                                         allow_unverified=False)
+            self.assertEqual(len(pub), 1, reason)
+
+    def test_wording_we_do_not_recognise_counts_as_transient(self):
+        """An unrecognised reason is not evidence. The strike count already
+        catches a stream that is really gone."""
+        pub, _ = self.gen._partition(
+            [self._ch("x", "some brand new error nobody has seen")],
+            allow_unverified=False)
+        self.assertEqual(len(pub), 1)
+
+    def test_a_channel_whose_last_probe_passed_is_untouched(self):
+        pub, _ = self.gen._partition(
+            [self._ch("x", "HTTP 404 Not Found", cf=0)], allow_unverified=False)
+        self.assertEqual(len(pub), 1, "no failure outstanding, so the reason is history")

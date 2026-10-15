@@ -149,6 +149,9 @@ def build_report(*, channels: list[Channel], movies: list[Movie],
         "watchlist": _read_watchlist_audit(),
         # Channels whose dead URL was replaced by a working alternative.
         "url_swaps": _read_json_status("url-swaps.json").get("swaps", []),
+        # How fresh the verification is, and how long a channel that dies can
+        # stay on the TV. See scripts/audit_freshness.py.
+        "freshness": _read_json_status("freshness-audit.json"),
         "ingest": {
             k: v for k, v in (ingest_stats or {}).items()
             if k in ("entries_parsed", "channels_accepted", "needs_custom_headers")

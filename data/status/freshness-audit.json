@@ -1,0 +1,44 @@
+{
+ "generated_at": "2026-10-15T12:08:19.136045+00:00",
+ "refresh": {
+  "cron": "0 */3 * * *",
+  "$note": "What the schedule asks for. GitHub defers scheduled runs under load, so measure the real cadence from the ages below rather than from the cron.",
+  "check_budget_seconds": 2400
+ },
+ "verification_age_hours": {
+  "never_verified": 0,
+  "median": 8.1,
+  "p90": 12.0,
+  "worst": 12.2,
+  "distribution": {
+   "<6h": 4482,
+   "6-12h": 6398,
+   "12-24h": 1264,
+   "1-2d": 0,
+   "2-7d": 0,
+   ">7d": 0
+  }
+ },
+ "dead_tile_exposure_hours": {
+  "strikes_before_pulled": 2,
+  "typical": 16.2,
+  "worst_case": 24.3,
+  "$note": "A channel that dies must fail this many consecutive probes before it leaves the TV, and probes come round only as often as the ages above. This is the window in which the owner can press a tile and get nothing."
+ },
+ "published": {
+  "total": 8437,
+  "one_probe_from_being_pulled": 849,
+  "video_never_confirmed": 3636,
+  "$note_unproven": "Published on a media playlist that carries no RESOLUTION or CODECS, so nothing is known about the video beyond the segment being real media."
+ },
+ "withheld": {
+  "denied_host": 10,
+  "last_probe_failed": 893,
+  "requires_custom_http_headers": 815,
+  "same_stream_as_another_tile": 47,
+  "status_degraded": 410,
+  "status_invalid": 20,
+  "status_offline": 1434,
+  "unreliable": 78
+ }
+}

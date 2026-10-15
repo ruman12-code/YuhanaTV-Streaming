@@ -81,7 +81,7 @@
     "per_host_delay_seconds": 1.0,
     "check_first_segment": true,
     "segment_probe_bytes": 65536,
-    "consecutive_failures_before_offline": 3,
+    "consecutive_failures_before_offline": 2,
     "degraded_latency_ms": 4000,
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36",
     "publish_statuses": [
@@ -117,7 +117,16 @@
     "$comment_tls": "Verification is always tried first. Only a certificate-verification failure - the host answered, its chain is untrusted - is retried without verification, and the channel is flagged tls_unverified. This is consistency, not indifference: the playlist already carries 902 plain-http streams with no certificate and no encryption at all, and the owner's own working playlist was 31% http. Holding https streams to a standard the rest of the list is not held to withheld 195 channels for nothing. These streams carry no credentials, because a URL that does is excluded outright.",
     "publish_foreign_refusals": true,
     "max_candidates_per_channel": 8,
-    "$comment_candidates": "A dead URL is not a dead channel: an operator rotates a path and the aggregator is slow to notice. data/candidates.json lists alternatives for a condemned channel, each probed with the same validation as anything else and adopted only if it passes. Capped, because this is a handful of plausible endpoints for a free-to-air channel on hosts already in use, not a scan."
+    "$comment_candidates": "A dead URL is not a dead channel: an operator rotates a path and the aggregator is slow to notice. data/candidates.json lists alternatives for a condemned channel, each probed with the same validation as anything else and adopted only if it passes. Capped, because this is a handful of plausible endpoints for a free-to-air channel on hosts already in use, not a scan.",
+    "live_edge_wait_seconds": 6,
+    "deep_check_categories": [
+      "bangladesh"
+    ],
+    "deep_check_sources": [
+      "src-user-m3u"
+    ],
+    "$comment_blackscreen": "Two causes of a black screen that every earlier check passed. First, the segment probe accepted any non-empty body with a 200, so an origin answering every path with an HTML error page or a 'stream offline' placeholder was reported ACTIVE; the bytes must now look like MPEG-TS, fMP4 or ADTS. Second, a dead encoder behind a live CDN serves a playlist whose window never moves - everything fetches and the player buffers forever - so a live playlist is re-read after live_edge_wait_seconds and must have advanced. The re-read costs a few seconds per channel, so it is spent on the categories and sources in deep_check_*, where the owner actually watches. The segment-content check is free and applies to all.",
+    "$comment_failures": "2, not 3. Scheduled runs land every 4 to 11 hours in practice rather than the 3 the cron asks for, so three strikes left a dead channel on the TV for up to 36 hours. Two brings that to roughly 24 at worst, and the candidate-URL retry plus the reliability floor already guard against one bad probe condemning a good channel."
   },
   "security": {
     "allowed_url_schemes": [

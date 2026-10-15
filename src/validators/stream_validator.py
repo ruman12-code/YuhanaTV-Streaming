@@ -66,6 +66,50 @@ def looks_like_mpegts(body: bytes) -> bool:
     return all(body[i * _TS_PACKET] == _TS_SYNC for i in range(3))
 
 
+def looks_like_media_segment(body: bytes) -> bool:
+    """True if these bytes are decodable media rather than something else.
+
+    The segment probe used to accept any non-empty body with a 200. An origin
+    that answers every path with an HTML error page, a JSON blob or a "stream
+    offline" placeholder therefore passed, and the channel reached the TV as a
+    black screen. Two containers are legitimate here: MPEG-TS, and fragmented
+    MP4, which HLS uses for its CMAF variants.
+    """
+    if len(body) < 8:
+        return False
+    if looks_like_mpegts(body):
+        return True
+    # fMP4: a box header in the first few bytes - styp for a segment, ftyp,
+    # moof for the fragment itself, sidx/moov/init for an init segment.
+    head = body[:64]
+    for box in (b"styp", b"ftyp", b"moof", b"sidx", b"moov", b"emsg"):
+        if box in head:
+            return True
+    # ID3 can prefix an AAC-in-HLS segment, and ADTS is a bare AAC frame.
+    if head.startswith(b"ID3") or (body[0] == 0xFF and (body[1] & 0xF0) == 0xF0):
+        return True
+    return False
+
+
+_MEDIA_SEQUENCE = re.compile(r"^#EXT-X-MEDIA-SEQUENCE:\s*(\d+)", re.MULTILINE)
+
+
+def live_edge_token(text: str) -> str:
+    """A fingerprint of where a live playlist's window currently sits.
+
+    A dead encoder behind a live CDN is the other way a channel becomes a black
+    screen: the playlist is served, the segments fetch, and the window never
+    moves, so the player buffers forever with nothing to show. Comparing this
+    token across two fetches a few seconds apart tells the two apart. VOD is
+    exempt - an ENDLIST playlist is not supposed to move.
+    """
+    m = _MEDIA_SEQUENCE.search(text or "")
+    seq = m.group(1) if m else ""
+    segs = [ln.strip() for ln in (text or "").splitlines()
+            if ln.strip() and not ln.startswith("#")]
+    return f"{seq}|{segs[-1] if segs else ''}|{len(segs)}"
+
+
 def resolution_label(width: int, height: int) -> str:
     """Marketing label derived ONLY from measured pixels (spec sections 7 and 9)."""
     if height >= 2000 or width >= 3600:
@@ -116,6 +160,11 @@ class ValidationResult:
     # skipped. Recorded per channel rather than hidden, so the report can say
     # exactly which streams are on an untrusted chain.
     tls_unverified: bool = False
+    # Liveness of a live playlist: whether it was checked at all, and whether
+    # its window had moved when re-read a few seconds later.
+    live_checked: bool = False
+    live_advancing: bool | None = None
+    segment_not_media: bool = False
     error: str = ""
     checked_at: str = field(default_factory=_now_iso)
     stages: list[dict] = field(default_factory=list)
@@ -178,9 +227,21 @@ class StreamValidator:
         # normally is never probed this way, and the exception is recorded per
         # channel rather than turned into a blanket setting.
         self.tls_fallback = bool(v.get("allow_unverified_tls_fallback", True))
+        # The liveness re-read costs a few seconds per channel, so it is spent
+        # where the owner actually watches rather than across twelve thousand
+        # channels. Everything still gets the segment-content check, which is free.
+        self.live_edge_wait = float(v.get("live_edge_wait_seconds", 6))
+        self.deep_categories = {str(c).lower() for c in
+                                (v.get("deep_check_categories") or ())}
+        self.deep_sources = {str(c) for c in (v.get("deep_check_sources") or ())}
         self._ssl_ctx_unverified = ssl.create_default_context()
         self._ssl_ctx_unverified.check_hostname = False
         self._ssl_ctx_unverified.verify_mode = ssl.CERT_NONE
+
+    def deep_check(self, channel) -> bool:
+        """Whether this channel earns the slower liveness re-read."""
+        return ((channel.category or "").lower() in self.deep_categories
+                or (channel.source or "") in self.deep_sources)
 
     # --- low level -----------------------------------------------------------
 
@@ -446,6 +507,8 @@ class StreamValidator:
         # variant first: a reachable master with a dead variant is a black screen
         # on the TV, and must not be reported as ACTIVE.
         probe_text, probe_base = text, (result.final_url or channel.stream_url)
+        probe_started = time.monotonic()
+        deep = self.deep_check(channel)
         if self.check_segment and result.manifest_kind == "master" and result.variant_url:
             try:
                 vs, vfinal, _, vbody, _ = self._fetch_retry(
@@ -483,17 +546,56 @@ class StreamValidator:
                         referrer=channel.http_referrer, agent=channel.http_user_agent,
                         range_bytes=self.segment_bytes,
                     )
-                    result.segment_ok = st in (200, 206) and len(seg_body) > 0
+                    fetched = st in (200, 206) and len(seg_body) > 0
+                    is_media = fetched and looks_like_media_segment(seg_body)
+                    result.segment_ok = bool(is_media)
+                    if fetched and not is_media:
+                        # An origin that answers every path with an HTML error
+                        # page or a placeholder passed the old check and reached
+                        # the TV as a black screen.
+                        result.segment_not_media = True
+                        detail = (f"HTTP {st}, {len(seg_body)} bytes but not a "
+                                  f"media segment ({seg_body[:16]!r})")
+                    else:
+                        detail = f"HTTP {st}, {len(seg_body)} bytes"
                     stages.append(StageResult("segment", bool(result.segment_ok),
-                                              f"HTTP {st}, {len(seg_body)} bytes",
-                                              (time.monotonic() - t0) * 1000))
+                                              detail, (time.monotonic() - t0) * 1000))
                 except Exception as exc:  # noqa: BLE001
                     result.segment_ok = False
                     stages.append(StageResult("segment", False, f"{type(exc).__name__}: {exc}"))
 
+        # Liveness: a dead encoder behind a live CDN serves a playlist whose
+        # window never moves. Everything above passes and the TV shows black.
+        if (deep and result.segment_ok and result.manifest_kind in ("media", "master")
+                and "#EXT-X-ENDLIST" not in probe_text):
+            result.live_checked = True
+            before = live_edge_token(probe_text)
+            waited = self.live_edge_wait - (time.monotonic() - probe_started)
+            if waited > 0:
+                time.sleep(min(waited, self.live_edge_wait))
+            try:
+                _, _, _, again, _ = self._fetch_retry(
+                    probe_base, max_bytes=self.max_manifest_bytes,
+                    referrer=channel.http_referrer, agent=channel.http_user_agent,
+                    attempts=1)
+                after = live_edge_token(again.decode("utf-8-sig", errors="replace"))
+                result.live_advancing = after != before
+            except Exception:                              # noqa: BLE001
+                # Could not re-read it; say nothing rather than condemn.
+                result.live_checked = False
+
         if result.segment_ok is False:
             result.status = "DEGRADED"
-            result.error = "manifest served but the first segment was not fetchable"
+            result.error = (
+                "manifest and segment served but the segment is not media "
+                "(an error page or placeholder, which plays as a black screen)"
+                if getattr(result, "segment_not_media", False)
+                else "manifest served but the first segment was not fetchable")
+        elif result.live_checked and result.live_advancing is False:
+            result.status = "DEGRADED"
+            result.error = ("live playlist is not advancing: the window did not "
+                            "move, so the encoder is down behind a CDN that is "
+                            "still serving - this plays as a black screen")
         elif result.latency_ms > self.degraded_ms:
             result.status = "DEGRADED"
             result.error = f"slow origin ({result.latency_ms:.0f} ms)"

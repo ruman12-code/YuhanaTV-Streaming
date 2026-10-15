@@ -6,7 +6,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from src import config
 from src.models import Channel
 from src.validators.stream_validator import (StreamValidator, resolution_label,
-                                              ValidationResult)
+                                              ValidationResult,
+                                              looks_like_media_segment,
+                                              live_edge_token)
 
 MASTER = (b'#EXTM3U\n#EXT-X-STREAM-INF:BANDWIDTH=800000,RESOLUTION=854x480\n480/i.m3u8\n'
           b'#EXT-X-STREAM-INF:BANDWIDTH=5200000,RESOLUTION=1920x1080,CODECS="avc1.640028"\n1080/i.m3u8\n')
@@ -353,3 +355,52 @@ class TestCandidateUrlAdoption(unittest.TestCase):
         swaps, tried = self._run(ch, {"https://b/x.m3u8": "ACTIVE"})
         self.assertEqual(swaps, [])
         self.assertEqual(tried, [], "a working channel is never re-pointed")
+
+
+class TestBlackScreenDetection(unittest.TestCase):
+    """Two ways a channel passed every check and still showed black."""
+
+    def test_an_error_page_is_not_a_media_segment(self):
+        for body in (b'<!DOCTYPE html><html><body>stream offline</body></html>',
+                     b'{"error":"not found"}',
+                     b'Service Temporarily Unavailable',
+                     b''):
+            self.assertFalse(looks_like_media_segment(body), body[:24])
+
+    def test_real_containers_are_accepted(self):
+        ts = bytes([0x47]) + bytes(187) + bytes([0x47]) + bytes(187) + bytes([0x47]) + bytes(187)
+        self.assertTrue(looks_like_media_segment(ts), "MPEG-TS")
+        self.assertTrue(looks_like_media_segment(b"\x00\x00\x00\x18styp" + bytes(40)), "fMP4")
+        self.assertTrue(looks_like_media_segment(b"\x00\x00\x00\x20ftyp" + bytes(40)), "fMP4 init")
+        self.assertTrue(looks_like_media_segment(b"ID3\x04\x00" + bytes(20)), "AAC with ID3")
+        self.assertTrue(looks_like_media_segment(b"\xff\xf1" + bytes(20)), "bare ADTS")
+
+    def test_a_stalled_live_window_is_detected(self):
+        """A dead encoder behind a live CDN: the playlist is served, the
+        segments fetch, and the window never moves, so the player buffers
+        forever with nothing to show."""
+        a = "#EXTM3U\n#EXT-X-MEDIA-SEQUENCE:100\n#EXTINF:6,\nseg100.ts\n#EXTINF:6,\nseg101.ts\n"
+        later_stalled = a
+        later_moved = ("#EXTM3U\n#EXT-X-MEDIA-SEQUENCE:102\n#EXTINF:6,\nseg102.ts\n"
+                       "#EXTINF:6,\nseg103.ts\n")
+        self.assertEqual(live_edge_token(a), live_edge_token(later_stalled))
+        self.assertNotEqual(live_edge_token(a), live_edge_token(later_moved))
+
+    def test_a_window_that_slides_without_a_sequence_tag_still_reads_as_moving(self):
+        a = "#EXTM3U\n#EXTINF:6,\nseg100.ts\n#EXTINF:6,\nseg101.ts\n"
+        b = "#EXTM3U\n#EXTINF:6,\nseg101.ts\n#EXTINF:6,\nseg102.ts\n"
+        self.assertNotEqual(live_edge_token(a), live_edge_token(b))
+
+    def test_only_the_owners_own_channels_pay_for_the_liveness_re_read(self):
+        """It costs seconds per channel, so it is spent where he watches rather
+        than across twelve thousand channels."""
+        from src import config
+        v = StreamValidator(config.load(use_cache=False))
+        bd = Channel(id="a", name="x", category="bangladesh", stream_url="https://h/a")
+        mine = Channel(id="b", name="x", category="news", source="src-user-m3u",
+                       stream_url="https://h/b")
+        other = Channel(id="c", name="x", category="news", source="src-iptv-org-index-all",
+                        stream_url="https://h/c")
+        self.assertTrue(v.deep_check(bd))
+        self.assertTrue(v.deep_check(mine))
+        self.assertFalse(v.deep_check(other))

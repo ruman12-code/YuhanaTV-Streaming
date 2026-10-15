@@ -88,6 +88,10 @@ jobs:
         if: always()
         run: python3 scripts/audit_watchlist.py
 
+      - name: Audit refresh freshness and dead-tile exposure
+        if: always()
+        run: python3 scripts/audit_freshness.py
+
       - name: Validation report
         if: always()
         run: python3 scripts/pipeline.py report

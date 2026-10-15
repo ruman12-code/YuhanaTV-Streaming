@@ -32,6 +32,37 @@ from ..classify import movie_language_bucket, display_key, clean_display_name
 SLOW_ORIGIN_RE = re.compile(r"^slow origin \(", re.I)
 
 
+# Reasons that mean the stream is broken wherever you stand, as against reasons
+# that may only mean the probe stood too far away.
+_DEFINITIVE = (
+    "404", "410", "400 ", "not found", "gone",
+    # Both wordings the validator uses for "the bytes are not media".
+    "not an hls manifest", "not a media segment", "is not media",
+    "exceeds the manifest size limit",
+    "is not advancing",
+)
+_TRANSIENT = (
+    "timed out", "timeout", "connection error", "dns failure", "reset",
+    "403", "408", "429", "500", "502", "503", "504", "523", "530",
+    "certificate",
+)
+
+
+def _definitive_failure(reason: str) -> bool:
+    """True when the recorded failure would happen from anywhere.
+
+    Unknown wording counts as transient: a reason this does not recognise is
+    not evidence, and the strike count is already there to catch a stream that
+    is really gone.
+    """
+    text = (reason or "").lower()
+    if not text:
+        return False
+    if any(t in text for t in _TRANSIENT):
+        return False
+    return any(d in text for d in _DEFINITIVE)
+
+
 @dataclass
 class BuildResult:
     files: dict[str, int]                # relative path -> bytes
@@ -177,6 +208,21 @@ class LiveGenerator:
                     published.append(ch)
                 else:
                     hold("offline_from_your_network", ch)
+                continue
+
+            # A channel whose most recent probe failed DEFINITIVELY is not
+            # published, even though it keeps its place in the registry and its
+            # strikes. The strike count exists so one bad probe cannot condemn a
+            # channel; it was never meant to keep a 404 on the screen for a day
+            # while the count caught up, which is the "it shows but does not
+            # play" the owner keeps hitting.
+            #
+            # Definitive and transient are kept apart deliberately. From a US
+            # runner, nine of the ten Bangladeshi channels in this state were
+            # timing out - that is the distance to Dhaka, not a dead stream, and
+            # withholding those would be the opposite mistake.
+            if ch.consecutive_failures and _definitive_failure(ch.status_reason):
+                hold("last_probe_failed", ch)
                 continue
 
             if ch.status not in allowed and not (
