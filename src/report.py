@@ -13,6 +13,16 @@ def _iso() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
 
 
+def _read_json_status(name: str) -> dict:
+    from pathlib import Path
+    import json as _json
+    p = Path(__file__).resolve().parent.parent / "data" / "status" / name
+    try:
+        return _json.loads(p.read_text())
+    except (OSError, ValueError):
+        return {}
+
+
 def _read_watchlist_audit() -> dict:
     from pathlib import Path
     import json as _json
@@ -137,6 +147,8 @@ def build_report(*, channels: list[Channel], movies: list[Movie],
         # "Is this channel missing, and why?" answered on every run instead of
         # waiting to be asked. See scripts/audit_watchlist.py.
         "watchlist": _read_watchlist_audit(),
+        # Channels whose dead URL was replaced by a working alternative.
+        "url_swaps": _read_json_status("url-swaps.json").get("swaps", []),
         "ingest": {
             k: v for k, v in (ingest_stats or {}).items()
             if k in ("entries_parsed", "channels_accepted", "needs_custom_headers")

@@ -262,6 +262,74 @@ def _parse_iso(value: str):
         return None
 
 
+def _try_candidates(cfg, validator, channels: list) -> list[dict]:
+    """Probe alternative URLs for channels whose own URL has died.
+
+    A dead URL is not a dead channel. An operator rotates a path, the aggregator
+    is slow to notice, and the tile sits there failing - T Sports HD returned 404
+    on eighteen consecutive probes while the same operator went on serving twenty
+    other Bangladeshi channels. data/candidates.json holds a short list of
+    alternatives per channel; the first that validates replaces the dead URL, and
+    the swap is recorded on the channel and in the report.
+
+    Deliberately narrow: only a channel already condemned is considered, a
+    candidate passes exactly the same validation as anything else, and the lists
+    are a handful of plausible endpoints rather than a scan. The reliability
+    counters restart, because a new URL has no history and inheriting the dead
+    one's record would misstate both.
+    """
+    try:
+        spec = json.loads((REPO / "data" / "candidates.json").read_text())
+        spec = spec.get("channels", {})
+    except (OSError, ValueError):
+        return []
+    if not spec:
+        return []
+
+    cap = int(cfg.get_path("validation.max_candidates_per_channel", 8))
+    by_id = {c.id: c for c in channels}
+    swaps: list[dict] = []
+
+    for cid, entry in spec.items():
+        ch = by_id.get(cid)
+        if ch is None or ch.status not in ("OFFLINE", "INVALID"):
+            continue
+        urls = [u for u in (entry.get("candidates") or [])
+                if u and u != ch.stream_url][:cap]
+        if not urls:
+            continue
+        print(f"  {ch.name}: URL dead, trying {len(urls)} alternative(s)")
+        for url in urls:
+            probe = Channel(id=ch.id, name=ch.name, stream_url=url,
+                            http_referrer=ch.http_referrer,
+                            http_user_agent=ch.http_user_agent)
+            try:
+                r = validator.validate(probe)
+            except Exception as exc:                      # noqa: BLE001
+                print(f"    {url} -> {type(exc).__name__}")
+                continue
+            if r.status in ("ACTIVE", "DEGRADED"):
+                swaps.append({"channel": ch.name, "id": ch.id,
+                              "from": ch.stream_url, "to": url,
+                              "status": r.status})
+                note = (f"url replaced after the previous one failed; "
+                        f"was {ch.stream_url}")
+                ch.stream_url = url
+                ch.status = r.status
+                ch.status_reason = r.error or ""
+                ch.last_http_status = int(r.http_status or 0)
+                ch.final_url = r.final_url or ""
+                ch.consecutive_failures = 0
+                ch.checks_total, ch.checks_ok = 1, 1
+                if r.resolution:
+                    ch.resolution, ch.resolution_label = r.resolution, r.resolution_label
+                ch.notes = f"{ch.notes}; {note}" if ch.notes else note
+                print(f"    {url} -> {r.status}  adopted")
+                break
+            print(f"    {url} -> {r.status} ({(r.error or '')[:44]})")
+    return swaps
+
+
 def _check_order(channels: list) -> list:
     """Never-checked channels first, then least-recently-checked.
 
@@ -375,6 +443,11 @@ def cmd_check(args) -> int:
             ch.stream_type = "dash"
         elif r.manifest_kind == "ts":
             ch.stream_type = "ts"
+
+    swaps = _try_candidates(cfg, validator, all_channels)
+    write_json(STATUS_DIR / "url-swaps.json", {"swaps": swaps})
+    if swaps:
+        print(f"  adopted a working URL for {len(swaps)} channel(s)")
 
     save_channels(CHANNELS_DIR, all_channels)
     write_json(STATUS_DIR / "stream-status.json",

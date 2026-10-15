@@ -115,7 +115,9 @@
     "$comment_check_budget": "40 minutes. The full aggregator index does not fit in one CI run, so a run probes never-checked channels first, then the least recently verified, and stops at the first chunk boundary past the budget. The next run continues where it stopped, so the whole catalogue is covered over a few passes and no channel is starved. Chunked rather than cancelled mid-probe: an interrupted probe would count as a failure and push a working channel towards OFFLINE on nothing but a clock.",
     "allow_unverified_tls_fallback": true,
     "$comment_tls": "Verification is always tried first. Only a certificate-verification failure - the host answered, its chain is untrusted - is retried without verification, and the channel is flagged tls_unverified. This is consistency, not indifference: the playlist already carries 902 plain-http streams with no certificate and no encryption at all, and the owner's own working playlist was 31% http. Holding https streams to a standard the rest of the list is not held to withheld 195 channels for nothing. These streams carry no credentials, because a URL that does is excluded outright.",
-    "publish_foreign_refusals": true
+    "publish_foreign_refusals": true,
+    "max_candidates_per_channel": 8,
+    "$comment_candidates": "A dead URL is not a dead channel: an operator rotates a path and the aggregator is slow to notice. data/candidates.json lists alternatives for a condemned channel, each probed with the same validation as anything else and adopted only if it passes. Capped, because this is a handful of plausible endpoints for a free-to-air channel on hosts already in use, not a scan."
   },
   "security": {
     "allowed_url_schemes": [

@@ -1,0 +1,17 @@
+{
+  "$comment": "Alternative URLs to try for a channel whose own URL has died. The check step probes these for any OFFLINE channel and promotes the first one that validates; nothing is published on a candidate's say-so. Each entry records where the candidate came from, because a guess and a published listing are not the same kind of evidence and the distinction should survive in the file. Keep the lists short: this is a handful of plausible endpoints for a free-to-air channel on hosts this project already uses, not a scan.",
+  "channels": {
+    "ch-37e9ee2459": {
+      "name": "T Sports HD",
+      "why": "The only URL iptv-org lists for TSports.bd is the one this channel already has, and it has returned 404 on 18 consecutive probes. Its operator (aynaott/aynascope) is alive and serving twenty-odd other Bangladeshi channels, and uses a readable slug for some of them - tvsen5.aynaott.com/atnbangla, /banglavision, /maasrangatv - alongside opaque tokens. These are the slug forms for this channel on the same operator.",
+      "candidates": [
+        "https://tvsen5.aynaott.com/tsports/index.m3u8",
+        "https://tvsen6.aynaott.com/tsports/index.m3u8",
+        "http://tvsen5.aynascope.net/tsports/index.m3u8",
+        "http://tvsen7.aynascope.net/tsports/index.m3u8",
+        "https://tvsen5.aynaott.com/tsportshd/index.m3u8",
+        "http://tvsen5.aynascope.net/TSports/index.m3u8"
+      ]
+    }
+  }
+}

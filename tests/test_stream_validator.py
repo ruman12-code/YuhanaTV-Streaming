@@ -5,7 +5,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from src import config
 from src.models import Channel
-from src.validators.stream_validator import StreamValidator, resolution_label
+from src.validators.stream_validator import (StreamValidator, resolution_label,
+                                              ValidationResult)
 
 MASTER = (b'#EXTM3U\n#EXT-X-STREAM-INF:BANDWIDTH=800000,RESOLUTION=854x480\n480/i.m3u8\n'
           b'#EXT-X-STREAM-INF:BANDWIDTH=5200000,RESOLUTION=1920x1080,CODECS="avc1.640028"\n1080/i.m3u8\n')
@@ -267,3 +268,88 @@ class TestDirectTransportStream(unittest.TestCase):
         self.assertFalse(looks_like_mpegts(b"\x47" + b"\x00" * 600))
         self.assertFalse(looks_like_mpegts(b"#EXTM3U\n"))
         self.assertFalse(looks_like_mpegts(b""))
+
+
+class TestCandidateUrlAdoption(unittest.TestCase):
+    """A dead URL is not a dead channel.
+
+    T Sports HD returned 404 on eighteen consecutive probes while its operator
+    went on serving twenty other Bangladeshi channels - a rotated path, not a
+    closed channel. data/candidates.json lists alternatives; the first that
+    validates replaces the dead one.
+    """
+
+    def setUp(self):
+        from src import config
+        self.cfg = config.load(use_cache=False)
+
+    def _run(self, channel, verdicts):
+        """Drive _try_candidates with a stub validator."""
+        import json as _json
+        import tempfile as _tf
+        from pathlib import Path as _P
+        import scripts.pipeline as pipe
+
+        class Stub:
+            def __init__(self, table): self.table, self.seen = table, []
+            def validate(self, ch):
+                self.seen.append(ch.stream_url)
+                status = self.table.get(ch.stream_url, "OFFLINE")
+                r = ValidationResult(channel_id=ch.id, url=ch.stream_url)
+                r.status = status
+                r.error = "" if status == "ACTIVE" else "HTTP 404 Not Found"
+                if status == "ACTIVE":
+                    r.resolution, r.resolution_label = "1280x720", "720p"
+                return r
+
+        tmp = _P(_tf.mkdtemp())
+        (tmp / "data").mkdir()
+        (tmp / "data" / "candidates.json").write_text(_json.dumps({"channels": {
+            channel.id: {"candidates": list(verdicts)}}}))
+        original = pipe.REPO
+        pipe.REPO = tmp
+        try:
+            stub = Stub(verdicts)
+            swaps = pipe._try_candidates(self.cfg, stub, [channel])
+            return swaps, stub.seen
+        finally:
+            pipe.REPO = original
+
+    def _dead(self):
+        return Channel(id="ch-t", name="T Sports HD", category="bangladesh",
+                       status="OFFLINE", stream_url="https://old/dead.m3u8",
+                       checks_total=75, checks_ok=49, consecutive_failures=18)
+
+    def test_the_first_working_candidate_is_adopted(self):
+        ch = self._dead()
+        swaps, tried = self._run(ch, {"https://a/x.m3u8": "OFFLINE",
+                                      "https://b/x.m3u8": "ACTIVE",
+                                      "https://c/x.m3u8": "ACTIVE"})
+        self.assertEqual(len(swaps), 1)
+        self.assertEqual(ch.stream_url, "https://b/x.m3u8")
+        self.assertEqual(ch.status, "ACTIVE")
+        self.assertEqual(ch.resolution_label, "720p")
+        self.assertNotIn("https://c/x.m3u8", tried, "stops at the first that works")
+
+    def test_the_history_restarts_rather_than_being_inherited(self):
+        """A new URL has no record of its own, and carrying the dead one's
+        would misstate both: 49/75 says nothing about this endpoint."""
+        ch = self._dead()
+        self._run(ch, {"https://b/x.m3u8": "ACTIVE"})
+        self.assertEqual((ch.checks_ok, ch.checks_total), (1, 1))
+        self.assertEqual(ch.consecutive_failures, 0)
+        self.assertIn("url replaced", ch.notes)
+
+    def test_nothing_changes_when_no_candidate_works(self):
+        ch = self._dead()
+        swaps, _ = self._run(ch, {"https://a/x.m3u8": "OFFLINE"})
+        self.assertEqual(swaps, [])
+        self.assertEqual(ch.stream_url, "https://old/dead.m3u8")
+        self.assertEqual(ch.status, "OFFLINE")
+
+    def test_a_healthy_channel_is_left_alone(self):
+        ch = self._dead()
+        ch.status = "ACTIVE"
+        swaps, tried = self._run(ch, {"https://b/x.m3u8": "ACTIVE"})
+        self.assertEqual(swaps, [])
+        self.assertEqual(tried, [], "a working channel is never re-pointed")

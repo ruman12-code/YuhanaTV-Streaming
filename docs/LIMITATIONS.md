@@ -185,3 +185,25 @@ year. Nothing needs doing now, and there are two straightforward remedies when
 it does: squash the history of the output commits, or move the registry out of
 git and into a workflow cache or release asset. Recording it here so that it is
 a decision rather than a surprise.
+
+## When a channel's URL dies
+
+A dead URL is not a dead channel. An operator rotates a path, the aggregator is
+slow to notice, and the tile sits there failing. T Sports HD is the case that
+prompted this: 404 on eighteen consecutive probes while the same operator went
+on serving twenty other Bangladeshi channels, and the only URL iptv-org lists
+for `TSports.bd` is that same dead one.
+
+`data/candidates.json` holds a short list of alternative URLs per channel. Any
+channel already condemned has its candidates probed on the normal cycle, each
+through exactly the same validation as everything else, and the first that
+passes replaces the dead URL. The swap is recorded on the channel and in
+`validation-report.json`; the reliability counters restart, because a new
+endpoint has no history and inheriting the old one's record would misstate
+both.
+
+Each entry records where its candidates came from, because a published listing
+and an informed guess are not the same kind of evidence and the difference
+should survive in the file. The lists stay short on purpose: a handful of
+plausible endpoints for a free-to-air channel on hosts this project already
+uses is a reasonable thing to try, and a scan of somebody's CDN is not.
