@@ -61,9 +61,12 @@ def audit() -> dict:
     # Channels on the TV right now that are one failed probe from being pulled.
     on_the_brink = [c for c in published if c.consecutive_failures >= strikes - 1
                     and c.consecutive_failures > 0]
-    # Published but never actually confirmed as carrying media.
-    unproven = [c for c in published
-                if not c.resolution and not c.codec]
+    # Published, but no decoder has ever confirmed a picture in it. This is the
+    # remaining black-screen risk: the manifest and segment checks are about the
+    # outside of the stream, and only a decode speaks to what is in it.
+    unproven = [c for c in published if not c.video_confirmed]
+    confirmed = [c for c in published if c.video_confirmed]
+    blackish = [c for c in published if c.black_fraction >= 0.5]
 
     buckets = {"<6h": 0, "6-12h": 0, "12-24h": 0, "1-2d": 0, "2-7d": 0, ">7d": 0}
     for a in ages:
@@ -101,10 +104,14 @@ def audit() -> dict:
         "published": {
             "total": len(published),
             "one_probe_from_being_pulled": len(on_the_brink),
+            "video_confirmed_by_decoder": len(confirmed),
             "video_never_confirmed": len(unproven),
-            "$note_unproven": ("Published on a media playlist that carries no "
-                              "RESOLUTION or CODECS, so nothing is known about "
-                              "the video beyond the segment being real media."),
+            "mostly_black_when_decoded": len(blackish),
+            "$note_unproven": ("No decoder has yet opened these and got frames "
+                              "out. The manifest and segment checks describe "
+                              "the outside of a stream; only a decode speaks to "
+                              "what is in it. The rotation clears this backlog "
+                              "a few hundred channels per run."),
         },
         "withheld": {reason: len(items) for reason, items in sorted(withheld.items())},
     }
@@ -125,8 +132,10 @@ def main() -> int:
     print(f"dead tile       up to {dt['worst_case']}h on the TV "
           f"({dt['strikes_before_pulled']} strikes x {va['worst']}h worst gap)")
     print(f"published       {pub['total']}, "
-          f"{pub['one_probe_from_being_pulled']} one probe from being pulled, "
-          f"{pub['video_never_confirmed']} with video never confirmed")
+          f"{pub['one_probe_from_being_pulled']} one probe from being pulled")
+    print(f"decoder         {pub['video_confirmed_by_decoder']} confirmed, "
+          f"{pub['video_never_confirmed']} not yet looked at, "
+          f"{pub['mostly_black_when_decoded']} mostly black")
     return 0
 
 

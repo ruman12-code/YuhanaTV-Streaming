@@ -106,6 +106,12 @@ class Channel:
     # in the report and carried across ingest, so it is a visible property of
     # the channel rather than a silent exception.
     tls_unverified: bool = False
+    # What a decoder made of the stream, as against what the manifest claimed.
+    # video_confirmed means ffmpeg opened it and got real frames out; the manifest
+    # declaring a resolution proves nothing about whether a TV can play it.
+    video_confirmed: bool = False
+    black_fraction: float = 0.0
+    last_decoded: str = ""
     # Reliability history, accumulated across validation runs. A channel that
     # passes once and fails four times is not the same asset as one that always
     # passes, and the difference has to survive into the published playlist.

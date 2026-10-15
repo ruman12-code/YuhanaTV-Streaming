@@ -38,6 +38,10 @@ _DEFINITIVE = (
     "404", "410", "400 ", "not found", "gone",
     # Both wordings the validator uses for "the bytes are not media".
     "not an hls manifest", "not a media segment", "is not media",
+    # Decoder verdicts. A decoder opened the stream and found no picture in it,
+    # which is as definitive as this project gets.
+    "no video stream in the container", "no frame could be decoded",
+    "of the decoded video is black", "the feed is stalling",
     "exceeds the manifest size limit",
     "is not advancing",
 )

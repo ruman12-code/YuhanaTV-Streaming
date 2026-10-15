@@ -195,6 +195,9 @@ def cmd_ingest(args) -> int:
             ch.last_http_status = prev.last_http_status
             ch.final_url = prev.final_url
             ch.tls_unverified = prev.tls_unverified
+            ch.video_confirmed = prev.video_confirmed
+            ch.black_fraction = prev.black_fraction
+            ch.last_decoded = prev.last_decoded
 
     # A channel that disappears from its source is not thereby proven dead, and
     # the owner asked that nothing be dropped without being checked for itself.
@@ -330,6 +333,32 @@ def _try_candidates(cfg, validator, channels: list) -> list[dict]:
     return swaps
 
 
+def _decode_set(cfg, channels: list) -> set[str]:
+    """Which channels this run may decode.
+
+    Two groups. The ones the owner actually watches are decoded every run, so a
+    black screen on his own list is caught within hours. Then a rotating slice
+    of everything whose video has never been confirmed, oldest first, so that
+    backlog - three and a half thousand channels published on nothing stronger
+    than "the segment was real bytes" - clears over a few days instead of never.
+    """
+    cap = int(cfg.get_path("validation.decode_rotation_per_run", 400))
+    cats = {str(c).lower() for c in (cfg.get_path("validation.deep_check_categories") or ())}
+    srcs = {str(c) for c in (cfg.get_path("validation.deep_check_sources") or ())}
+
+    always = {c.id for c in channels
+              if (c.category or "").lower() in cats or (c.source or "") in srcs}
+    if cap <= 0:
+        return always
+
+    backlog = [c for c in channels
+               if c.id not in always
+               and not c.video_confirmed
+               and c.status in ("ACTIVE", "DEGRADED")]
+    backlog.sort(key=lambda c: (c.last_decoded or "", c.name))
+    return always | {c.id for c in backlog[:cap]}
+
+
 def _check_order(channels: list) -> list:
     """Never-checked channels first, then least-recently-checked.
 
@@ -372,6 +401,11 @@ def cmd_check(args) -> int:
     previous_status = {c.id: c.status for c in all_channels}
 
     validator = StreamValidator(cfg)
+    decode_ids = _decode_set(cfg, all_channels)
+    validator.set_decode_set(decode_ids)
+    if decode_ids:
+        print(f"  decoding {len(decode_ids)} channel(s) this run "
+              f"(the owner's own list, plus a slice of the unconfirmed backlog)")
     budget = float(args.budget_seconds
                    or cfg.get_path("validation.max_check_seconds", 0) or 0)
     channels = _check_order(all_channels)
@@ -428,6 +462,10 @@ def cmd_check(args) -> int:
         ch.last_http_status = int(r.http_status or 0)
         ch.final_url = r.final_url or ""
         ch.tls_unverified = bool(getattr(r, "tls_unverified", False))
+        if getattr(r, "decode_measured", False):
+            ch.video_confirmed = bool(r.video_confirmed)
+            ch.black_fraction = float(r.black_fraction or 0.0)
+            ch.last_decoded = r.checked_at
         if ch.status != previous:
             ch.last_status_change = now
         ch.last_verified = r.checked_at

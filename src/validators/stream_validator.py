@@ -38,6 +38,7 @@ from dataclasses import dataclass, field, asdict
 from datetime import datetime, timezone
 
 from ..util.urls import check_url, resolves, host_of, absolutise
+from . import decode as _decode
 
 _STREAM_INF = re.compile(r"^#EXT-X-STREAM-INF:(.*)$", re.MULTILINE)
 _ATTR = re.compile(r'([A-Z0-9-]+)=("([^"]*)"|[^,]*)')
@@ -165,6 +166,12 @@ class ValidationResult:
     live_checked: bool = False
     live_advancing: bool | None = None
     segment_not_media: bool = False
+    # Decoder findings. decode_measured False means ffmpeg was never run, which
+    # is never held against a channel.
+    decode_measured: bool = False
+    video_confirmed: bool = False
+    black_fraction: float = 0.0
+    decode_note: str = ""
     error: str = ""
     checked_at: str = field(default_factory=_now_iso)
     stages: list[dict] = field(default_factory=list)
@@ -234,6 +241,29 @@ class StreamValidator:
         self.deep_categories = {str(c).lower() for c in
                                 (v.get("deep_check_categories") or ())}
         self.deep_sources = {str(c) for c in (v.get("deep_check_sources") or ())}
+        # Decoding is the only check that proves a television will show
+        # something. It is also the most expensive, so it is bounded.
+        self.decode_enabled = bool(v.get("decode_check", True))
+        self.decode_seconds = float(v.get("decode_seconds", 4))
+        self.decode_timeout = float(v.get("decode_timeout_seconds", 45))
+        self.decode_min_frames = int(v.get("decode_min_frames", 10))
+        self.decode_max_black = float(v.get("decode_max_black_fraction", 0.95))
+        self._decode_ids: set[str] = set()
+
+    def set_decode_set(self, ids) -> None:
+        """Channels this run may decode, chosen by the caller.
+
+        The caller owns the choice because it can see the whole registry: the
+        categories the owner watches, plus a rotating slice of everything whose
+        video has never been confirmed, so that backlog clears over a few runs
+        instead of never.
+        """
+        self._decode_ids = {str(i) for i in ids}
+
+    def _should_decode(self, channel) -> bool:
+        if not self.decode_enabled or not _decode.available():
+            return False
+        return channel.id in self._decode_ids or self.deep_check(channel)
         self._ssl_ctx_unverified = ssl.create_default_context()
         self._ssl_ctx_unverified.check_hostname = False
         self._ssl_ctx_unverified.verify_mode = ssl.CERT_NONE
@@ -584,7 +614,38 @@ class StreamValidator:
                 # Could not re-read it; say nothing rather than condemn.
                 result.live_checked = False
 
-        if result.segment_ok is False:
+        # Decode. Everything above reasons about the stream from the outside;
+        # only a decoder can say whether there is a picture in it. A container
+        # with no video stream, and one whose every frame is black, both pass
+        # every earlier check and play as a black screen.
+        if result.segment_ok is not False and self._should_decode(channel):
+            d = _decode.decode(result.final_url or channel.stream_url,
+                               seconds=self.decode_seconds,
+                               timeout=self.decode_timeout,
+                               referrer=channel.http_referrer,
+                               agent=channel.http_user_agent)
+            result.decode_measured = d.measured
+            if d.measured:
+                result.video_confirmed = bool(d.has_video and d.frames)
+                result.black_fraction = round(d.black_fraction, 3)
+                # A decoded size is measured; a manifest's RESOLUTION is a claim.
+                if d.width and d.height:
+                    result.width, result.height = d.width, d.height
+                    result.resolution = f"{d.width}x{d.height}"
+                    result.resolution_label = resolution_label(d.width, d.height)
+                if d.codec and not result.codec:
+                    result.codec = d.codec
+                note = _decode.verdict(d, min_frames=self.decode_min_frames,
+                                       max_black_fraction=self.decode_max_black)
+                result.decode_note = note
+                stages.append(StageResult("decode", not note,
+                                          note or f"{d.frames} frames, "
+                                                  f"{d.black_fraction:.0%} black"))
+
+        if result.decode_note:
+            result.status = "DEGRADED"
+            result.error = result.decode_note
+        elif result.segment_ok is False:
             result.status = "DEGRADED"
             result.error = (
                 "manifest and segment served but the segment is not media "

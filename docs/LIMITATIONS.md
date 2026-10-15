@@ -207,3 +207,43 @@ and an informed guess are not the same kind of evidence and the difference
 should survive in the file. The lists stay short on purpose: a handful of
 plausible endpoints for a free-to-air channel on hosts this project already
 uses is a reasonable thing to try, and a scan of somebody's CDN is not.
+
+## What a decoder adds that nothing else can
+
+Every check before this one reasons about a stream from the outside: the URL is
+safe, the host resolves, the manifest parses, a segment is fetched and its bytes
+look like a container. None of that proves a television will show a picture.
+Two kinds of channel pass all of it and play as a black screen:
+
+* the container carries no video stream at all, only sound;
+* the video decodes perfectly and every frame is black, because the encoder is
+  pushing a dead feed behind a CDN that is still serving happily.
+
+`src/validators/decode.py` runs ffmpeg against the stream, decodes a few
+seconds and reads what came out: frames, black time, and the real codec and
+picture size. A manifest's `RESOLUTION` is a claim; a decoded size is a
+measurement, and where the two differ the measurement wins.
+
+It is bounded, because a decode costs seconds and bandwidth where an HTTP probe
+costs milliseconds. Bangladesh and the owner's own playlist are decoded every
+run, so a black screen on the list he actually watches is caught within hours.
+Everything else joins a rotation of a few hundred per run, oldest first, so the
+backlog of channels published on nothing stronger than "the segment was real
+bytes" clears over about three days instead of never.
+
+Three things it deliberately does not do. It does not treat a dark scene as a
+dead feed: the black threshold is 95% of the decoded window with a near-zero
+pixel threshold, so a film can be dark without being pulled. It does not hold a
+failed decode against a channel: a decode that timed out is recorded as
+transient, exactly like a timed-out HTTP probe, because an instrument that
+could not take a reading has not taken one. And it never runs with `file` in
+ffmpeg's protocol whitelist, because the URLs come from aggregators and a
+crafted playlist must not be able to read the runner's disk; arguments are
+passed as a list rather than through a shell, and output goes to the null muxer
+so nothing is ever written.
+
+### What it still cannot tell you
+
+That the stream decodes on a GitHub runner, not that it decodes on a Toshiba.
+The TV's own decoder has its own limits, and the geography problem at the top of
+this file is untouched by any of this.
