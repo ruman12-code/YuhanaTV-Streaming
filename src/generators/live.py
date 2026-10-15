@@ -196,7 +196,7 @@ class LiveGenerator:
                 continue
             published.append(ch)
 
-        published = self._collapse_duplicates(published, hold)
+        published = self._disambiguate_duplicates(published, hold)
         return published, withheld
 
     def _slow_but_working(self, ch) -> bool:
@@ -238,46 +238,87 @@ class LiveGenerator:
             return True
         return "geo-blocked" in (ch.tags or [])
 
-    def _collapse_duplicates(self, published: list[Channel], hold) -> list[Channel]:
-        """One tile per channel, keeping the best-evidenced entry.
+    def _disambiguate_duplicates(self, published: list[Channel], hold) -> list[Channel]:
+        """Keep every feed of a channel, and make the tiles tell them apart.
 
-        Cross-source de-duplication at ingest matches on the stream URL, so two
-        sources carrying the same channel on different origins both survive. On
-        the Bangladesh screen that showed as ATN Bangla twice, plus Boishakhi
-        next to Boishakhi TV and Bangla Vision next to Banglavision - the same
-        channel, spelled differently.
+        This used to discard all but one. That was wrong twice over. Two entries
+        sharing a name are often two genuinely independent feeds from different
+        operators - Boishakhi runs on aynaott and on sonarbanglatv, Green TV on
+        jagobd and on ncare - and when one stops working the other is exactly
+        what the viewer wants. Discarding it also discarded the better picture:
+        Boishakhi's measured 720p feed lost to an unmeasured one whose
+        reliability was higher by a single probe out of seventy-six.
 
-        Done here rather than at ingest on purpose. Both records keep accruing
-        reliability history in the registry, and by this point status and
-        reliability are known, so the entry that is kept is the one with the
-        better evidence rather than whichever source was read first.
+        So nothing is dropped. The best-evidenced feed keeps the plain name and
+        the others are numbered after it, ordered best first, with the measured
+        resolution in each tile's subtitle. If the first tile does not play, the
+        second is right beside it.
         """
-        best: dict[tuple[str, str], Channel] = {}
+        from dataclasses import replace
+
+        # First, one tile per STREAM. Two records can carry the same URL under
+        # different names - "Premier Sports 2" and "Premier Sports 2
+        # (Philippines)" are the same two feeds listed twice - and keeping both
+        # names put four tiles on the screen for two streams. Identical URL is
+        # not an independent feed; it is the same stream, and the viewer gains
+        # nothing from being offered it twice.
+        best_by_url: dict[str, Channel] = {}
+        url_order: list[str] = []
+        for ch in published:
+            key = (ch.stream_url or "").rstrip("/")
+            current = best_by_url.get(key)
+            if current is None:
+                best_by_url[key] = ch
+                url_order.append(key)
+            elif self._evidence(ch) > self._evidence(current):
+                best_by_url[key] = ch
+                hold("same_stream_as_another_tile", current)
+            else:
+                hold("same_stream_as_another_tile", ch)
+        published = [best_by_url[k] for k in url_order]
+
+        groups: dict[tuple[str, str], list[Channel]] = {}
         order: list[tuple[str, str]] = []
         for ch in published:
             key = (ch.category, display_key(ch.name))
-            current = best.get(key)
-            if current is None:
-                best[key] = ch
+            if key not in groups:
+                groups[key] = []
                 order.append(key)
-            elif self._evidence(ch) > self._evidence(current):
-                best[key] = ch
-                hold("duplicate_of_better_entry", current)
-            else:
-                hold("duplicate_of_better_entry", ch)
-        return [best[k] for k in order]
+            groups[key].append(ch)
+
+        out: list[Channel] = []
+        for key in order:
+            members = sorted(groups[key], key=self._evidence, reverse=True)
+            if len(members) == 1:
+                out.append(members[0])
+                continue
+            base = members[0].name
+            out.append(members[0])
+            for n, ch in enumerate(members[1:], start=2):
+                # Numbered from the same base name, so the alternatives sort
+                # together and read as what they are rather than as a different
+                # channel that happens to be spelled oddly.
+                out.append(replace(ch, name=f"{base} ({n})"))
+        return out
 
     @staticmethod
     def _evidence(ch: Channel) -> tuple:
-        """Ranking for two records of the same channel. Measurement first."""
+        """Which feed of a channel to put first.
+
+        Measured picture size leads. Reliability used to, and that let an
+        unmeasured feed beat a measured 720p one on a 0.013 difference in
+        success rate - the owner opened Boishakhi and got the poor picture.
+        Everything here has already passed the publication gate, so all of it
+        answers; between two that answer, the better picture wins.
+        """
         height = 0
         if "x" in (ch.resolution or ""):
             try:
                 height = int(ch.resolution.split("x")[1])
             except (ValueError, IndexError):
                 height = 0
-        return (ch.reliability, ch.checks_total, height, ch.status == "ACTIVE",
-                len(ch.name))
+        return (height, ch.status == "ACTIVE", ch.reliability, ch.checks_total,
+                -len(ch.name))
 
     # --- rendering -----------------------------------------------------------
 
@@ -552,8 +593,14 @@ class LiveGenerator:
         small: list[Channel] = []
         entries = []
         for cat, members in by_cat.items():
-            (entries.append((cat, members)) if len(members) >= self.min_bucket
-             else small.extend(members))
+            # The "other" category is itself the residual bucket and renders as
+            # "Others", so giving it a folder beside the spill folder put two
+            # tiles called "Others" on one screen. One Others per screen, as the
+            # owner asked.
+            if cat == "other" or len(members) < self.min_bucket:
+                small.extend(members)
+            else:
+                entries.append((cat, members))
         for cat, members in sorted(entries,
                                    key=lambda kv: live_meta(kv[0])["order"]):
             meta = live_meta(cat)

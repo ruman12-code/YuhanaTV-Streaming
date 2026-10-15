@@ -439,29 +439,56 @@ class TestBangladeshDetection(unittest.TestCase):
 
 
 class TestDuplicateTiles(unittest.TestCase):
-    """Two sources carrying one channel on different origins both survived
-    ingest, so the Bangladesh screen showed ATN Bangla twice, and Boishakhi
-    beside Boishakhi TV. One tile per channel, keeping the better evidenced."""
+    """Two feeds of one channel are both kept, and the tiles say which is which.
+
+    Discarding all but one was wrong twice over. Two entries sharing a name are
+    often two independent operators - Boishakhi runs on aynaott and on
+    sonarbanglatv - and when one stops the other is what the viewer wants.
+    Discarding also threw away the better picture: Boishakhi's measured 720p
+    feed lost to an unmeasured one that was more reliable by a single probe out
+    of seventy-six, and the owner opened the tile and got the poor picture.
+    """
 
     def setUp(self):
         self.gen = LiveGenerator(config.load(use_cache=False), Path(tempfile.mkdtemp()))
 
-    def _ch(self, name, ok, total, url):
+    def _ch(self, name, ok, total, url, res=""):
         return Channel(id=f"c-{url}", name=name, category="bangladesh", status="ACTIVE",
-                       stream_url=url, checks_total=total, checks_ok=ok)
+                       stream_url=url, checks_total=total, checks_ok=ok, resolution=res)
 
-    def test_spelling_variants_collapse_to_the_better_record(self):
-        a = self._ch("Boishakhi", 10, 40, "https://a/x.m3u8")       # 0.25
-        b = self._ch("Boishakhi TV", 38, 40, "https://b/x.m3u8")    # 0.95
-        pub, held = self.gen._partition([a, b], allow_unverified=False)
-        self.assertEqual([c.name for c in pub], ["Boishakhi TV"])
-        self.assertIn("duplicate_of_better_entry", held)
+    def test_both_feeds_are_kept_and_numbered(self):
+        a = self._ch("Boishakhi", 10, 40, "https://a/x.m3u8")
+        b = self._ch("Boishakhi TV", 38, 40, "https://b/x.m3u8")
+        pub, _ = self.gen._partition([a, b], allow_unverified=False)
+        self.assertEqual(len(pub), 2)
+        names = [c.name for c in pub]
+        self.assertEqual(names[0], "Boishakhi TV")
+        self.assertEqual(names[1], "Boishakhi TV (2)")
 
-    def test_identical_names_collapse(self):
+    def test_a_measured_picture_outranks_a_marginal_reliability_edge(self):
+        """The exact Boishakhi case: 75/76 at a measured 720p against 46/46
+        unmeasured. The measured feed leads."""
+        measured = self._ch("Boishakhi", 75, 76, "https://a/x.m3u8", res="1280x720")
+        unmeasured = self._ch("Boishakhi TV", 46, 46, "https://b/x.m3u8")
+        pub, _ = self.gen._partition([measured, unmeasured], allow_unverified=False)
+        self.assertEqual(pub[0].stream_url, "https://a/x.m3u8")
+        self.assertEqual(len(pub), 2, "the second feed is still offered")
+
+    def test_identical_names_are_both_kept(self):
         pub, _ = self.gen._partition(
             [self._ch("ATN Bangla", 40, 40, "https://a/x.m3u8"),
              self._ch("ATN Bangla", 20, 40, "https://b/x.m3u8")], allow_unverified=False)
-        self.assertEqual(len(pub), 1)
+        self.assertEqual([c.name for c in pub], ["ATN Bangla", "ATN Bangla (2)"])
+
+    def test_channel_s_is_not_channels_tv(self):
+        """display_key deleted the separators and then the trailing "TV", so
+        "Channel S" - a Bangladeshi broadcaster - and "Channels TV" became one
+        key and one of them was dropped."""
+        self.assertNotEqual(display_key("Channel S"), display_key("Channels TV"))
+        pub, _ = self.gen._partition(
+            [self._ch("Channel S", 40, 40, "https://a/x.m3u8"),
+             self._ch("Channels TV", 40, 40, "https://b/x.m3u8")], allow_unverified=False)
+        self.assertEqual(sorted(c.name for c in pub), ["Channel S", "Channels TV"])
 
     def test_parenthetical_feeds_stay_separate(self):
         pub, _ = self.gen._partition(
@@ -607,8 +634,10 @@ class TestHomeProbeOverridesCI(unittest.TestCase):
         return self.gen.load_home_probe(p)
 
     def _ch(self, cid, status, **kw):
+        # A distinct URL per channel: identical URLs are now collapsed to one
+        # tile, since the same stream twice is noise rather than a second feed.
         return Channel(id=cid, name=cid, category="news", status=status,
-                       stream_url="https://h/a.m3u8", checks_total=10,
+                       stream_url=f"https://h/{cid}.m3u8", checks_total=10,
                        checks_ok=0 if status == "OFFLINE" else 10, **kw)
 
     def test_a_channel_dead_to_ci_but_alive_at_home_is_published(self):
@@ -720,3 +749,41 @@ class TestWatchlistAudit(unittest.TestCase):
             if row["verdict"] == "withheld":
                 self.assertIn("best_variant", row, row["name"])
                 self.assertTrue(row["best_variant"]["status"])
+
+
+class TestSameStreamTwice(unittest.TestCase):
+    """Two records can carry the same URL under different names - "Premier
+    Sports 2" and "Premier Sports 2 (Philippines)" are the same two feeds
+    listed twice - and once nothing was being discarded that put four tiles on
+    the screen for two streams. An identical URL is not an independent feed."""
+
+    def setUp(self):
+        self.gen = LiveGenerator(config.load(use_cache=False), Path(tempfile.mkdtemp()))
+
+    def _ch(self, cid, name, url, res=""):
+        return Channel(id=cid, name=name, category="sports", status="ACTIVE",
+                       stream_url=url, checks_total=10, checks_ok=10, resolution=res)
+
+    def test_one_tile_per_stream_keeping_the_better_record(self):
+        pub, held = self.gen._partition([
+            self._ch("a", "Premier Sports 2", "https://h/ps2"),
+            self._ch("b", "Premier Sports 2 (Philippines)", "https://h/ps2",
+                     res="1920x1080"),
+        ], allow_unverified=False)
+        self.assertEqual(len(pub), 1)
+        self.assertEqual(pub[0].resolution, "1920x1080")
+        self.assertIn("same_stream_as_another_tile", held)
+
+    def test_a_trailing_slash_is_not_a_different_stream(self):
+        pub, _ = self.gen._partition([
+            self._ch("a", "X", "https://h/live"),
+            self._ch("b", "X alt", "https://h/live/"),
+        ], allow_unverified=False)
+        self.assertEqual(len(pub), 1)
+
+    def test_different_urls_are_still_two_feeds(self):
+        pub, _ = self.gen._partition([
+            self._ch("a", "Boishakhi", "https://one/x.m3u8", res="1280x720"),
+            self._ch("b", "Boishakhi TV", "https://two/x.m3u8"),
+        ], allow_unverified=False)
+        self.assertEqual(len(pub), 2)

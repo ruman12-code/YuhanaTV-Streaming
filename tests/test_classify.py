@@ -8,7 +8,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from src.classify import (categorise, from_name, from_group, clean_display_name,
-                          is_geo_blocked, is_not_24_7)
+                          is_geo_blocked, is_not_24_7, display_key,
+                          is_bangladeshi)
 from src.ingest.m3u_import import import_file
 
 
@@ -185,3 +186,35 @@ class TestGeneralIsNotEntertainment(unittest.TestCase):
         self.assertIn("general", LIVE_CATEGORIES)
         self.assertEqual(Channel(id="x", name="y", category="general").category,
                          "general")
+
+
+class TestTSportsIsNotAlwaysBangladeshi(unittest.TestCase):
+    """Thailand's T Sports 7 arrived declaring country "th", from a Thai origin
+    at 240p, and was filed under Bangladesh because "t sports" was being treated
+    as a name that can only mean one country. It cannot."""
+
+    def test_a_thai_t_sports_stays_out_of_bangladesh(self):
+        self.assertFalse(is_bangladeshi("T Sports 7", "th"))
+        self.assertEqual(categorise("T Sports 7", "general"), "sports")
+
+    def test_the_bangladeshi_one_is_unaffected(self):
+        self.assertTrue(is_bangladeshi("T Sports HD", "bd"))
+        self.assertTrue(is_bangladeshi("T Sports", ""))
+
+
+class TestDisplayKeySeparators(unittest.TestCase):
+    """"Channel S" and "Channels TV" are different broadcasters. Deleting the
+    separators before stripping the trailing variant token made them one key,
+    and one of the two was discarded as a duplicate of the other."""
+
+    def test_a_trailing_letter_is_not_absorbed_into_the_previous_word(self):
+        self.assertNotEqual(display_key("Channel S"), display_key("Channels TV"))
+        self.assertNotEqual(display_key("Channel S"), display_key("Channels"))
+
+    def test_real_spelling_variants_still_match(self):
+        self.assertEqual(display_key("Boishakhi"), display_key("Boishakhi TV"))
+        self.assertEqual(display_key("Maasranga"), display_key("Maasranga TV"))
+
+    def test_parenthetical_feeds_stay_distinct(self):
+        self.assertNotEqual(display_key("Channel S (Bangladesh)"),
+                            display_key("Channel S (United Kingdom)"))

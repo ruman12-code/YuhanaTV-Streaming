@@ -92,8 +92,12 @@ TOKEN_TO_CATEGORY = {
 # The declared country does not overrule them, so the London-based diaspora
 # feeds (Channel S UK, ATN Bangla UK) stay on the Bangladesh screen.
 BD_NAME_STRONG_RE = re.compile(
-    r"\b(t[\s-]?sports|atn|somoy|jamuna|ekushey|ekattor|maasranga|boishakhi|"
-    r"bijoy|deepto|banglavision|bangla\s*vision|channel\s*i|channel\s*s|dbc|"
+    r"\b(atn|somoy|jamuna|ekushey|ekattor|maasranga|boishakhi|"
+    # A separator is required before the single letter: "channel\s*s" also
+    # matched "Channels TV" and "Channels 24", two Nigerian broadcasters, and
+    # because this list overrides the declared country they landed on the
+    # Bangladesh screen.
+    r"bijoy|deepto|banglavision|bangla\s*vision|channel[\s-]+[is]\b|dbc|"
     r"news24 bd|nagorik|desh tv|gtv bangla|duronto|asian tv|mohona|sa tv)\b",
     re.IGNORECASE)
 
@@ -103,7 +107,11 @@ BD_NAME_STRONG_RE = re.compile(
 # the channel declares Bangladesh or declares nothing - "BTV (Uganda)" was
 # sitting on the Bangladesh screen because of this.
 BD_NAME_WEAK_RE = re.compile(
-    r"\b(btv|n[\s-]?tv|rtv|my tv|independent tv)\b", re.IGNORECASE)
+    # "t sports" sits here, not above: Thailand's T Sports 7 arrived declaring
+    # country "th" from a Thai origin at 240p and was filed under Bangladesh,
+    # because the token was being treated as unambiguous. Bangladesh's own
+    # T Sports declares "bd" and is unaffected.
+    r"\b(btv|n[\s-]?tv|rtv|my tv|independent tv|t[\s-]?sports)\b", re.IGNORECASE)
 
 # Kept as the union, for callers that only want "does this name look Bangladeshi".
 BD_NAME_RE = re.compile(
@@ -265,4 +273,7 @@ def display_key(name: str) -> str:
     while previous != cleaned:
         previous = cleaned
         cleaned = _DISPLAY_SUFFIX.sub("", cleaned).strip()
-    return _DISPLAY_STRIP.sub("", cleaned)
+    # Collapse separators to a single space rather than deleting them. Deleting
+    # them made "Channel S" and "Channels TV" both "channels" - two unrelated
+    # broadcasters, one of them Bangladeshi, treated as one channel.
+    return " ".join(_DISPLAY_STRIP.sub(" ", cleaned).split())
