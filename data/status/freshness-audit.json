@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-22T17:30:31.291042+00:00",
+ "generated_at": "2026-10-22T22:42:58.310353+00:00",
  "refresh": {
   "cron": "0 */3 * * *",
   "$note": "What the schedule asks for. GitHub defers scheduled runs under load, so measure the real cadence from the ages below rather than from the cron.",
@@ -7,13 +7,13 @@
  },
  "verification_age_hours": {
   "never_verified": 0,
-  "median": 5.8,
-  "p90": 13.5,
-  "worst": 13.6,
+  "median": 5.5,
+  "p90": 11.0,
+  "worst": 11.2,
   "distribution": {
-   "<6h": 7842,
-   "6-12h": 1118,
-   "12-24h": 3484,
+   "<6h": 9120,
+   "6-12h": 3324,
+   "12-24h": 0,
    "1-2d": 0,
    "2-7d": 0,
    ">7d": 0
@@ -21,26 +21,26 @@
  },
  "dead_tile_exposure_hours": {
   "strikes_before_pulled": 2,
-  "typical": 11.6,
-  "worst_case": 27.3,
+  "typical": 11.1,
+  "worst_case": 22.4,
   "$note": "A channel that dies must fail this many consecutive probes before it leaves the TV, and probes come round only as often as the ages above. This is the window in which the owner can press a tile and get nothing."
  },
  "published": {
-  "total": 6712,
-  "one_probe_from_being_pulled": 837,
-  "video_confirmed_by_decoder": 1187,
-  "video_never_confirmed": 5525,
+  "total": 6728,
+  "one_probe_from_being_pulled": 839,
+  "video_confirmed_by_decoder": 1193,
+  "video_never_confirmed": 5535,
   "mostly_black_when_decoded": 12,
   "$note_unproven": "No decoder has yet opened these and got frames out. The manifest and segment checks describe the outside of a stream; only a decode speaks to what is in it. The rotation clears this backlog a few hundred channels per run."
  },
  "withheld": {
   "denied_host": 10,
-  "last_probe_failed": 1009,
+  "last_probe_failed": 994,
   "requires_custom_http_headers": 939,
   "same_stream_as_another_tile": 42,
-  "status_degraded": 2001,
-  "status_invalid": 16,
-  "status_offline": 1650,
-  "unreliable": 65
+  "status_degraded": 2004,
+  "status_invalid": 20,
+  "status_offline": 1638,
+  "unreliable": 69
  }
 }
