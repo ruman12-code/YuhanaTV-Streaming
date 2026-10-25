@@ -1,15 +1,15 @@
 {
  "checked": 70,
  "summary": {
-  "published": 53,
-  "absent": 5,
-  "withheld": 12
+  "published": 52,
+  "withheld": 13,
+  "absent": 5
  },
  "rows": [
   {
    "name": "&TV",
    "verdict": "published",
-   "detail": "2937 of 5146 variants on the TV",
+   "detail": "2927 of 5146 variants on the TV",
    "examples": [
     "&TV HD",
     "&TV International",
@@ -68,11 +68,15 @@
   },
   {
    "name": "Zee TV",
-   "verdict": "published",
-   "detail": "1 of 4 variants on the TV",
-   "examples": [
-    "Zee TV HD"
-   ]
+   "verdict": "withheld",
+   "detail": "status_degraded, status_offline",
+   "variants": 4,
+   "best_variant": {
+    "name": "Zee TV HD",
+    "status": "DEGRADED",
+    "checks": "86/93",
+    "reason": "live playlist is not advancing: the window did not move, so the encoder is down behind a CDN that is still serving - this plays as a black screen"
+   }
   },
   {
    "name": "Zee Cinema",
@@ -121,7 +125,7 @@
    "best_variant": {
     "name": "Star Movies Select HD",
     "status": "DEGRADED",
-    "checks": "22/22",
+    "checks": "23/23",
     "reason": "manifest and segment served but the segment is not media (an error page or placeholder, which plays as a black screen)"
    }
   },
@@ -210,7 +214,7 @@
    "best_variant": {
     "name": "Colors Bangla Cinema",
     "status": "DEGRADED",
-    "checks": "22/22",
+    "checks": "23/23",
     "reason": "manifest and segment served but the segment is not media (an error page or placeholder, which plays as a black screen)"
    }
   },
@@ -239,7 +243,7 @@
    "verdict": "published",
    "detail": "11 of 34 variants on the TV",
    "examples": [
-    "HBO (United States)",
+    "HBO",
     "HBO Asia Taiwan",
     "HBO Drama",
     "HBO Drama West"
@@ -275,7 +279,7 @@
    "best_variant": {
     "name": "Lotus TV",
     "status": "DEGRADED",
-    "checks": "47/47",
+    "checks": "48/48",
     "reason": "manifest served but the first segment was not fetchable"
    }
   },
@@ -287,7 +291,7 @@
    "best_variant": {
     "name": "Ten Sports Pakistan",
     "status": "OFFLINE",
-    "checks": "0/47",
+    "checks": "0/48",
     "reason": "connection error: timed out"
    }
   },
@@ -315,9 +319,10 @@
   {
    "name": "ATN Bangla",
    "verdict": "published",
-   "detail": "1 of 3 variants on the TV",
+   "detail": "2 of 3 variants on the TV",
    "examples": [
-    "ATN Bangla"
+    "ATN Bangla",
+    "ATN Bangla UK"
    ]
   },
   {
@@ -331,7 +336,7 @@
   {
    "name": "NTV",
    "verdict": "published",
-   "detail": "234 of 366 variants on the TV",
+   "detail": "237 of 366 variants on the TV",
    "examples": [
     "1KZN TV",
     "4 Fun TV",
@@ -578,7 +583,7 @@
   {
    "name": "DW",
    "verdict": "published",
-   "detail": "7 of 21 variants on the TV",
+   "detail": "8 of 21 variants on the TV",
    "examples": [
     "Anand Wari TV",
     "DW Arabic",
