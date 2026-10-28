@@ -152,6 +152,10 @@ def build_report(*, channels: list[Channel], movies: list[Movie],
         # How fresh the verification is, and how long a channel that dies can
         # stay on the TV. See scripts/audit_freshness.py.
         "freshness": _read_json_status("freshness-audit.json"),
+        # How many independent feeds each channel has. A channel with one is a
+        # single outage from a dead tile; this is where another app carrying a
+        # different feed of the same broadcaster looks better than this one.
+        "coverage": _read_json_status("coverage-audit.json"),
         "ingest": {
             k: v for k, v in (ingest_stats or {}).items()
             if k in ("entries_parsed", "channels_accepted", "needs_custom_headers")

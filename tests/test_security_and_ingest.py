@@ -845,3 +845,37 @@ class TestLastProbeFailed(unittest.TestCase):
         pub, _ = self.gen._partition(
             [self._ch("x", "HTTP 404 Not Found", cf=0)], allow_unverified=False)
         self.assertEqual(len(pub), 1, "no failure outstanding, so the reason is history")
+
+
+class TestDecoderOutranksTheHeuristics(unittest.TestCase):
+    """A byte sniff must never overrule a successful decode.
+
+    ATN News - 96 of 96 probes good, ffmpeg confirming 720p video, zero black -
+    was off the Bangladesh screen because a 64KB ranged read of one segment did
+    not look like media to a heuristic. The sniff reads a fragment and guesses;
+    the decoder opens the stream and counts frames. The guess was also
+    suppressing the measurement entirely, because the decode step was gated on
+    the sniff having passed.
+    """
+
+    def test_the_sniff_does_not_gate_the_decode(self):
+        import inspect
+        from src.validators import stream_validator as sv
+        src = inspect.getsource(sv.StreamValidator.validate)
+        self.assertNotIn("result.segment_ok is not False and self._should_decode", src,
+                         "the decode must not be conditional on the sniff")
+
+    def test_a_decode_verdict_short_circuits_the_outside_checks(self):
+        import inspect
+        from src.validators import stream_validator as sv
+        src = inspect.getsource(sv.StreamValidator.validate)
+        decode_at = src.index("if result.decode_measured:")
+        segment_at = src.index("if result.segment_ok is False:")
+        self.assertLess(decode_at, segment_at,
+                        "the decoder's verdict is read before the proxies for it")
+
+    def test_a_ranged_read_is_retried_plainly_before_condemning(self):
+        import inspect
+        from src.validators import stream_validator as sv
+        src = inspect.getsource(sv.StreamValidator.validate)
+        self.assertIn("mishandle a Range request", src)

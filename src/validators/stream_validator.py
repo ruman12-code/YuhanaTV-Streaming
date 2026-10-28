@@ -95,6 +95,22 @@ def looks_like_media_segment(body: bytes) -> bool:
 _MEDIA_SEQUENCE = re.compile(r"^#EXT-X-MEDIA-SEQUENCE:\s*(\d+)", re.MULTILINE)
 
 
+_TARGET_DURATION = re.compile(r"^#EXT-X-TARGETDURATION:\s*([\d.]+)", re.MULTILINE)
+
+
+def _target_duration(text: str) -> float:
+    """The playlist's own segment length, or 0 when it does not say.
+
+    The liveness check has to wait longer than this or the window has not had
+    time to move and a perfectly good channel reads as stalled.
+    """
+    m = _TARGET_DURATION.search(text or "")
+    try:
+        return float(m.group(1)) if m else 0.0
+    except ValueError:
+        return 0.0
+
+
 def live_edge_token(text: str) -> str:
     """A fingerprint of where a live playlist's window currently sits.
 
@@ -238,6 +254,7 @@ class StreamValidator:
         # where the owner actually watches rather than across twelve thousand
         # channels. Everything still gets the segment-content check, which is free.
         self.live_edge_wait = float(v.get("live_edge_wait_seconds", 6))
+        self.live_edge_wait_max = float(v.get("live_edge_wait_max_seconds", 14))
         self.deep_categories = {str(c).lower() for c in
                                 (v.get("deep_check_categories") or ())}
         self.deep_sources = {str(c) for c in (v.get("deep_check_sources") or ())}
@@ -578,6 +595,22 @@ class StreamValidator:
                     )
                     fetched = st in (200, 206) and len(seg_body) > 0
                     is_media = fetched and looks_like_media_segment(seg_body)
+                    if fetched and not is_media:
+                        # Some origins mishandle a Range request and answer with
+                        # a redirect body, a padded response or the playlist
+                        # again. Ask once more for the plain object before
+                        # concluding anything about the stream: this sniff was
+                        # rejecting ATN News and Nexus TV, both of which ffmpeg
+                        # decodes without complaint.
+                        try:
+                            st2, _, _, body2, _ = self._fetch_retry(
+                                seg_url, max_bytes=self.segment_bytes,
+                                referrer=channel.http_referrer,
+                                agent=channel.http_user_agent, attempts=1)
+                            if st2 in (200, 206) and looks_like_media_segment(body2):
+                                is_media, seg_body = True, body2
+                        except Exception:                      # noqa: BLE001
+                            pass
                     result.segment_ok = bool(is_media)
                     if fetched and not is_media:
                         # An origin that answers every path with an HTML error
@@ -596,13 +629,21 @@ class StreamValidator:
 
         # Liveness: a dead encoder behind a live CDN serves a playlist whose
         # window never moves. Everything above passes and the TV shows black.
-        if (deep and result.segment_ok and result.manifest_kind in ("media", "master")
+        will_decode = self._should_decode(channel)
+        if (deep and not will_decode and result.segment_ok
+                and result.manifest_kind in ("media", "master")
                 and "#EXT-X-ENDLIST" not in probe_text):
             result.live_checked = True
             before = live_edge_token(probe_text)
-            waited = self.live_edge_wait - (time.monotonic() - probe_started)
+            # Wait longer than the playlist's own segment length, or the window
+            # legitimately has not moved yet and a working channel reads as
+            # stalled. Six seconds against a ten-second target duration was
+            # exactly that mistake.
+            target = _target_duration(probe_text)
+            need = max(self.live_edge_wait, target + 1.5)
+            waited = need - (time.monotonic() - probe_started)
             if waited > 0:
-                time.sleep(min(waited, self.live_edge_wait))
+                time.sleep(min(waited, self.live_edge_wait_max))
             try:
                 _, _, _, again, _ = self._fetch_retry(
                     probe_base, max_bytes=self.max_manifest_bytes,
@@ -618,7 +659,12 @@ class StreamValidator:
         # only a decoder can say whether there is a picture in it. A container
         # with no video stream, and one whose every frame is black, both pass
         # every earlier check and play as a black screen.
-        if result.segment_ok is not False and self._should_decode(channel):
+        # Run even when the segment sniff failed. That sniff reads 64KB of one
+        # object and guesses; the decoder opens the stream and counts frames.
+        # Letting the guess suppress the measurement is how ATN News - 96 of 96
+        # probes good, video confirmed, 720p - ended up off the Bangladesh
+        # screen.
+        if self._should_decode(channel):
             d = _decode.decode(result.final_url or channel.stream_url,
                                seconds=self.decode_seconds,
                                timeout=self.decode_timeout,
@@ -642,10 +688,26 @@ class StreamValidator:
                                           note or f"{d.frames} frames, "
                                                   f"{d.black_fraction:.0%} black"))
 
-        if result.decode_note:
-            result.status = "DEGRADED"
-            result.error = result.decode_note
-        elif result.segment_ok is False:
+        if result.decode_measured:
+            # A decoder looked. Its answer is the answer: either it got a
+            # watchable picture out of the stream or it said why not. The
+            # outside checks below are proxies for this measurement and must
+            # not be allowed to override it - DBC News and Ekushe TV both
+            # decoded real 720p and 1080p frames and were still being pulled
+            # by the liveness heuristic, which is a CDN serving a cached
+            # playlist twice, not a dead encoder.
+            if result.decode_note:
+                result.status = "DEGRADED"
+                result.error = result.decode_note
+            elif result.latency_ms > self.degraded_ms:
+                result.status = "DEGRADED"
+                result.error = f"slow origin ({result.latency_ms:.0f} ms)"
+            else:
+                result.status = "ACTIVE"
+            result.stages = [asdict(s) for s in stages]
+            return result
+
+        if result.segment_ok is False:
             result.status = "DEGRADED"
             result.error = (
                 "manifest and segment served but the segment is not media "
