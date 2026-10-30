@@ -396,9 +396,13 @@ class TestSlowDegradedIsStillPublished(unittest.TestCase):
 
     def test_a_channel_mid_failure_is_not(self):
         # A hard failure below the condemn threshold also parks a channel in
-        # DEGRADED, carrying the previous run's reason with it.
-        pub, held = self.gen._partition([self._ch("slow origin (4200 ms)", fails=2)],
-                                        allow_unverified=False)
+        # DEGRADED, carrying the previous run's reason with it. Asserted on a
+        # non-Bangladeshi channel: Bangladesh deliberately keeps a channel with
+        # a history through a non-definitive DEGRADED, which is its own rule and
+        # has its own test.
+        ch = self._ch("slow origin (4200 ms)", fails=2)
+        ch.category = "news"
+        pub, held = self.gen._partition([ch], allow_unverified=False)
         self.assertEqual(pub, [])
         self.assertIn("status_degraded", held)
 
@@ -408,8 +412,31 @@ class TestSlowDegradedIsStillPublished(unittest.TestCase):
         self.assertEqual(pub, [])
 
     def test_no_recorded_reason_is_not_assumed_benign(self):
-        pub, _ = self.gen._partition([self._ch("")], allow_unverified=False)
+        ch = self._ch("")
+        ch.category = "news"
+        pub, _ = self.gen._partition([ch], allow_unverified=False)
         self.assertEqual(pub, [])
+
+    def test_the_relaxation_is_scoped_to_bangladesh_only(self):
+        """A gate tuned on global data misfired on Bangladesh three times
+        running, because every reading of a Bangladeshi origin is taken from a
+        US datacentre. Relaxing the whole catalogue to fix one market would be
+        the wrong trade, so the proven rule is off everywhere else."""
+        bd = self._ch("", ok=67, total=68)
+        other = self._ch("", ok=67, total=68)
+        other.category, other.id = "news", "other-id"
+        pub, _ = self.gen._partition([bd, other], allow_unverified=False)
+        kept = {c.category for c in pub}
+        self.assertEqual(kept, {"bangladesh"})
+
+    def test_a_proven_bangladeshi_channel_survives_a_vague_degradation(self):
+        """Ekushey TV at 67 of 68 probes, Me TV at 96 of 98 and Green TV twice
+        over were all sitting in DEGRADED with no definitive fault recorded
+        against them, and all four lost their tiles. DEGRADED means imperfect,
+        not dead."""
+        pub, _ = self.gen._partition([self._ch("", ok=67, total=68)],
+                                     allow_unverified=False)
+        self.assertEqual(len(pub), 1)
 
 
 class TestBangladeshDetection(unittest.TestCase):
@@ -813,15 +840,39 @@ class TestLastProbeFailed(unittest.TestCase):
                        status_reason=reason, consecutive_failures=cf,
                        checks_total=40, checks_ok=30)
 
-    def test_a_definitive_failure_is_withheld_at_once(self):
-        for reason in ("HTTP 404 Not Found",
-                       "body is not an HLS manifest (no #EXTM3U)",
-                       "manifest and segment served but the segment is not media",
-                       "live playlist is not advancing: the window did not move"):
-            pub, held = self.gen._partition([self._ch("x", reason)],
-                                            allow_unverified=False)
+    _DEFINITIVE_REASONS = ("HTTP 404 Not Found",
+                           "body is not an HLS manifest (no #EXTM3U)",
+                           "manifest and segment served but the segment is not media",
+                           "manifest served but the first segment was not fetchable",
+                           "live playlist is not advancing: the window did not move")
+
+    def test_a_definitive_failure_is_withheld_outside_bangladesh_at_once(self):
+        for reason in self._DEFINITIVE_REASONS:
+            ch = self._ch("x", reason, cf=1)
+            ch.category = "news"
+            pub, held = self.gen._partition([ch], allow_unverified=False)
             self.assertEqual(pub, [], reason)
             self.assertIn("last_probe_failed", held, reason)
+
+    def test_bangladesh_gets_exactly_one_bad_reading_of_grace(self):
+        """Me TV had answered 96 of 98 probes when a single 404 took its tile
+        away, and every reading of a Bangladeshi origin here is taken from the
+        wrong continent. One definitive failure is noise; two is a pattern."""
+        for reason in self._DEFINITIVE_REASONS:
+            pub, _ = self.gen._partition([self._ch("x", reason, cf=1)],
+                                         allow_unverified=False)
+            self.assertEqual(len(pub), 1, f"one strike, kept: {reason}")
+            pub, held = self.gen._partition([self._ch("x", reason, cf=2)],
+                                            allow_unverified=False)
+            self.assertEqual(pub, [], f"two strikes, pulled: {reason}")
+            self.assertIn("last_probe_failed", held)
+
+    def test_a_channel_that_never_worked_gets_no_grace_anywhere(self):
+        ch = self._ch("x", "HTTP 404 Not Found", cf=1)
+        ch.checks_ok, ch.checks_total = 0, 40
+        pub, held = self.gen._partition([ch], allow_unverified=False)
+        self.assertEqual(pub, [])
+        self.assertIn("last_probe_failed", held)
 
     def test_a_transient_failure_keeps_its_tile(self):
         for reason in ("connection error: timed out",

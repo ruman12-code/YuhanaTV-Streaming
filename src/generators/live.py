@@ -38,15 +38,23 @@ _DEFINITIVE = (
     "404", "410", "400 ", "not found", "gone",
     # Both wordings the validator uses for "the bytes are not media".
     "not an hls manifest", "not a media segment", "is not media",
-    # Decoder verdicts. A decoder opened the stream and found no picture in it,
-    # which is as definitive as this project gets.
-    "no video stream in the container", "no frame could be decoded",
+    "first segment was not fetchable", "variant playlist was not usable",
+    # Decoder verdicts, and only the ones where the decoder actually opened the
+    # stream and looked: no video track in a container it read, or a picture it
+    # read and found black. "Could not open the input" is the instrument
+    # failing, not a finding about the stream, and it belongs with the timeouts
+    # below - Ekushey TV passed 67 of 68 HTTP probes and was pulled because
+    # ffmpeg could not open it from a US runner.
+    "no video stream in the container",
     "of the decoded video is black", "the feed is stalling",
     "exceeds the manifest size limit",
     "is not advancing",
 )
 _TRANSIENT = (
     "timed out", "timeout", "connection error", "dns failure", "reset",
+    # The decoder could not get in at all. That is this runner's problem.
+    "no frame could be decoded", "error opening input", "ffmpeg not installed",
+    "invalid data found", "server returned 4", "server returned 5",
     "403", "408", "429", "500", "502", "503", "504", "523", "530",
     "certificate",
 )
@@ -127,6 +135,18 @@ class LiveGenerator:
         # where the viewer is.
         self.publish_region_blocked = bool(
             cfg.get_path("validation.publish_region_blocked", True))
+        self.definitive_grace = int(
+            cfg.get_path("validation.definitive_grace_failures", 1))
+        self.definitive_grace_by_category = dict(
+            cfg.get_path("validation.definitive_grace_failures_by_category", {}) or {})
+        self.proven_min_successes = int(
+            cfg.get_path("validation.proven_min_successes", 0))
+        self.proven_min_successes_by_category = dict(
+            cfg.get_path("validation.proven_min_successes_by_category", {}) or {})
+        self.proven_grace_failures = int(
+            cfg.get_path("validation.proven_grace_failures", 3))
+        self.proven_grace_failures_by_category = dict(
+            cfg.get_path("validation.proven_grace_failures_by_category", {}) or {})
         self.min_country_folder = int(cfg.get_path("ssiptv.min_country_folder", 4))
         self.pinned_countries = [str(c).lower() for c in
                                  cfg.get_path("ssiptv.pinned_countries", []) or ()]
@@ -225,11 +245,38 @@ class LiveGenerator:
             # runner, nine of the ten Bangladeshi channels in this state were
             # timing out - that is the distance to Dhaka, not a dead stream, and
             # withholding those would be the opposite mistake.
-            if ch.consecutive_failures and _definitive_failure(ch.status_reason):
+            if (_definitive_failure(ch.status_reason)
+                    and ch.consecutive_failures >= self._definitive_grace(ch)):
                 hold("last_probe_failed", ch)
                 continue
 
-            if ch.status not in allowed and not (
+            # DEGRADED means something about the stream was imperfect, not that
+            # it is dead. For a channel with a real history that is not reason
+            # enough to take its tile away: Me TV at 96 of 98 probes, Ekushey TV
+            # at 67 of 68 and Green TV twice over were all sitting in DEGRADED
+            # with no definitive fault recorded against them. A definitive
+            # fault is handled above and still wins.
+            # A proven channel keeps its tile through a DEGRADED, with one
+            # exception that matters.
+            #
+            # consecutive_failures only counts hard failures, so a channel that
+            # is PERMANENTLY degraded - its manifest loads and its segments
+            # never fetch, which is a black screen every time - sits at zero
+            # forever and would never reach the grace rule above. A definitive
+            # fault with no failure streak behind it is therefore a standing
+            # fault, not one bad reading, and it stays out.
+            #
+            # A definitive fault WITH a streak is the Me TV case: 96 of 98
+            # probes good, then one 404. The grace rule above has already
+            # decided how many of those to forgive, and re-testing the reason
+            # here would contradict it.
+            reason_is_definitive = _definitive_failure(ch.status_reason)
+            one_bad_reading = 1 <= ch.consecutive_failures < self._definitive_grace(ch)
+            degraded_but_proven = (
+                ch.status == "DEGRADED"
+                and self._proven_recently(ch)
+                and (not reason_is_definitive or one_bad_reading))
+            if ch.status not in allowed and not degraded_but_proven and not (
                     ch.status == "DEGRADED" and self._slow_but_working(ch)):
                 if self._blocked_from_here_only(ch):
                     published.append(ch)
@@ -266,6 +313,43 @@ class LiveGenerator:
         if ch.checks_total < self.min_checks_for_gate:
             return False
         return ch.reliability >= self.slow_degraded_min_reliability
+
+    def _definitive_grace(self, ch) -> int:
+        """How many consecutive definitive failures to allow before pulling it.
+
+        One is the default: a 404 is a 404. Bangladesh gets two, because a
+        single bad reading against a long record of good ones is more likely a
+        moment than a death - Me TV had answered 96 of 98 probes when one 404
+        took its tile away - and every reading of a Bangladeshi origin here is
+        taken from the wrong continent. Two consecutive is a pattern; one is
+        noise. A channel that has never worked gets no grace at all.
+        """
+        if ch.checks_ok <= 0:
+            return 1
+        return int(self.definitive_grace_by_category.get(
+            ch.category, self.definitive_grace))
+
+    def _proven_recently(self, ch) -> bool:
+        """True when this channel has earned the benefit of the doubt.
+
+        A channel that has answered dozens of probes and then missed one is far
+        more likely to be having a moment than to have died, and this validator
+        watches Bangladesh from a US datacentre where a moment is common. Me TV
+        passed 96 of 98 probes and lost its tile to a single 404; Green TV did
+        the same twice over, with ffmpeg having decoded its picture.
+
+        So a proven channel is not pulled on one failure. It is pulled once the
+        failures are sustained, which is what `grace_failures` counts. Nothing
+        here applies to a channel that has never worked: there is no history to
+        give credit for.
+        """
+        floor = self.proven_min_successes_by_category.get(
+            ch.category, self.proven_min_successes)
+        grace = self.proven_grace_failures_by_category.get(
+            ch.category, self.proven_grace_failures)
+        if floor <= 0 or ch.checks_ok < floor:
+            return False
+        return ch.consecutive_failures < grace
 
     def _blocked_from_here_only(self, ch) -> bool:
         """True when the probe's failure says more about the runner than the stream.
@@ -421,7 +505,19 @@ class LiveGenerator:
         Movies category alone produced a 207-channel screen - and splitting the
         category once is not enough.
         """
-        ordered = sorted(items, key=lambda c: c.name.lower())
+        # Last line of defence against two identical labels on one screen. The
+        # identity pass upstream groups by category, so the same channel reached
+        # by two different doors - a country folder and a genre folder - can
+        # still collide here.
+        seen: set[str] = set()
+        deduped = []
+        for c in sorted(items, key=lambda c: c.name.lower()):
+            key = c.name.strip().lower()
+            if key in seen:
+                continue
+            seen.add(key)
+            deduped.append(c)
+        ordered = deduped
         target = self.root / rel
 
         if len(ordered) <= self.max_items:

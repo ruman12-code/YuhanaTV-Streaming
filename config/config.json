@@ -134,7 +134,21 @@
     "decode_max_black_fraction": 0.95,
     "decode_rotation_per_run": 400,
     "$comment_decode": "ffmpeg decodes a few seconds of the stream and reports frames and black time. It is the only check that says a television will show something: a container with no video stream, and one whose every frame is black, both pass every outside check and play as a black screen. pix_th is 0.10 and the black threshold 0.95, so a dark scene in a film is not mistaken for a dead feed. Scope is bounded: the owner's own categories and sources every run, plus decode_rotation_per_run channels whose video has never been confirmed, oldest first, so that backlog clears over days rather than never. When ffmpeg is absent nothing is withheld on its account.",
-    "$comment_decode_budget": "Decoding runs inside the ordinary probe, so it spends the same 40-minute budget. At 30s worst case per channel and 40 in flight, the owner's own set plus 400 rotation channels costs at most about eight minutes of that budget and usually far less. The backlog of channels never decoded clears in roughly three days of normal runs."
+    "$comment_decode_budget": "Decoding runs inside the ordinary probe, so it spends the same 40-minute budget. At 30s worst case per channel and 40 in flight, the owner's own set plus 400 rotation channels costs at most about eight minutes of that budget and usually far less. The backlog of channels never decoded clears in roughly three days of normal runs.",
+    "proven_min_successes": 0,
+    "proven_min_successes_by_category": {
+      "bangladesh": 2
+    },
+    "proven_grace_failures": 3,
+    "proven_grace_failures_by_category": {
+      "bangladesh": 8
+    },
+    "$comment_proven": "OFF everywhere by default (0 disables it), ON for Bangladesh. A Bangladeshi channel that has answered at least 2 probes keeps its tile through a DEGRADED with no definitive fault recorded, and through up to 8 consecutive non-definitive failures. Me TV at 96 of 98 probes, Ekushey TV at 67 of 68 and Green TV twice over were all pulled while sitting in DEGRADED with nothing definitive against them. Scoped to one market on purpose. Every reading of a Bangladeshi origin here is taken from a US datacentre, so the noise floor for this market is far higher than the rest, and a gate tuned on global data has now misfired on it three times running. Relaxing the whole catalogue to fix one region would be the wrong trade; a channel that has never worked gets nothing from this anywhere.",
+    "definitive_grace_failures": 1,
+    "definitive_grace_failures_by_category": {
+      "bangladesh": 2
+    },
+    "$comment_definitive_grace": "Consecutive definitive failures - a 404, a body that is not a manifest, an unfetchable segment - allowed before the tile goes. One everywhere else: a 404 is a 404. Two for Bangladesh, because a single bad reading against a long record of good ones is more likely a moment than a death, and every reading of a Bangladeshi origin is taken from the wrong continent. A channel that has never once worked gets no grace."
   },
   "security": {
     "allowed_url_schemes": [

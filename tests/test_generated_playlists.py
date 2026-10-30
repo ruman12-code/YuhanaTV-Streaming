@@ -86,3 +86,29 @@ class TestHomeScreen(unittest.TestCase):
 
     def test_home_screen_stays_short(self):
         self.assertLessEqual(len(self.extinfs), 10)
+
+    def test_the_bangladesh_screen_carries_the_channels_the_owner_named(self):
+        """A standing guard, because this regressed four times.
+
+        Each of these was reported missing, found to be withheld by a gate of
+        mine that misfired on Bangladeshi measurements taken from a US runner,
+        and restored. The list is here so the next such gate fails a test
+        instead of reaching the television.
+        """
+        text = (PLAYLISTS / "live" / "bangladesh.m3u").read_text(encoding="utf-8")
+        labels = [ln.split(",", 1)[-1].strip()
+                  for ln in text.splitlines() if ln.startswith("#EXTINF")]
+        blob = " | ".join(labels).lower()
+        for name in ("atn bangla", "atn news", "dbc news", "ekattor",
+                     "ekush", "boishakhi", "bangla vision", "gazi tv",
+                     "jamuna", "somoy", "channel i", "n tv", "maasranga",
+                     "green tv", "me tv", "deepto", "sa tv"):
+            self.assertIn(name, blob, f"{name} is missing from the Bangladesh screen")
+
+    def test_no_screen_shows_the_same_label_twice(self):
+        for f in PLAYLISTS.rglob("*.m3u"):
+            labels = [ln.split(",", 1)[-1].strip()
+                      for ln in f.read_text(encoding="utf-8").splitlines()
+                      if ln.startswith("#EXTINF")]
+            dupes = {x for x in labels if labels.count(x) > 1}
+            self.assertEqual(dupes, set(), f"{f.name} repeats {dupes}")
