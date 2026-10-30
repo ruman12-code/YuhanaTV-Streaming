@@ -39,6 +39,7 @@ _DEFINITIVE = (
     # Both wordings the validator uses for "the bytes are not media".
     "not an hls manifest", "not a media segment", "is not media",
     "first segment was not fetchable", "variant playlist was not usable",
+    "two independent checks agree",
     # Decoder verdicts, and only the ones where the decoder actually opened the
     # stream and looked: no video track in a container it read, or a picture it
     # read and found black. "Could not open the input" is the instrument
@@ -75,6 +76,20 @@ def _definitive_failure(reason: str) -> bool:
     return any(d in text for d in _DEFINITIVE)
 
 
+def _epg_has_programmes(path) -> bool:
+    """True when the XMLTV file holds at least one <programme>."""
+    try:
+        with open(path, "rb") as fh:
+            while True:
+                block = fh.read(1 << 20)
+                if not block:
+                    return False
+                if b"<programme" in block:
+                    return True
+    except OSError:
+        return False
+
+
 @dataclass
 class BuildResult:
     files: dict[str, int]                # relative path -> bytes
@@ -89,6 +104,11 @@ class LiveGenerator:
         self.live_dir = self.root / "live"
         self.max_items = int(cfg.get_path("ssiptv.max_items_per_playlist", 120))
         self.attach_epg = bool(cfg.get_path("ssiptv.attach_epg_to_live", True))
+        # A guide is only worth pointing SS IPTV at if it contains something.
+        # It was attached to 916 playlists while holding 6,214 channel entries
+        # and no programmes at all - 917 KB fetched for a blank grid.
+        self.epg_has_programmes = _epg_has_programmes(
+            self.root.parent / "epg" / "epg.xml")
         self.size_root = cfg.get_path("ssiptv.tile_size_root", "big")
         self.size_cat = cfg.get_path("ssiptv.tile_size_category", "medium")
         self.size_chan = cfg.get_path("ssiptv.tile_size_channel", "small")
@@ -211,6 +231,9 @@ class LiveGenerator:
                                 denied_hosts=self.denied_hosts)
             if verdict.ok and ch.final_url and ch.final_url != ch.stream_url:
                 verdict = check_url(ch.final_url, require_https=self.require_https,
+                                    denied_hosts=self.denied_hosts)
+            if verdict.ok and ch.publish_url:
+                verdict = check_url(ch.publish_url, require_https=self.require_https,
                                     denied_hosts=self.denied_hosts)
             if not verdict.ok:
                 reason = ("plain_http" if "plain http" in verdict.reason
@@ -370,7 +393,14 @@ class LiveGenerator:
         # owner is not watching from.
         if ch.last_http_status in (403, 451):
             return True
-        return "geo-blocked" in (ch.tags or [])
+        # The source's geo tag is a hint that a failure MAY be a refusal. It is
+        # not a licence to publish a stream whose recorded failure is something
+        # else entirely: 27 tiles were reaching the TV on this tag alone while
+        # their last probe said 404, an unfetchable segment or bytes that were
+        # not media - black screens from anywhere, Dhaka included.
+        if "geo-blocked" in (ch.tags or []):
+            return not _definitive_failure(ch.status_reason)
+        return False
 
     def _disambiguate_duplicates(self, published: list[Channel], hold) -> list[Channel]:
         """Keep every feed of a channel, and make the tiles tell them apart.
@@ -396,10 +426,14 @@ class LiveGenerator:
         # names put four tiles on the screen for two streams. Identical URL is
         # not an independent feed; it is the same stream, and the viewer gains
         # nothing from being offered it twice.
-        best_by_url: dict[str, Channel] = {}
-        url_order: list[str] = []
+        best_by_url: dict[tuple, Channel] = {}
+        url_order: list[tuple] = []
         for ch in published:
-            key = (ch.stream_url or "").rstrip("/")
+            # Per category: the same stream appearing under News and under
+            # Bangladesh is one channel reachable through two doors, not a
+            # duplicate. Deduplicating across categories could take a channel
+            # off the Bangladesh screen because its twin was kept under General.
+            key = (ch.category, (ch.publish_url or ch.stream_url or "").rstrip("/"))
             current = best_by_url.get(key)
             if current is None:
                 best_by_url[key] = ch
@@ -456,8 +490,18 @@ class LiveGenerator:
 
     # --- rendering -----------------------------------------------------------
 
+    @staticmethod
+    def _verified(ch: Channel) -> bool:
+        """Ever confirmed to play by any probe, here or on the owner's network."""
+        return ch.checks_ok > 0 or ch.video_confirmed
+
     def _channel_description(self, ch: Channel) -> str:
         bits = []
+        if not self._verified(ch):
+            # Published because the owner asked that nothing be withheld for
+            # where it is, and never once confirmed to play. Saying so costs
+            # nothing and saves him guessing which tiles to try first.
+            bits.append("Unverified - may be region-locked")
         if ch.resolution_label:
             bits.append(ch.resolution_label)          # only ever a measured label
         if ch.language:
@@ -469,15 +513,18 @@ class LiveGenerator:
     def _channel_playlist(self, channels: list[Channel], *, title: str,
                           seed_note: str) -> M3UBuilder:
         b = M3UBuilder(
-            tvg_url=self.cfg.epg_url() if self.attach_epg else "",
+            tvg_url=self.cfg.epg_url() if self.attach_epg and self.epg_has_programmes else "",
             default_size=self.size_chan,
             default_description=title,
             header_comment=seed_note,
         )
-        for ch in sorted(channels, key=lambda c: c.name.lower()):
+        # Confirmed channels first, alphabetically; then the never-confirmed
+        # ones, alphabetically. Nothing is hidden, but the first tiles a viewer
+        # sees on any screen are ones that have actually been seen to play.
+        for ch in sorted(channels, key=lambda c: (not self._verified(c), c.name.lower())):
             b.add_stream(
                 ch.name,
-                ch.stream_url,
+                ch.publish_url or ch.stream_url,
                 tvg_id=ch.epg_id,
                 tvg_name=ch.name,
                 logo=ch.logo,
@@ -510,12 +557,15 @@ class LiveGenerator:
         # by two different doors - a country folder and a genre folder - can
         # still collide here.
         seen: set[str] = set()
+        seen_urls: set[str] = set()
         deduped = []
-        for c in sorted(items, key=lambda c: c.name.lower()):
+        for c in sorted(items, key=lambda c: (not self._verified(c), c.name.lower())):
             key = c.name.strip().lower()
-            if key in seen:
+            url = (c.publish_url or c.stream_url or "").rstrip("/")
+            if key in seen or url in seen_urls:
                 continue
             seen.add(key)
+            seen_urls.add(url)
             deduped.append(c)
         ordered = deduped
         target = self.root / rel

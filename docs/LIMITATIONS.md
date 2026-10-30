@@ -247,3 +247,74 @@ so nothing is ever written.
 That the stream decodes on a GitHub runner, not that it decodes on a Toshiba.
 The TV's own decoder has its own limits, and the geography problem at the top of
 this file is untouched by any of this.
+
+## Self-audit, 2026-10-30: flaws found in my own gates
+
+An audit of every rule in the pipeline against the published data, from the
+television's point of view. Each of these was compromising playback, and each is
+fixed with a test that fails if it returns.
+
+**The TLS fallback never ran.** urllib wraps a certificate failure inside
+`URLError`, so `except ssl.SSLCertVerificationError` around a fetch is
+unreachable code. The relaxation the owner approved had not taken effect once;
+220 channels sat failing with `CERTIFICATE_VERIFY_FAILED`. Fixed by recognising
+the failure by inspection. And because a TV's player almost certainly validates
+certificates itself, an https stream with an untrusted chain is also tried over
+plain http on the same path, and the http form is published when it serves.
+
+**Reliability counted black screens as successes.** Every DEGRADED result
+incremented `checks_ok`, and DEGRADED had come to include "decoded video is
+black", "segment is not media" and "no video stream". A channel stuck in one of
+those accrued a perfect record and was trusted on it. A probe is now graded
+playable, broken or unknown: only playable earns credit, only broken costs a
+strike, and a timeout or a decoder that could not get in does neither.
+
+**A geo tag was publishing 404s.** The source's `[Geo-blocked]` tag admitted a
+channel whatever its recorded failure, so 27 tiles reached the TV whose last
+probe said 404, an unfetchable segment, or bytes that were not media. The tag
+now only excuses a failure that could be a refusal.
+
+**Stream dedup was global.** The same stream filed under News and under
+Bangladesh lost one of its two doors, and the one kept was not necessarily the
+Bangladesh one. Dedup is now per category, plus a per-screen pass so no screen
+carries one stream or one label twice.
+
+**An empty guide was attached to 916 playlists.** 917 KB of XMLTV holding 6,214
+channel entries and zero programmes, which SS IPTV was told to fetch for every
+screen. Now attached only when it contains at least one programme.
+
+## Startup time
+
+Two things shorten the time from pressing a tile to seeing a picture, and both
+are measured rather than assumed:
+
+* A redirect that returns the same destination on two consecutive probes, with
+  no query string (where expiring tokens live), is published as its
+  destination. Every press otherwise pays an extra round trip to the redirector,
+  and from Dhaka to a redirector abroad that is real time. If the destination
+  ever changes, the next probe sees it and the tile reverts.
+* On every screen, channels that have been confirmed to play come first. Nothing
+  is hidden - the never-confirmed ones follow, alphabetically, marked
+  "Unverified" - but the first tiles a viewer tries are ones known to work.
+
+One thing that would seem to help and deliberately does not: ranking feeds by
+how quickly they answer. That latency is measured from a US datacentre, and for
+Bangladeshi content it is close to backwards - a feed hosted in Dhaka looks slow
+from Virginia and is fast from Dhaka. Ranking on it would push the best feeds
+for this viewer to the bottom. The home probe records latency from the right
+place; until it runs, picture size and reliability decide.
+
+## Detection speed
+
+The full pass is forty minutes over twelve thousand channels and GitHub runs it
+every four to eleven hours. `quick-check.yml` probes only what the owner watches
+- Bangladesh, his own playlist and his favourites, about seventy channels -
+hourly, and rebuilds. A Bangladeshi channel that dies is pulled, and one that
+recovers is restored, within an hour or two instead of a day.
+
+It shares the content-write concurrency group with the full pass, which is
+required: both rewrite the registry, and two runs racing would let the older
+snapshot overwrite the newer probe results. The cost is that GitHub cancels a
+*pending* run in a group when another is queued, so an hourly quick run can
+occasionally displace a pending full pass. That skips one full pass; it never
+loses data.

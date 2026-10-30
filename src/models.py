@@ -102,6 +102,10 @@ class Channel:
     # publication gate can apply its safety rules to the real endpoint: a link
     # shortener otherwise hides its target from every check we make.
     final_url: str = ""
+    # What the television is handed when it differs from stream_url: the
+    # plain-http twin of an untrusted https stream, or the destination of a
+    # redirect that has proved stable. Empty means hand out stream_url.
+    publish_url: str = ""
     # The origin answered only with certificate verification skipped. Surfaced
     # in the report and carried across ingest, so it is a visible property of
     # the channel rather than a silent exception.

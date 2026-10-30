@@ -1,0 +1,117 @@
+name: Quick check (watched channels)
+
+# The full pass probes twelve thousand channels in forty minutes, and GitHub
+# runs it every four to eleven hours in practice. A Bangladeshi channel that
+# dies in between sits on the TV the whole time. This pass covers only what the
+# owner actually watches - Bangladesh, his own playlist, his favourites, about
+# seventy channels - takes a few minutes, and runs hourly, so a dead tile is
+# pulled and a recovered one restored within an hour or two instead of a day.
+#
+# No ingest: sources do not change hourly and fetching the full aggregator
+# index takes longer than this whole job. Shares the content-write concurrency
+# group with the other pipelines so two runs never race on the same files.
+
+on:
+  schedule:
+    - cron: '20 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: content-write
+  cancel-in-progress: false
+
+jobs:
+  quick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Ensure ffmpeg is present
+        run: |
+          if ! command -v ffmpeg >/dev/null || ! command -v ffprobe >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq ffmpeg
+          fi
+
+      - name: Probe the watched channels
+        run: python3 scripts/pipeline.py check --only-watched --budget-seconds 600
+
+      - name: Rebuild playlists
+        run: python3 scripts/pipeline.py build
+
+      - name: Validate playlists
+        run: python3 scripts/pipeline.py verify
+
+      - name: Commit refreshed playlists
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A playlists data
+          if git diff --cached --quiet; then
+            echo "no change"
+            exit 0
+          fi
+          git commit -m "chore: quick check of watched channels [skip ci]"
+          for attempt in 1 2 3; do
+            if git push origin HEAD:"$GITHUB_REF_NAME"; then exit 0; fi
+            echo "push rejected (attempt $attempt); rebasing onto the remote"
+            STAGE=$(mktemp -d)
+            cp -r playlists data "$STAGE"/
+            git fetch origin "$GITHUB_REF_NAME"
+            git reset --hard "origin/$GITHUB_REF_NAME"
+            rm -rf playlists
+            cp -r "$STAGE"/. .
+            rm -rf "$STAGE"
+            git add -A playlists data
+            git diff --cached --quiet && exit 0
+            git commit -m "chore: quick check of watched channels [skip ci]"
+          done
+          echo "could not push after 3 attempts" >&2
+          exit 1
+
+  deploy:
+    needs: quick
+    if: github.ref_name == github.event.repository.default_branch
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - name: Stage the public site
+        run: |
+          mkdir -p _site
+          touch _site/.nojekyll
+          cp site/index.html _site/index.html
+          [ -d site/art ] && cp -r site/art _site/art || true
+          cp -r playlists _site/playlists
+          [ -d epg ] && cp -r epg _site/epg || true
+          cp validation-report.json _site/ 2>/dev/null || true
+          mkdir -p _site/iptv
+          cp playlists/master.m3u          _site/iptv/master.m3u
+          cp playlists/live/live-tv.m3u    _site/iptv/live-tv.m3u
+          cp playlists/live/bangladesh.m3u _site/iptv/bangladesh.m3u
+          [ -f playlists/movies/movies.m3u ] && cp playlists/movies/movies.m3u _site/iptv/movies.m3u || true
+          [ -f epg/epg.xml ] && cp epg/epg.xml _site/iptv/epg.xml || true
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4

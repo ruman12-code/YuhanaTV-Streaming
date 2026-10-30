@@ -67,6 +67,37 @@ def looks_like_mpegts(body: bytes) -> bool:
     return all(body[i * _TS_PACKET] == _TS_SYNC for i in range(3))
 
 
+def _is_cert_failure(exc: BaseException) -> bool:
+    """True when the failure was an untrusted certificate, however it arrived.
+
+    urllib does not raise ssl.SSLCertVerificationError to its caller: the
+    handshake error is an OSError, and AbstractHTTPHandler wraps every OSError
+    in URLError. So an `except ssl.SSLCertVerificationError` around urlopen is
+    unreachable. That is exactly how the TLS fallback the owner approved never
+    ran once - 220 channels sat there failing with CERTIFICATE_VERIFY_FAILED in
+    their recorded reason while the code meant to rescue them waited for an
+    exception that was never going to come.
+    """
+    seen = 0
+    node = exc
+    while node is not None and seen < 6:
+        if isinstance(node, ssl.SSLCertVerificationError):
+            return True
+        if "CERTIFICATE_VERIFY_FAILED" in str(node):
+            return True
+        if not isinstance(node, BaseException):
+            # URLError.reason is sometimes a plain string; it has been read.
+            return False
+        node = (getattr(node, "reason", None) or node.__cause__ or node.__context__)
+        seen += 1
+    return False
+
+
+def _http_twin(url: str) -> str:
+    """The plain-http form of an https URL, or '' if there is none."""
+    return "http://" + url[len("https://"):] if url.lower().startswith("https://") else ""
+
+
 def looks_like_media_segment(body: bytes) -> bool:
     """True if these bytes are decodable media rather than something else.
 
@@ -182,6 +213,10 @@ class ValidationResult:
     live_checked: bool = False
     live_advancing: bool | None = None
     segment_not_media: bool = False
+    # Plain-http form of an https stream whose certificate is untrusted, when
+    # the origin serves the same object in the clear.
+    http_twin: str = ""
+    segment_http_status: int = 0
     # Decoder findings. decode_measured False means ffmpeg was never run, which
     # is never held against a channel.
     decode_measured: bool = False
@@ -340,15 +375,13 @@ class StreamValidator:
                                    verify_tls=verify)
                 self._tls_local.unverified = not verify
                 return body
-            except ssl.SSLCertVerificationError as exc:
+            except Exception as exc:  # noqa: BLE001
                 last = exc
-                if self.tls_fallback and verify:
+                if self.tls_fallback and verify and _is_cert_failure(exc):
                     # Untrusted chain, not an unreachable host. Try once more
                     # without verification; see __init__ for why.
                     verify = False
                     attempts = max(attempts, attempt + 2)
-            except Exception as exc:  # noqa: BLE001
-                last = exc
         self._tls_local.unverified = False
         raise last
 
@@ -495,19 +528,40 @@ class StreamValidator:
             except urllib.error.HTTPError as exc:
                 result.http_status = exc.code
                 last_error = f"HTTP {exc.code} {exc.reason}"
-            except ssl.SSLCertVerificationError as exc:
-                last_error = f"TLS certificate not trusted: {exc}"
-                if self.tls_fallback and verify_tls:
-                    # The host answered; its chain is untrusted. Retry once
-                    # without verification and record it. See __init__.
-                    verify_tls = False
-                    attempts_allowed = max(attempts_allowed, attempt + 2)
-            except ssl.SSLError as exc:
-                last_error = f"TLS error: {exc}"
-            except urllib.error.URLError as exc:
-                last_error = f"connection error: {exc.reason}"
             except Exception as exc:  # noqa: BLE001
-                last_error = f"{type(exc).__name__}: {exc}"
+                # Certificate failures arrive wrapped in URLError, so they are
+                # recognised by inspection rather than by exception type.
+                if _is_cert_failure(exc):
+                    last_error = f"TLS certificate not trusted: {exc}"
+                    if self.tls_fallback and verify_tls:
+                        verify_tls = False
+                        attempts_allowed = max(attempts_allowed, attempt + 2)
+                elif isinstance(exc, ssl.SSLError):
+                    last_error = f"TLS error: {exc}"
+                elif isinstance(exc, urllib.error.URLError):
+                    last_error = f"connection error: {exc.reason}"
+                else:
+                    last_error = f"{type(exc).__name__}: {exc}"
+                continue
+
+        if not last_error and result.tls_unverified:
+            twin = _http_twin(channel.stream_url)
+            if twin:
+                try:
+                    self._throttle(host)
+                    tst, tfinal, _, tbody, _ = self._fetch(
+                        twin, max_bytes=self.max_manifest_bytes,
+                        referrer=channel.http_referrer, agent=channel.http_user_agent)
+                    head = tbody.lstrip(b"\xef\xbb\xbf \t\r\n")[:7]
+                    if tst == 200 and (head.startswith(b"#EXTM3U") or looks_like_mpegts(tbody)):
+                        # Served in the clear on the same path. Publish that:
+                        # it plays on a validating player where the https
+                        # URL, with its untrusted chain, would not.
+                        result.http_twin = twin
+                        stages.append(StageResult("http_twin", True,
+                                                  "same stream served over plain http"))
+                except Exception:                              # noqa: BLE001
+                    pass
 
         stages.append(StageResult("http", not last_error, last_error or f"HTTP {result.http_status}",
                                   result.latency_ms))
@@ -625,6 +679,7 @@ class StreamValidator:
                                               detail, (time.monotonic() - t0) * 1000))
                 except Exception as exc:  # noqa: BLE001
                     result.segment_ok = False
+                    result.segment_http_status = int(getattr(exc, "code", 0) or 0)
                     stages.append(StageResult("segment", False, f"{type(exc).__name__}: {exc}"))
 
         # Liveness: a dead encoder behind a live CDN serves a playlist whose
@@ -683,6 +738,19 @@ class StreamValidator:
                     result.codec = d.codec
                 note = _decode.verdict(d, min_frames=self.decode_min_frames,
                                        max_black_fraction=self.decode_max_black)
+                # A decoder that could not get in is, by itself, the runner
+                # failing. But if the segment probe ALSO got a 404 for the same
+                # stream, two independent instruments agree the media is not
+                # there - which is a finding, not a failure to take one. Only a
+                # 404 or 410 counts: a 403 is the refusal a geo-fence gives, and
+                # treating that as proof would pull Bangladeshi channels for
+                # being watched from the wrong continent.
+                if (note.startswith("no frame could be decoded")
+                        and result.segment_ok is False
+                        and result.segment_http_status in (404, 410)):
+                    note = ("segment returned 404 and the stream would not open "
+                            "in a decoder - two independent checks agree the "
+                            "media is gone")
                 result.decode_note = note
                 stages.append(StageResult("decode", not note,
                                           note or f"{d.frames} frames, "

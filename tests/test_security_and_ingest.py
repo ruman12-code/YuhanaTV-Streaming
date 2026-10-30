@@ -930,3 +930,182 @@ class TestDecoderOutranksTheHeuristics(unittest.TestCase):
         from src.validators import stream_validator as sv
         src = inspect.getsource(sv.StreamValidator.validate)
         self.assertIn("mishandle a Range request", src)
+
+
+class TestQuickPassNeverTruncatesTheRegistry(unittest.TestCase):
+    """The quick pass probes ~70 channels. It must save all of them.
+
+    save_channels REPLACES the registry, so a quick pass that saved only what
+    it probed would delete the other twelve thousand channels. The check step
+    reloads the full registry before saving; this test is here so that can
+    never quietly stop being true.
+    """
+
+    def test_a_watched_only_check_keeps_every_channel(self):
+        import argparse
+        import scripts.pipeline as pipe
+        from src.models import save_channels, load_channels
+        from src.validators.stream_validator import ValidationResult
+
+        tmp = Path(tempfile.mkdtemp())
+        chans = [Channel(id=f"bd{i}", name=f"BD {i}", category="bangladesh",
+                         status="ACTIVE", stream_url=f"https://h/bd{i}.m3u8",
+                         checks_total=10, checks_ok=10) for i in range(12)]
+        chans += [Channel(id=f"x{i}", name=f"X {i}", category="news",
+                          status="ACTIVE", stream_url=f"https://h/x{i}.m3u8",
+                          checks_total=10, checks_ok=10) for i in range(40)]
+        (tmp / "channels").mkdir()
+        (tmp / "status").mkdir()
+        save_channels(tmp / "channels", chans)
+
+        class Stub:
+            concurrency = 4
+            def __init__(self, cfg): pass
+            def set_decode_set(self, ids): pass
+            def validate(self, ch):
+                r = ValidationResult(channel_id=ch.id, url=ch.stream_url)
+                r.status = "ACTIVE"
+                return r
+            def validate_all(self, cs):
+                return [self.validate(c) for c in cs]
+
+        saved = (pipe.CHANNELS_DIR, pipe.STATUS_DIR, pipe.StreamValidator)
+        pipe.CHANNELS_DIR, pipe.STATUS_DIR, pipe.StreamValidator = (
+            tmp / "channels", tmp / "status", Stub)
+        try:
+            pipe.cmd_check(argparse.Namespace(limit=0, budget_seconds=0,
+                                              only_watched=True))
+        finally:
+            pipe.CHANNELS_DIR, pipe.STATUS_DIR, pipe.StreamValidator = saved
+
+        after = load_channels(tmp / "channels")
+        self.assertEqual(len(after), 52, "the quick pass must not drop unprobed channels")
+        probed = {c.id for c in after if c.checks_total == 11}
+        self.assertEqual(probed, {f"bd{i}" for i in range(12)},
+                         "only the watched channels were probed")
+
+
+class TestPlaybackAudit(unittest.TestCase):
+    """Each flaw found in the self-audit, and the invariant that now holds."""
+
+    def setUp(self):
+        self.root = Path(tempfile.mkdtemp())
+        (self.root / "playlists").mkdir()
+        (self.root / "epg").mkdir()
+        cfg = config.load(use_cache=False)
+        cfg["site"]["base_url"] = "https://example.test"
+        self.cfg = cfg
+        self.gen = LiveGenerator(cfg, self.root / "playlists")
+
+    def _ch(self, cid, **kw):
+        base = dict(id=cid, name=cid.upper(), category="news", status="ACTIVE",
+                    stream_url=f"https://h/{cid}.m3u8", checks_total=10, checks_ok=10)
+        base.update(kw)
+        return Channel(**base)
+
+    # 1. The TLS fallback the owner approved was unreachable code.
+    def test_a_wrapped_certificate_failure_is_recognised(self):
+        import ssl, urllib.error
+        from src.validators.stream_validator import _is_cert_failure
+        inner = ssl.SSLCertVerificationError(1, "[SSL: CERTIFICATE_VERIFY_FAILED] x")
+        self.assertTrue(_is_cert_failure(urllib.error.URLError(inner)),
+                        "urllib wraps it; the old except clause never saw it")
+        self.assertFalse(_is_cert_failure(urllib.error.URLError("timed out")))
+
+    # 2. Reliability counted black screens as successes.
+    def test_only_a_playable_probe_earns_credit(self):
+        from scripts.pipeline import _probe_grade
+        from src.validators.stream_validator import ValidationResult
+        def r(status, error=""):
+            x = ValidationResult(channel_id="a", url="u"); x.status, x.error = status, error
+            return x
+        self.assertEqual(_probe_grade(r("ACTIVE")), "playable")
+        self.assertEqual(_probe_grade(r("DEGRADED", "slow origin (5000 ms)")), "playable")
+        self.assertEqual(_probe_grade(r("DEGRADED", "100% of the decoded video is black")), "broken")
+        self.assertEqual(_probe_grade(r("DEGRADED", "manifest and segment served but the segment is not media")), "broken")
+        self.assertEqual(_probe_grade(r("DEGRADED", "no frame could be decoded (Error opening input)")), "unknown")
+        self.assertEqual(_probe_grade(r("OFFLINE", "connection error: timed out")), "unknown")
+
+    # 3. Hand the TV the URL that will actually play fastest.
+    def test_the_published_url_is_chosen_on_evidence(self):
+        from scripts.pipeline import _publish_url
+        from src.validators.stream_validator import ValidationResult
+        ch = self._ch("a", stream_url="https://r.example/a")
+        r = ValidationResult(channel_id="a", url=ch.stream_url)
+
+        r.http_twin = "http://r.example/a"
+        self.assertEqual(_publish_url(ch, r, ""), "http://r.example/a",
+                         "an untrusted https stream served in the clear plays as http")
+
+        r.http_twin, r.final_url = "", "https://cdn.example/live/a.m3u8"
+        self.assertEqual(_publish_url(ch, r, ""), "",
+                         "a redirect seen once is not yet stable")
+        self.assertEqual(_publish_url(ch, r, "https://cdn.example/live/a.m3u8"),
+                         "https://cdn.example/live/a.m3u8",
+                         "the same destination twice running is handed out directly")
+
+        r.final_url = "https://cdn.example/live/a.m3u8?token=abc"
+        self.assertEqual(_publish_url(ch, r, r.final_url), "",
+                         "a query string is where expiring tokens live")
+
+    def test_the_tile_carries_the_published_url(self):
+        ch = self._ch("a", publish_url="https://cdn.example/a.m3u8")
+        self.gen.build([ch])
+        text = (self.root / "playlists" / "live" / "news.m3u").read_text(encoding="utf-8")
+        self.assertIn("https://cdn.example/a.m3u8", text)
+        self.assertNotIn("https://h/a.m3u8", text)
+
+    # 4. A geo tag was publishing 404s and black screens.
+    def test_a_geo_tag_does_not_excuse_a_definitive_failure(self):
+        dead = self._ch("a", status="OFFLINE", checks_ok=0, consecutive_failures=5,
+                        status_reason="HTTP 404 Not Found", last_http_status=404,
+                        tags=["news", "geo-blocked"])
+        refused = self._ch("b", status="OFFLINE", checks_ok=0, consecutive_failures=5,
+                           status_reason="HTTP 403 Forbidden", last_http_status=403,
+                           tags=["news", "geo-blocked"])
+        pub, _ = self.gen._partition([dead, refused], allow_unverified=False)
+        self.assertEqual([c.id for c in pub], ["b"],
+                         "a refusal may be geography; a 404 is a 404 from anywhere")
+
+    # 5. Nothing withheld, but confirmed channels first and unverified ones said so.
+    def test_verified_channels_lead_every_screen(self):
+        a = self._ch("aaa", checks_ok=0, status="OFFLINE", consecutive_failures=3,
+                     status_reason="HTTP 403 Forbidden", last_http_status=403)
+        z = self._ch("zzz")
+        self.gen.build([a, z])
+        text = (self.root / "playlists" / "live" / "news.m3u").read_text(encoding="utf-8")
+        self.assertLess(text.index(",ZZZ"), text.index(",AAA"),
+                        "the confirmed channel comes first despite the alphabet")
+        self.assertIn("Unverified", text)
+
+    # 6. A 917 KB guide with no programmes was attached to 916 playlists.
+    def test_an_empty_guide_is_not_attached(self):
+        (self.root / "epg" / "epg.xml").write_text("<tv><channel id='a'/></tv>")
+        gen = LiveGenerator(self.cfg, self.root / "playlists")
+        gen.build([self._ch("a")])
+        head = (self.root / "playlists" / "live" / "news.m3u").read_text(encoding="utf-8").split("\n", 1)[0]
+        self.assertNotIn("x-tvg-url", head)
+
+    def test_a_guide_with_programmes_is_attached(self):
+        (self.root / "epg" / "epg.xml").write_text(
+            "<tv><channel id='a'/><programme channel='a'/></tv>")
+        gen = LiveGenerator(self.cfg, self.root / "playlists")
+        gen.build([self._ch("a")])
+        head = (self.root / "playlists" / "live" / "news.m3u").read_text(encoding="utf-8").split("\n", 1)[0]
+        self.assertIn("x-tvg-url", head)
+
+    # 7. One stream, two categories, is two doors - not a duplicate.
+    def test_the_same_stream_in_two_categories_keeps_both_doors(self):
+        bd = self._ch("bd", category="bangladesh", stream_url="https://h/same.m3u8")
+        nw = self._ch("nw", category="news", stream_url="https://h/same.m3u8")
+        pub, _ = self.gen._partition([bd, nw], allow_unverified=False)
+        self.assertEqual(sorted(c.category for c in pub), ["bangladesh", "news"])
+
+    def test_no_screen_carries_the_same_stream_twice(self):
+        a = self._ch("a", name="One", stream_url="https://h/same.m3u8")
+        b = self._ch("b", name="Two", stream_url="https://h/same.m3u8", category="sports")
+        self.gen.build([a, b])
+        for f in (self.root / "playlists").rglob("*.m3u"):
+            urls = [ln for ln in f.read_text(encoding="utf-8").splitlines()
+                    if ln.startswith("http")]
+            self.assertEqual(len(urls), len(set(urls)), f.name)

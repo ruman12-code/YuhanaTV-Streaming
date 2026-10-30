@@ -18,6 +18,7 @@ import argparse
 import json
 import sys
 import time
+from urllib.parse import urlsplit
 from datetime import timedelta
 from pathlib import Path
 
@@ -194,6 +195,7 @@ def cmd_ingest(args) -> int:
             ch.status_reason = prev.status_reason
             ch.last_http_status = prev.last_http_status
             ch.final_url = prev.final_url
+            ch.publish_url = prev.publish_url
             ch.tls_unverified = prev.tls_unverified
             ch.video_confirmed = prev.video_confirmed
             ch.black_fraction = prev.black_fraction
@@ -333,6 +335,69 @@ def _try_candidates(cfg, validator, channels: list) -> list[dict]:
     return swaps
 
 
+def _probe_grade(r) -> str:
+    """'playable', 'broken' or 'unknown' for one probe result.
+
+    playable  ACTIVE, or DEGRADED only for being slow to answer.
+    broken    a definitive fault: the stream would fail from anywhere.
+    unknown   something went wrong that may only be this runner - a timeout,
+              a decoder that could not get in - so it neither earns credit
+              nor costs a strike.
+    """
+    from src.generators.live import _definitive_failure
+    if r.status == "ACTIVE":
+        return "playable"
+    reason = (r.error or "").lower()
+    if r.status == "DEGRADED" and reason.startswith("slow origin"):
+        return "playable"
+    if _definitive_failure(r.error or ""):
+        return "broken"
+    return "unknown"
+
+
+def _publish_url(ch, r, previous_final: str) -> str:
+    """The URL the television should be handed, when it is not stream_url.
+
+    Two cases, each measured rather than assumed:
+
+    * An https stream whose certificate is untrusted, served identically over
+      plain http on the same path. A TV's player almost certainly validates
+      TLS, so the https URL fails on the set however it probes here; the http
+      twin plays.
+    * A stable redirect. Every press of a redirecting tile pays an extra round
+      trip - and from Dhaka to a redirector abroad that is real time before the
+      picture starts. When the same final URL comes back on two consecutive
+      probes and carries no query string, which is where expiring tokens live,
+      it is handed out directly. If it ever changes, the very next probe sees
+      the difference and the tile goes back to the original URL.
+    """
+    from src.util.urls import check_url
+    twin = getattr(r, "http_twin", "") or ""
+    if twin and check_url(twin).ok:
+        return twin
+    final = (r.final_url or "").rstrip("/")
+    if (final and final != (ch.stream_url or "").rstrip("/")
+            and final == (previous_final or "").rstrip("/")
+            and not urlsplit(final).query
+            and check_url(final).ok):
+        return r.final_url
+    return ""
+
+
+def _watched_ids(cfg, channels: list) -> set[str]:
+    """Bangladesh, the owner's own playlist, and his favourites."""
+    cats = {str(c).lower() for c in (cfg.get_path("validation.deep_check_categories") or ())}
+    srcs = {str(c) for c in (cfg.get_path("validation.deep_check_sources") or ())}
+    try:
+        favs = set(json.loads((REPO / "data" / "favourites.json").read_text())
+                   .get("channel_ids") or [])
+    except (OSError, ValueError):
+        favs = set()
+    return {c.id for c in channels
+            if (c.category or "").lower() in cats or (c.source or "") in srcs
+            or c.id in favs}
+
+
 def _decode_set(cfg, channels: list) -> set[str]:
     """Which channels this run may decode.
 
@@ -400,6 +465,18 @@ def cmd_check(args) -> int:
     # Snapshot the pre-run state so the health gate has something to regress from.
     previous_status = {c.id: c.status for c in all_channels}
 
+    if getattr(args, "only_watched", False):
+        # The quick pass: only what the owner actually watches. A Bangladeshi
+        # channel that dies otherwise waits for the full forty-minute pass,
+        # which GitHub runs every four to eleven hours in practice.
+        watched = _watched_ids(cfg, all_channels)
+        all_channels = [c for c in all_channels if c.id in watched]
+        print(f"  quick pass: {len(all_channels)} watched channel(s)")
+        if not all_channels:
+            print("no watched channels to check", file=sys.stderr)
+            return 1
+        previous_status = {c.id: c.status for c in all_channels}
+
     validator = StreamValidator(cfg)
     decode_ids = _decode_set(cfg, all_channels)
     validator.set_decode_set(decode_ids)
@@ -443,24 +520,39 @@ def cmd_check(args) -> int:
         # Reliability counters accrue even when the gate is shut: they are a
         # measurement, and suppressing them would hide the very pattern that
         # distinguishes a flaky channel from a bad run.
+        # What a probe proves, in three grades rather than two. Reliability
+        # used to count every DEGRADED as a success, and DEGRADED has since come
+        # to include "segment is not media", "decoded video is black" and "no
+        # video stream" - black screens, every one. A channel stuck in one of
+        # those accrued a perfect record and was then trusted on the strength
+        # of it. Only a result that would actually play counts as a success
+        # now, and a definitive fault counts as a strike even when the probe
+        # technically answered.
+        grade = _probe_grade(r)
         ch.checks_total += 1
-        if r.status in ("ACTIVE", "DEGRADED"):
+        if grade == "playable":
             ch.checks_ok += 1
 
         if not verdict.ok:
             continue   # the run is not trusted to change published status
 
         previous = ch.status
-        if r.status in ("OFFLINE", "INVALID"):
+        previous_final = ch.final_url
+        if r.status in ("OFFLINE", "INVALID") or grade == "broken":
             ch.consecutive_failures += 1
             # One failure demotes; only sustained failure condemns.
-            ch.status = r.status if ch.consecutive_failures >= threshold else "DEGRADED"
+            if r.status in ("OFFLINE", "INVALID"):
+                ch.status = r.status if ch.consecutive_failures >= threshold else "DEGRADED"
+            else:
+                ch.status = r.status
         else:
-            ch.consecutive_failures = 0
+            if grade == "playable":
+                ch.consecutive_failures = 0
             ch.status = r.status
         ch.status_reason = r.error or ""
         ch.last_http_status = int(r.http_status or 0)
         ch.final_url = r.final_url or ""
+        ch.publish_url = _publish_url(ch, r, previous_final)
         ch.tls_unverified = bool(getattr(r, "tls_unverified", False))
         if getattr(r, "decode_measured", False):
             ch.video_confirmed = bool(r.video_confirmed)
@@ -685,6 +777,8 @@ def main() -> int:
     sp = sub.add_parser("check"); sp.add_argument("--limit", type=int, default=0); \
         sp.add_argument("--budget-seconds", type=float, default=0,
                         help="stop after this long; 0 uses validation.max_check_seconds"); \
+        sp.add_argument("--only-watched", action="store_true",
+                        help="probe only Bangladesh, the owner's playlist and favourites"); \
         sp.set_defaults(fn=cmd_check)
     sp = sub.add_parser("build"); sp.add_argument("--seed", action="store_true"); \
         sp.add_argument("--force", action="store_true",
