@@ -18,6 +18,7 @@ from ..models import Channel, slugify, stable_id
 from ..util.urls import check_url, host_of
 from ..content_policy import adult_channel_reason
 from ..classify import (categorise, clean_display_name, is_bangladeshi,
+                        country_for_strong_bd_name,
                         is_geo_blocked, is_not_24_7)
 
 _ATTR_RE = re.compile(r'([A-Za-z0-9_-]+)\s*=\s*"([^"]*)"')
@@ -203,12 +204,14 @@ def entry_to_channel(entry: ParsedEntry, source_id: str) -> tuple[Channel | None
         return None, f"adult content ({adult})"
 
     country, language = GROUP_TO_LOCALE.get(group_slug, ("", ""))
+    guessed = bool(country)
 
     tvg_id = entry.attrs.get("tvg-id", "")
     if not country:
         m = _TVG_ID_COUNTRY.search(tvg_id)
         if m:
             country = m.group(1).lower()
+    country = country_for_strong_bd_name(raw_name, country, guessed=guessed)
 
     # Bangladesh is a country bucket, not a genre: the owner wants every
     # Bangladeshi channel in one place regardless of what it broadcasts.

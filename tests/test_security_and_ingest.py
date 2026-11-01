@@ -531,6 +531,40 @@ class TestDuplicateTiles(unittest.TestCase):
             allow_unverified=False)
         self.assertEqual(len(pub), 2)
 
+    def test_spelling_variants_of_one_channel_read_as_its_feeds(self):
+        """The Bangladesh screen showed "Bangla Vision" beside "Banglavision",
+        "Ekushe TV" beside "Ekushey TV" and "R TV", "RTV", "RTV (Bangladesh)" -
+        five apparently different channels that are two. The viewer could not
+        tell they were spare feeds of one channel."""
+        for variants, base in (
+                (("Bangla Vision", "Banglavision"), None),
+                (("Ekushey TV", "Ekushe TV"), "Ekushey TV"),
+                (("RTV", "R TV", "RTV (Bangladesh)"), "RTV")):
+            chans = [self._ch(n, 40 - i, 40, f"https://{i}/x.m3u8")
+                     for i, n in enumerate(variants)]
+            pub, _ = self.gen._partition(chans, allow_unverified=False)
+            names = [c.name for c in pub]
+            first = base or names[0]
+            self.assertEqual(names, [first] + [f"{first} ({n})"
+                                               for n in range(2, len(variants) + 1)],
+                             variants)
+
+    def test_same_name_in_two_countries_is_two_channels(self):
+        """NTV of Russia was numbered "NTV (2)" as if it were a spare feed of
+        NTV of Turkey. Both are kept, under their own names, with the country
+        said so the viewer can choose."""
+        a = Channel(id="a", name="NTV", category="news", status="ACTIVE", country="ru",
+                    stream_url="https://a/x.m3u8", checks_total=40, checks_ok=40)
+        b = Channel(id="b", name="NTV", category="news", status="ACTIVE", country="tr",
+                    stream_url="https://b/x.m3u8", checks_total=40, checks_ok=40)
+        pub, _ = self.gen._partition([a, b], allow_unverified=False)
+        self.assertEqual(sorted(c.name for c in pub), ["NTV (Russia)", "NTV (Türkiye)"])
+
+    def test_casing_slip_is_tidied(self):
+        pub, _ = self.gen._partition([self._ch("Somoy Tv", 40, 40, "https://a/x.m3u8")],
+                                     allow_unverified=False)
+        self.assertEqual(pub[0].name, "Somoy TV")
+
 
 class TestRegionBlockedChannels(unittest.TestCase):
     """Validation runs in a US datacentre; the TV is in South Asia.

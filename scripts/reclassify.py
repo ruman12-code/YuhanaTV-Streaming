@@ -24,7 +24,9 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 
 from src.models import load_channels, save_channels                  # noqa: E402
-from src.classify import categorise, is_bangladeshi                  # noqa: E402
+from src.classify import (categorise, is_bangladeshi,                # noqa: E402
+                          country_for_strong_bd_name)
+from src.ingest.m3u_import import GROUP_TO_LOCALE                   # noqa: E402
 
 CHANNELS = REPO / "data" / "channels"
 
@@ -62,9 +64,21 @@ def main() -> int:
             if c:
                 ch.country = c
                 filled += 1
+    # The same correction ingest now makes, applied to records ingested before
+    # it existed: a country that is exactly the one the record's group title
+    # implies was guessed from that title, and a strong Bangladeshi name
+    # outranks it. Records carrying a canonical id keep their declared country.
+    for ch in channels:
+        group = ch.tags[0] if ch.tags else ""
+        guessed = (not ch.epg_id and bool(ch.country)
+                   and GROUP_TO_LOCALE.get(group, ("", ""))[0] == (ch.country or "").lower())
+        c = country_for_strong_bd_name(ch.name, ch.country, guessed=guessed)
+        if c != ch.country:
+            print(f"  country {ch.country} -> {c}: {ch.name} (from group '{group}')")
+            ch.country = c
+            filled += 1
     if filled:
-        print(f"filled {filled} missing countr{'y' if filled == 1 else 'ies'} "
-              f"from canonical ids")
+        print(f"filled or corrected {filled} countr{'y' if filled == 1 else 'ies'}")
     moves = []
     for ch in channels:
         want = intended(ch)

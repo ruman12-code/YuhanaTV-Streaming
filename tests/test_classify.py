@@ -218,3 +218,42 @@ class TestDisplayKeySeparators(unittest.TestCase):
     def test_parenthetical_feeds_stay_distinct(self):
         self.assertNotEqual(display_key("Channel S (Bangladesh)"),
                             display_key("Channel S (United Kingdom)"))
+
+
+class TestAGroupTitleDoesNotOutrankTheName(unittest.TestCase):
+    """The owner's list filed the jagobd feed of Ananda TV - a Dhaka channel -
+    under "Indian Bangla". Ingest turned that shelf label into country "in" and
+    the channel landed in Others, absent from the Bangladesh screen."""
+
+    def _one(self, group, name, tvg_id=""):
+        tmp = Path(tempfile.mkdtemp()) / "x.m3u"
+        tid = f' tvg-id="{tvg_id}"' if tvg_id else ""
+        tmp.write_text(f'#EXTM3U\n#EXTINF:-1{tid} group-title="{group}",{name}\n'
+                       f'https://example.com/{abs(hash(name))}.m3u8\n', encoding="utf-8")
+        chans, _ = import_file(tmp, "t")
+        return chans[0]
+
+    def test_ananda_tv_from_an_indian_bangla_shelf_is_bangladeshi(self):
+        ch = self._one("Indian Bangla", "Ananda TV")
+        self.assertEqual((ch.category, ch.country), ("bangladesh", "bd"))
+
+    def test_abp_ananda_stays_indian(self):
+        self.assertFalse(is_bangladeshi("ABP Ananda", "in"))
+        self.assertNotEqual(self._one("Indian Bangla", "ABP Ananda").category, "bangladesh")
+
+    def test_a_diaspora_feed_keeps_its_foreign_country(self):
+        from src.classify import country_for_strong_bd_name
+        self.assertEqual(country_for_strong_bd_name("ATN Bangla UK", "gb", guessed=True), "gb")
+        self.assertEqual(country_for_strong_bd_name(
+            "Channel S (United Kingdom)", "gb", guessed=True), "gb")
+
+    def test_a_declared_country_is_never_overridden(self):
+        from src.classify import country_for_strong_bd_name
+        self.assertEqual(country_for_strong_bd_name("Ananda TV", "in", guessed=False), "in")
+
+
+class TestSpellingsOfOneName(unittest.TestCase):
+    def test_spacing_glued_tv_and_romanisation(self):
+        for a, b in (("Bangla Vision", "Banglavision"), ("R TV", "RTV"),
+                     ("Ekushe TV", "Ekushey TV"), ("Somoy Tv", "Somoy TV")):
+            self.assertEqual(display_key(a), display_key(b), (a, b))

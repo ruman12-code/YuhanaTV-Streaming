@@ -23,7 +23,7 @@ from ..models import Channel
 from ..util.urls import check_url
 from .m3u import M3UBuilder
 from .catalog import live_meta, subgroup_meta, region_meta, LIVE_CATEGORY_META
-from .countries import continent_of, continent_meta
+from .countries import continent_of, continent_meta, COUNTRY_NAMES
 from ..classify import movie_language_bucket, display_key, clean_display_name
 
 # The validator's wording for the one DEGRADED cause that still plays on a TV.
@@ -445,10 +445,14 @@ class LiveGenerator:
                 hold("same_stream_as_another_tile", ch)
         published = [best_by_url[k] for k in url_order]
 
-        groups: dict[tuple[str, str], list[Channel]] = {}
-        order: list[tuple[str, str]] = []
+        groups: dict[tuple, list[Channel]] = {}
+        order: list[tuple] = []
         for ch in published:
-            key = (ch.category, display_key(ch.name))
+            # Country is part of identity. NTV of Russia and NTV of Turkey share
+            # a name, not a channel; numbering one "NTV (2)" told the viewer it
+            # was a spare feed of the other.
+            key = (ch.category, (ch.country or "").lower(),
+                   display_key(self._screen_name(ch)))
             if key not in groups:
                 groups[key] = []
                 order.append(key)
@@ -457,16 +461,61 @@ class LiveGenerator:
         out: list[Channel] = []
         for key in order:
             members = sorted(groups[key], key=self._evidence, reverse=True)
-            if len(members) == 1:
-                out.append(members[0])
-                continue
-            base = members[0].name
-            out.append(members[0])
+            # The tile is named after the record that carries the channel's
+            # canonical identity (its EPG id) when one does: "Ekushey TV", not
+            # whichever spelling the best-measured feed's source happened to use.
+            named = next((m for m in members if m.epg_id), members[0])
+            base = self._tidy_label(self._screen_name(named))
+            out.append(replace(members[0], name=base)
+                       if base != members[0].name else members[0])
             for n, ch in enumerate(members[1:], start=2):
                 # Numbered from the same base name, so the alternatives sort
                 # together and read as what they are rather than as a different
                 # channel that happens to be spelled oddly.
                 out.append(replace(ch, name=f"{base} ({n})"))
+        return self._name_the_country_on_collisions(out, by=lambda c: c.category)
+
+    @staticmethod
+    def _screen_name(ch: Channel) -> str:
+        """The name as it should read on its own screen.
+
+        "(Bangladesh)" on the Bangladesh screen says nothing, and it stopped
+        "RTV (Bangladesh)" from being recognised as the same channel as "RTV".
+        """
+        name = ch.name or ""
+        if ch.category == "bangladesh":
+            name = re.sub(r"\s*\(bangladesh\)\s*$", "", name, flags=re.IGNORECASE)
+        return name.strip() or (ch.name or "")
+
+    @staticmethod
+    def _tidy_label(name: str) -> str:
+        """"Somoy Tv" -> "Somoy TV": the one casing slip the sources keep making."""
+        return re.sub(r"\bTv\b", "TV", name)
+
+    @staticmethod
+    def _name_the_country_on_collisions(items: list[Channel], by) -> list[Channel]:
+        """Same label, different countries, same screen: say which is which.
+
+        Without this the screen's last-line label dedup drops all but one, so a
+        viewer looking for NTV (Turkey) could only ever find NTV (Russia).
+        """
+        from dataclasses import replace
+        labels: dict[tuple, set[str]] = {}
+        for c in items:
+            labels.setdefault((by(c), c.name.strip().lower()), set()).add(
+                (c.country or "").lower())
+        out = []
+        for c in items:
+            countries = labels[(by(c), c.name.strip().lower())]
+            country = COUNTRY_NAMES.get((c.country or "").lower())
+            if (len(countries) > 1 and country
+                    and f"({country.lower()})" not in c.name.lower()):
+                m = re.match(r"^(.*?)(\s\(\d+\))$", c.name)
+                # "Zoom (India) (2)", not "Zoom (2) (India)": the feed number
+                # belongs to the channel, and the channel is Zoom of India.
+                c = replace(c, name=(f"{m.group(1)} ({country}){m.group(2)}" if m
+                                     else f"{c.name} ({country})"))
+            out.append(c)
         return out
 
     @staticmethod
@@ -831,12 +880,15 @@ class LiveGenerator:
         # separate per category, which is right there and wrong here: an A-Z
         # screen showing "ADA TV" twice gives the viewer no way to choose.
         for letter, items in buckets.items():
-            seen: dict[str, Channel] = {}
+            seen: dict[tuple, Channel] = {}
             for ch in items:
-                key = display_key(ch.name)
+                # Per country, as in the genre tree: one name from two countries
+                # is two channels, and both belong under their letter.
+                key = ((ch.country or "").lower(), display_key(ch.name))
                 if key not in seen or self._evidence(ch) > self._evidence(seen[key]):
                     seen[key] = ch
-            buckets[letter] = list(seen.values())
+            buckets[letter] = self._name_the_country_on_collisions(
+                list(seen.values()), by=lambda c: letter)
 
         index = M3UBuilder(default_size=self.size_cat, default_description="🔤 A–Z",
                            header_comment=seed_note)

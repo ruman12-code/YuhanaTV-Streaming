@@ -29,6 +29,14 @@ PLAYLISTS = REPO / "playlists"
 _SKIP = os.environ.get("YUHANA_SKIP_BUILD_OUTPUT_TESTS") == "1"
 
 
+def setUpModule():
+    # Module-wide, not per class: a class added later without the decorator
+    # would compare a fresh registry against the previous build's playlists
+    # before the build has run, and fail every pipeline run until fixed by hand.
+    if _SKIP:
+        raise unittest.SkipTest("build-output checks run after the build, not before it")
+
+
 @unittest.skipIf(_SKIP, "build-output checks run after the build, not before it")
 @unittest.skipUnless((PLAYLISTS / "master.m3u").exists(), "playlists not generated yet")
 class TestGenerated(unittest.TestCase):

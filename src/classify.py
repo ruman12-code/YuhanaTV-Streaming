@@ -107,8 +107,35 @@ BD_NAME_STRONG_RE = re.compile(
     # because this list overrides the declared country they landed on the
     # Bangladesh screen.
     r"bijoy|deepto|banglavision|bangla\s*vision|channel[\s-]+[is]\b|dbc|"
-    r"news24 bd|nagorik|desh tv|gtv bangla|duronto|asian tv|mohona|sa tv)\b",
+    r"news24 bd|nagorik|desh tv|gtv bangla|duronto|asian tv|mohona|sa tv|"
+    # Ananda TV is Dhaka's; India's Bengali channel is "ABP Ananda", excluded.
+    r"(?<!abp )ananda\s*tv)\b",
     re.IGNORECASE)
+
+# A name that names its own market: the diaspora feeds (ATN Bangla UK, Channel S
+# (United Kingdom)) are Bangladeshi brands with a real foreign country, and
+# that country is kept.
+_FOREIGN_FEED_RE = re.compile(
+    r"\b(uk|usa|us|europe|canada|australia|middle east)\b|\((?!bangladesh\))[^)]*\)\s*$",
+    re.IGNORECASE)
+
+
+def country_for_strong_bd_name(name: str, country: str, *, guessed: bool) -> str:
+    """'bd' when an unmistakably Bangladeshi name meets a country that was only
+    GUESSED from a playlist's group title; otherwise the country unchanged.
+
+    The owner's own list files the jagobd feed of Ananda TV under "Indian
+    Bangla", ingest turned that group title into country "in", and the channel
+    sat in Others instead of on the Bangladesh screen. A group title is one
+    curator's shelf; the channel's own name is stronger evidence. A country
+    declared by a tvg-id is a statement about this channel and is never
+    overridden here, nor is a name that names a foreign market.
+    """
+    c = (country or "").lower()
+    if (guessed and c and c != "bd" and BD_NAME_STRONG_RE.search(clean_display_name(name))
+            and not _FOREIGN_FEED_RE.search(clean_display_name(name))):
+        return "bd"
+    return country
 
 # Ambiguous: call signs Bangladesh shares with other broadcasters. BTV is also
 # Uganda Broadcasting and Bulgarian National TV; NTV is Kenya, Russia and
@@ -266,23 +293,56 @@ _DISPLAY_SUFFIX = re.compile(
 _DISPLAY_STRIP = re.compile(r"[^a-z0-9()]+")
 
 
+# Romanisations of the same Bangla name. Each pair below appears in the sources
+# as two spellings of ONE broadcaster; nothing else is inferred from spelling.
+_TRANSLITERATION = {
+    "ekushe": "ekushey",
+    "shomoy": "somoy",
+    "baishakhi": "boishakhi",
+    "masranga": "maasranga",
+    "dipto": "deepto",
+}
+_PAREN = re.compile(r"\s*(\([^)]*\))\s*$")
+
+
 def display_key(name: str) -> str:
     """Identity of a channel for "is this the same tile twice?".
 
     Spacing and a trailing feed-variant token are not identity: "Banglavision"
-    and "Bangla Vision", "Boishakhi" and "Boishakhi TV", "Maasranga" and
-    "Maasranga TV" are each one channel carried by two sources.
+    and "Bangla Vision", "R TV" and "RTV", "Boishakhi" and "Boishakhi TV",
+    "Ekushe TV" and "Ekushey TV" are each one channel carried by two sources.
 
-    A parenthetical IS kept, because that is where the sources put the thing
-    that genuinely distinguishes two feeds - Channel S (Bangladesh) and
-    Channel S (United Kingdom) are different channels and need separate tiles.
+    Two things ARE identity and survive:
+    - a parenthetical, because that is where the sources put what genuinely
+      distinguishes two feeds - Channel S (Bangladesh) and Channel S (United
+      Kingdom) are different channels and need separate tiles;
+    - a single letter after a word. Deleting separators outright once made
+      "Channel S" and "Channels TV" both "channels" - two unrelated
+      broadcasters, one of them Bangladeshi, treated as one channel.
+
+    This says only that two NAMES match. Whether two records are the same
+    channel also needs the country to match; callers add it.
     """
     cleaned = clean_display_name(name).lower()
+    paren = ""
+    m = _PAREN.search(cleaned)
+    if m:
+        paren = " " + " ".join(_DISPLAY_STRIP.sub(" ", m.group(1)).split())
+        cleaned = cleaned[:m.start()]
     previous = None
     while previous != cleaned:
         previous = cleaned
         cleaned = _DISPLAY_SUFFIX.sub("", cleaned).strip()
-    # Collapse separators to a single space rather than deleting them. Deleting
-    # them made "Channel S" and "Channels TV" both "channels" - two unrelated
-    # broadcasters, one of them Bangladeshi, treated as one channel.
-    return " ".join(_DISPLAY_STRIP.sub(" ", cleaned).split())
+    tokens = _DISPLAY_STRIP.sub(" ", cleaned).split()
+    compact = ""
+    for i, tok in enumerate(tokens):
+        if i and len(tok) == 1 and len(tokens[i - 1]) > 1:
+            compact += "_"          # "channel s" stays apart from "channels"
+        compact += _TRANSLITERATION.get(tok, tok)
+    # A "tv" glued to the name is the same suffix as a spaced one: RTV = R TV.
+    if len(compact) > 2 and compact.endswith("tv") and "_" not in compact:
+        compact = compact[:-2]
+    compact = _TRANSLITERATION.get(compact, compact)
+    if not compact:     # a name that is nothing but "TV": keep it as written
+        compact = " ".join(_DISPLAY_STRIP.sub(" ", clean_display_name(name).lower()).split())
+    return (compact + paren).strip()
