@@ -36,6 +36,10 @@ jobs:
           python-version: '3.11'
 
       - name: Unit tests
+        # Code only. Checks on build output run after the build: run before it
+        # they test the previous run's files and can block the fix.
+        env:
+          YUHANA_SKIP_BUILD_OUTPUT_TESTS: "1"
         run: python3 -m unittest discover -s tests
 
       - name: Fetch movie metadata
@@ -55,6 +59,12 @@ jobs:
       - name: Rebuild playlists
         if: github.event.inputs.dry_run != 'true'
         run: python3 scripts/pipeline.py build
+
+      # Checks on what the build just wrote. After the build, never before:
+      # a failure here means this run's code produced a bad tree, and the
+      # previously deployed playlists stay up until it is fixed.
+      - name: Test build output
+        run: python3 -m unittest tests.test_generated_playlists -v
 
       - name: Validate playlists
         if: always()

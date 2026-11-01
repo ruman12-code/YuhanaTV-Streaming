@@ -67,6 +67,19 @@ def looks_like_mpegts(body: bytes) -> bool:
     return all(body[i * _TS_PACKET] == _TS_SYNC for i in range(3))
 
 
+# Errors that mean THIS CODE is wrong, not the stream. Every broad handler in
+# the probe re-raises these, so they surface as an internal error instead of
+# being written down as the channel failing: a missing attribute once cost 47
+# channels their tiles, Boishakhi TV among them, on sixteen "failures" that
+# were all the same bug.
+_PROGRAMMING_ERRORS = (AttributeError, TypeError, NameError, AssertionError)
+
+
+def _reraise_bug(exc: BaseException) -> None:
+    if isinstance(exc, _PROGRAMMING_ERRORS):
+        raise exc
+
+
 def _is_cert_failure(exc: BaseException) -> bool:
     """True when the failure was an untrusted certificate, however it arrived.
 
@@ -217,6 +230,8 @@ class ValidationResult:
     # the origin serves the same object in the clear.
     http_twin: str = ""
     segment_http_status: int = 0
+    # Set when the probe threw a programming error: nothing was measured.
+    internal_error: str = ""
     # Decoder findings. decode_measured False means ffmpeg was never run, which
     # is never held against a channel.
     decode_measured: bool = False
@@ -285,6 +300,12 @@ class StreamValidator:
         # normally is never probed this way, and the exception is recorded per
         # channel rather than turned into a blanket setting.
         self.tls_fallback = bool(v.get("allow_unverified_tls_fallback", True))
+        # Built here, in the constructor. It was once stranded after a return
+        # in another method by an edit, never created, and the fallback crashed
+        # on exactly the channels it existed to rescue.
+        self._ssl_ctx_unverified = ssl.create_default_context()
+        self._ssl_ctx_unverified.check_hostname = False
+        self._ssl_ctx_unverified.verify_mode = ssl.CERT_NONE
         # The liveness re-read costs a few seconds per channel, so it is spent
         # where the owner actually watches rather than across twelve thousand
         # channels. Everything still gets the segment-content check, which is free.
@@ -316,9 +337,6 @@ class StreamValidator:
         if not self.decode_enabled or not _decode.available():
             return False
         return channel.id in self._decode_ids or self.deep_check(channel)
-        self._ssl_ctx_unverified = ssl.create_default_context()
-        self._ssl_ctx_unverified.check_hostname = False
-        self._ssl_ctx_unverified.verify_mode = ssl.CERT_NONE
 
     def deep_check(self, channel) -> bool:
         """Whether this channel earns the slower liveness re-read."""
@@ -376,6 +394,7 @@ class StreamValidator:
                 self._tls_local.unverified = not verify
                 return body
             except Exception as exc:  # noqa: BLE001
+                _reraise_bug(exc)
                 last = exc
                 if self.tls_fallback and verify and _is_cert_failure(exc):
                     # Untrusted chain, not an unreachable host. Try once more
@@ -472,6 +491,23 @@ class StreamValidator:
     # --- public --------------------------------------------------------------
 
     def validate(self, channel) -> ValidationResult:
+        """Probe one channel. A bug in this code is reported, never blamed on it.
+
+        When the probe itself throws a programming error, nothing about the
+        stream has been measured, so the result says exactly that and the
+        pipeline leaves the channel's record alone. The error is still loud:
+        every run counts and prints them, and the report carries the count.
+        """
+        try:
+            return self._validate(channel)
+        except _PROGRAMMING_ERRORS as exc:
+            r = ValidationResult(channel_id=channel.id, url=channel.stream_url)
+            r.status = "UNVERIFIED"
+            r.internal_error = f"{type(exc).__name__}: {exc}"
+            r.error = f"validator bug, nothing measured: {r.internal_error}"
+            return r
+
+    def _validate(self, channel) -> ValidationResult:
         result = ValidationResult(channel_id=channel.id, url=channel.stream_url)
         stages: list[StageResult] = []
 
@@ -529,6 +565,7 @@ class StreamValidator:
                 result.http_status = exc.code
                 last_error = f"HTTP {exc.code} {exc.reason}"
             except Exception as exc:  # noqa: BLE001
+                _reraise_bug(exc)
                 # Certificate failures arrive wrapped in URLError, so they are
                 # recognised by inspection rather than by exception type.
                 if _is_cert_failure(exc):
@@ -560,7 +597,8 @@ class StreamValidator:
                         result.http_twin = twin
                         stages.append(StageResult("http_twin", True,
                                                   "same stream served over plain http"))
-                except Exception:                              # noqa: BLE001
+                except Exception as _exc:                              # noqa: BLE001
+                    _reraise_bug(_exc)
                     pass
 
         stages.append(StageResult("http", not last_error, last_error or f"HTTP {result.http_status}",
@@ -631,6 +669,7 @@ class StreamValidator:
                     result.stages = [asdict(s) for s in stages]
                     return result
             except Exception as exc:  # noqa: BLE001
+                _reraise_bug(exc)
                 stages.append(StageResult("variant", False, f"{type(exc).__name__}: {exc}"))
                 result.status = "DEGRADED"
                 result.error = f"variant playlist unreachable: {exc}"
@@ -663,7 +702,8 @@ class StreamValidator:
                                 agent=channel.http_user_agent, attempts=1)
                             if st2 in (200, 206) and looks_like_media_segment(body2):
                                 is_media, seg_body = True, body2
-                        except Exception:                      # noqa: BLE001
+                        except Exception as _exc:                      # noqa: BLE001
+                            _reraise_bug(_exc)
                             pass
                     result.segment_ok = bool(is_media)
                     if fetched and not is_media:
@@ -678,6 +718,7 @@ class StreamValidator:
                     stages.append(StageResult("segment", bool(result.segment_ok),
                                               detail, (time.monotonic() - t0) * 1000))
                 except Exception as exc:  # noqa: BLE001
+                    _reraise_bug(exc)
                     result.segment_ok = False
                     result.segment_http_status = int(getattr(exc, "code", 0) or 0)
                     stages.append(StageResult("segment", False, f"{type(exc).__name__}: {exc}"))
@@ -706,7 +747,8 @@ class StreamValidator:
                     attempts=1)
                 after = live_edge_token(again.decode("utf-8-sig", errors="replace"))
                 result.live_advancing = after != before
-            except Exception:                              # noqa: BLE001
+            except Exception as _exc:                              # noqa: BLE001
+                _reraise_bug(_exc)
                 # Could not re-read it; say nothing rather than condemn.
                 result.live_checked = False
 

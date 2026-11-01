@@ -15,6 +15,7 @@ held, and touches nothing that came from a probe.
 from __future__ import annotations
 
 import argparse
+import re
 import sys
 from collections import Counter
 from pathlib import Path
@@ -26,6 +27,18 @@ from src.models import load_channels, save_channels                  # noqa: E40
 from src.classify import categorise, is_bangladeshi                  # noqa: E402
 
 CHANNELS = REPO / "data" / "channels"
+
+
+def country_from_canonical_id(ch) -> str:
+    """The country in a canonical tvg-id such as ATNBangla.bd, or ''.
+
+    The owner's own playlist carries no tvg-ids, so ingest decides a country
+    with nothing to go on and leaves it blank. The EPG step attaches canonical
+    ids afterwards, by which time that decision has already been made; 69
+    channels were left countryless that way, two of them Bangladeshi.
+    """
+    m = re.search(r"\.([a-z]{2})$", (ch.epg_id or "").lower())
+    return m.group(1) if m else ""
 
 
 def intended(ch) -> str:
@@ -42,6 +55,16 @@ def main() -> int:
     args = ap.parse_args()
 
     channels = load_channels(CHANNELS)
+    filled = 0
+    for ch in channels:
+        if not ch.country:
+            c = country_from_canonical_id(ch)
+            if c:
+                ch.country = c
+                filled += 1
+    if filled:
+        print(f"filled {filled} missing countr{'y' if filled == 1 else 'ies'} "
+              f"from canonical ids")
     moves = []
     for ch in channels:
         want = intended(ch)
@@ -50,6 +73,9 @@ def main() -> int:
 
     if not moves:
         print("every channel is already where the current rules put it")
+        if filled and args.write:
+            save_channels(CHANNELS, channels)
+            print("countries written")
         return 0
 
     pairs = Counter((a, b) for _, a, b in moves)

@@ -32,7 +32,7 @@ NAME_RULES: tuple[tuple[str, str], ...] = (
     # "republic" is anchored to the Indian news brands. Bare, it matched every
     # "(Czech Republic)" and "(Dominican Republic)" in the catalogue and filed
     # National Geographic and Film+ under News.
-    ("news", r"\b(news|24x7|24/7 news|aaj tak|ndtv|republic (tv|bharat|bangla|world)|"
+    ("news", r"\b(news|samachar|khabar|24x7|24/7 news|aaj tak|ndtv|republic (tv|bharat|bangla|world)|"
              r"al ?jazeera|cnn|bbc (world|news)|dw|france ?24|euronews|sky news|"
              r"newsmax|cgtn|rt news|trt world|abp|india today|wion|noticias)\b"),
     ("movies", r"\b(cinema|cinemax|movies?|movie ?club|film(s|x|box|rise)?|"
@@ -72,6 +72,9 @@ TOKEN_TO_CATEGORY = {
     "documentary": "documentary", "culture": "documentary", "science": "documentary",
     "history": "documentary", "education": "documentary",
     "religious": "religious",
+    # The owner's own playlist titles its religious group "Islamic". Unmapped,
+    # those channels fell through to Others.
+    "islamic": "religious", "islam": "religious", "quran": "religious",
     "lifestyle": "lifestyle", "travel": "lifestyle", "cooking": "lifestyle",
     "outdoor": "lifestyle", "auto": "lifestyle",
     "business": "business",
@@ -92,7 +95,13 @@ TOKEN_TO_CATEGORY = {
 # The declared country does not overrule them, so the London-based diaspora
 # feeds (Channel S UK, ATN Bangla UK) stay on the Bangladesh screen.
 BD_NAME_STRONG_RE = re.compile(
-    r"\b(atn|somoy|jamuna|ekushey|ekattor|maasranga|boishakhi|"
+    # "atn bangla", not bare "atn": iptv-org lists an ATN News for Afghanistan
+    # and one for Canada, and ATN Samachar is a Hindi channel broadcast in
+    # India. Bare "atn" sat in this list, which overrides a declared country,
+    # and put ATN Samachar on the Bangladesh screen. ATN Bangla is
+    # unambiguous, and holds its diaspora feed, ATN Bangla UK, where it
+    # belongs; ATN News and ATN Music fall to the weak list below.
+    r"\b(atn bangla|somoy|jamuna|ekushey|ekattor|maasranga|boishakhi|"
     # A separator is required before the single letter: "channel\s*s" also
     # matched "Channels TV" and "Channels 24", two Nigerian broadcasters, and
     # because this list overrides the declared country they landed on the
@@ -111,7 +120,7 @@ BD_NAME_WEAK_RE = re.compile(
     # country "th" from a Thai origin at 240p and was filed under Bangladesh,
     # because the token was being treated as unambiguous. Bangladesh's own
     # T Sports declares "bd" and is unaffected.
-    r"\b(btv|n[\s-]?tv|rtv|my tv|independent tv|t[\s-]?sports)\b", re.IGNORECASE)
+    r"\b(btv|n[\s-]?tv|rtv|my tv|independent tv|t[\s-]?sports|atn)\b", re.IGNORECASE)
 
 # Kept as the union, for callers that only want "does this name look Bangladeshi".
 BD_NAME_RE = re.compile(

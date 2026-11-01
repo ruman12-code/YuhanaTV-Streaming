@@ -44,8 +44,20 @@ jobs:
       - name: Probe the watched channels
         run: python3 scripts/pipeline.py check --only-watched --budget-seconds 600
 
+      # Classification re-applied after the EPG step has attached canonical
+      # ids: ingest decides a country before those ids exist, and a channel
+      # left countryless there is never placed in its country otherwise.
+      - name: Re-apply classification rules
+        run: python3 scripts/reclassify.py --write
+
       - name: Rebuild playlists
         run: python3 scripts/pipeline.py build
+
+      # Checks on what the build just wrote. After the build, never before:
+      # a failure here means this run's code produced a bad tree, and the
+      # previously deployed playlists stay up until it is fixed.
+      - name: Test build output
+        run: python3 -m unittest tests.test_generated_playlists -v
 
       - name: Validate playlists
         run: python3 scripts/pipeline.py verify

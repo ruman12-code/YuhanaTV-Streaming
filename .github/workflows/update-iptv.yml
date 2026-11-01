@@ -68,6 +68,10 @@ jobs:
           ffprobe -version | head -1
 
       - name: Unit tests
+        # Code only. Checks on build output run after the build: run before it
+        # they test the previous run's files and can block the fix.
+        env:
+          YUHANA_SKIP_BUILD_OUTPUT_TESTS: "1"
         run: python3 -m unittest discover -s tests -v
 
       - name: Normalize and de-duplicate the source registry
@@ -83,6 +87,12 @@ jobs:
       - name: Canonical tvg-ids and EPG
         run: python3 scripts/build_epg.py
 
+      # Classification re-applied after the EPG step has attached canonical
+      # ids: ingest decides a country before those ids exist, and a channel
+      # left countryless there is never placed in its country otherwise.
+      - name: Re-apply classification rules
+        run: python3 scripts/reclassify.py --write
+
       - name: Generate playlists
         run: |
           if [ "${{ github.event.inputs.seed }}" = "true" ]; then
@@ -90,6 +100,12 @@ jobs:
           else
             python3 scripts/pipeline.py build
           fi
+
+      # Checks on what the build just wrote. After the build, never before:
+      # a failure here means this run's code produced a bad tree, and the
+      # previously deployed playlists stay up until it is fixed.
+      - name: Test build output
+        run: python3 -m unittest tests.test_generated_playlists -v
 
       # These run even when the build step failed, so a shut health gate still
       # produces a readable report instead of an opaque red cross.

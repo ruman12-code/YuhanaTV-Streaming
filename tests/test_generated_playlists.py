@@ -1,5 +1,21 @@
-"""Regression guard: the playlists actually committed in this repo must be valid."""
-import sys, unittest
+"""Checks on BUILD OUTPUT: the playlists the generator has just written.
+
+These run after the build in CI, never before it. Run before, they examine the
+previous run's files - and if anything about those files is wrong, they stop the
+very run that would regenerate them. That deadlocked the pipeline for six runs:
+a test here asserted a named channel was on the Bangladesh screen, the channel
+went off the air, the quick check correctly pulled it, and every full run after
+that failed its tests before it could rebuild anything.
+
+Nothing here may depend on the outside world. Whether a broadcaster is up today
+is a measurement and belongs in the watchlist audit, which reports and never
+blocks. What belongs here is whether the generator turned whatever it was given
+into a correct tree.
+
+Set YUHANA_SKIP_BUILD_OUTPUT_TESTS=1 to skip this module, as the pre-build test
+step does.
+"""
+import os, sys, unittest
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
@@ -10,6 +26,10 @@ from src.validators.m3u_validator import M3UValidator    # noqa: E402
 PLAYLISTS = REPO / "playlists"
 
 
+_SKIP = os.environ.get("YUHANA_SKIP_BUILD_OUTPUT_TESTS") == "1"
+
+
+@unittest.skipIf(_SKIP, "build-output checks run after the build, not before it")
 @unittest.skipUnless((PLAYLISTS / "master.m3u").exists(), "playlists not generated yet")
 class TestGenerated(unittest.TestCase):
     @classmethod
@@ -87,24 +107,6 @@ class TestHomeScreen(unittest.TestCase):
     def test_home_screen_stays_short(self):
         self.assertLessEqual(len(self.extinfs), 10)
 
-    def test_the_bangladesh_screen_carries_the_channels_the_owner_named(self):
-        """A standing guard, because this regressed four times.
-
-        Each of these was reported missing, found to be withheld by a gate of
-        mine that misfired on Bangladeshi measurements taken from a US runner,
-        and restored. The list is here so the next such gate fails a test
-        instead of reaching the television.
-        """
-        text = (PLAYLISTS / "live" / "bangladesh.m3u").read_text(encoding="utf-8")
-        labels = [ln.split(",", 1)[-1].strip()
-                  for ln in text.splitlines() if ln.startswith("#EXTINF")]
-        blob = " | ".join(labels).lower()
-        for name in ("atn bangla", "atn news", "dbc news", "ekattor",
-                     "ekush", "boishakhi", "bangla vision", "gazi tv",
-                     "jamuna", "somoy", "channel i", "n tv", "maasranga",
-                     "green tv", "me tv", "deepto", "sa tv"):
-            self.assertIn(name, blob, f"{name} is missing from the Bangladesh screen")
-
     def test_no_screen_shows_the_same_label_twice(self):
         for f in PLAYLISTS.rglob("*.m3u"):
             labels = [ln.split(",", 1)[-1].strip()
@@ -112,3 +114,24 @@ class TestHomeScreen(unittest.TestCase):
                       if ln.startswith("#EXTINF")]
             dupes = {x for x in labels if labels.count(x) > 1}
             self.assertEqual(dupes, set(), f"{f.name} repeats {dupes}")
+
+    def test_every_published_bangladeshi_channel_reaches_the_bangladesh_screen(self):
+        """The generator's half of "no Bangladeshi channel left out".
+
+        Independent of which broadcasters are up: whatever the publication
+        gate let through as Bangladeshi must appear on the Bangladesh screen,
+        and nothing that is not Bangladeshi may. A failure here is a bug in the
+        tree builder, never a channel going off the air.
+        """
+        from src.models import load_channels
+        from src.generators.live import LiveGenerator
+        gen = LiveGenerator(config.load(use_cache=False), PLAYLISTS)
+        gen.load_home_probe(REPO / "data" / "status" / "home-probe.json")
+        published, _ = gen._partition(load_channels(REPO / "data" / "channels"), False)
+        want = {(c.publish_url or c.stream_url).rstrip("/")
+                for c in published if c.category == "bangladesh"}
+        text = (PLAYLISTS / "live" / "bangladesh.m3u").read_text(encoding="utf-8")
+        have = {ln.strip().rstrip("/") for ln in text.splitlines() if ln.startswith("http")}
+        self.assertEqual(want - have, set(), "published as Bangladeshi but not on the screen")
+        self.assertEqual(have - want, set(), "on the Bangladesh screen but not Bangladeshi")
+

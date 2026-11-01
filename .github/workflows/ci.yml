@@ -17,6 +17,10 @@ jobs:
         with:
           python-version: '3.11'
       - name: Unit tests
+        # Code only. Checks on build output run after the build: run before it
+        # they test the previous run's files and can block the fix.
+        env:
+          YUHANA_SKIP_BUILD_OUTPUT_TESTS: "1"
         run: python3 -m unittest discover -s tests -v
       - name: Structural validation of committed playlists
         run: python3 scripts/pipeline.py verify --verbose

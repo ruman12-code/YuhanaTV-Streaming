@@ -498,7 +498,7 @@ def cmd_check(args) -> int:
     gate_cfg = cfg.get_path("validation.health_gate", {}) or {}
     verdict = assess(
         previous_status=previous_status,
-        results=results,
+        results=[r for r in results if not getattr(r, "internal_error", "")],
         max_failure_fraction=float(gate_cfg.get("max_failure_fraction", 0.70)),
         max_regression_fraction=float(gate_cfg.get("max_regression_fraction", 0.40)),
         min_baseline=int(gate_cfg.get("min_baseline", 10)),
@@ -509,10 +509,24 @@ def cmd_check(args) -> int:
     now = results[0].checked_at if results else ""
     threshold = int(cfg.get_path("validation.consecutive_failures_before_offline", 3))
 
+    bugs = [r for r in results if getattr(r, "internal_error", "")]
+    if bugs:
+        kinds = sorted({r.internal_error for r in bugs})
+        print(f"  WARNING: the validator itself failed on {len(bugs)} channel(s); "
+              f"those records are left untouched", file=sys.stderr)
+        for k in kinds[:5]:
+            print(f"    {k}", file=sys.stderr)
+    write_json(STATUS_DIR / "validator-errors.json",
+               {"count": len(bugs), "kinds": sorted({r.internal_error for r in bugs}),
+                "channels": [r.channel_id for r in bugs][:200]})
+
     all_channels = load_channels(CHANNELS_DIR)
     for ch in all_channels:
         r = by_id.get(ch.id)
-        if r is None:
+        if r is None or getattr(r, "internal_error", ""):
+            # Nothing was measured. A bug in the probe is not evidence about
+            # the stream, and recording it as one is exactly how 47 channels
+            # were once pulled for a missing attribute.
             continue
         if not ch.first_seen:
             ch.first_seen = now
