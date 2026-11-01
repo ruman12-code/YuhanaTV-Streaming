@@ -18,7 +18,7 @@ from ..models import Channel, slugify, stable_id
 from ..util.urls import check_url, host_of
 from ..content_policy import adult_channel_reason
 from ..classify import (categorise, clean_display_name, is_bangladeshi,
-                        country_for_strong_bd_name,
+                        country_for_strong_bd_name, owner_decision,
                         is_geo_blocked, is_not_24_7)
 
 _ATTR_RE = re.compile(r'([A-Za-z0-9_-]+)\s*=\s*"([^"]*)"')
@@ -222,6 +222,11 @@ def entry_to_channel(entry: ParsedEntry, source_id: str) -> tuple[Channel | None
         language = language or "bn"
     else:
         category = categorise(raw_name, group_slug)
+
+    decided = owner_decision(raw_name)
+    if decided:
+        category = decided.get("category") or category
+        country = decided.get("country", country)
 
     notes = []
     if quality_claim:

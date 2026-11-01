@@ -257,3 +257,34 @@ class TestSpellingsOfOneName(unittest.TestCase):
         for a, b in (("Bangla Vision", "Banglavision"), ("R TV", "RTV"),
                      ("Ekushe TV", "Ekushey TV"), ("Somoy Tv", "Somoy TV")):
             self.assertEqual(display_key(a), display_key(b), (a, b))
+
+
+class TestTheOwnersPlacementIsFinal(unittest.TestCase):
+    """The owner moved Makkah Live, Medina Live and Madani Channel Bangla to
+    Religious. Each carries a .bd canonical id and a Bangladeshi relay host,
+    so every automatic rule would put them straight back."""
+
+    def _one(self, group, name):
+        tmp = Path(tempfile.mkdtemp()) / "x.m3u"
+        tmp.write_text(f'#EXTM3U\n#EXTINF:-1 tvg-id="{name.replace(" ", "")}.bd" '
+                       f'group-title="{group}",{name}\nhttps://example.com/a.m3u8\n',
+                       encoding="utf-8")
+        return import_file(tmp, "t")[0][0]
+
+    def test_ingest_honours_the_decision_even_with_a_bd_id(self):
+        for name, country in (("Makkah Live", "sa"), ("Medina Live", "sa"),
+                              ("Madani Channel Bangla", "pk")):
+            ch = self._one("Bangladesh", name)
+            self.assertEqual((ch.category, ch.country), ("religious", country), name)
+
+    def test_reclassification_honours_it_too(self):
+        sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
+        import reclassify
+        from src.models import Channel
+        ch = Channel(id="x", name="Makkah Live", category="bangladesh", country="bd",
+                     stream_url="https://example.com/a.m3u8")
+        self.assertEqual(reclassify.intended(ch), "religious")
+
+    def test_undecided_channels_are_untouched(self):
+        self.assertEqual(self._one("Bangladesh", "Ekhon").category, "bangladesh")
+        self.assertEqual(self._one("Bangladesh", "Global TV").category, "bangladesh")

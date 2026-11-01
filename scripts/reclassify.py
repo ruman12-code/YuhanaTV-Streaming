@@ -25,7 +25,7 @@ sys.path.insert(0, str(REPO))
 
 from src.models import load_channels, save_channels                  # noqa: E402
 from src.classify import (categorise, is_bangladeshi,                # noqa: E402
-                          country_for_strong_bd_name)
+                          country_for_strong_bd_name, owner_decision)
 from src.ingest.m3u_import import GROUP_TO_LOCALE                   # noqa: E402
 
 CHANNELS = REPO / "data" / "channels"
@@ -46,6 +46,9 @@ def country_from_canonical_id(ch) -> str:
 def intended(ch) -> str:
     """The category the current rules would give this channel at ingest."""
     group = ch.tags[0] if ch.tags else ""
+    decided = owner_decision(ch.name)
+    if decided and decided.get("category"):
+        return decided["category"]
     if (ch.country or "").lower() == "bd" or is_bangladeshi(ch.name, ch.country):
         return "bangladesh"
     return categorise(ch.name, group)
@@ -58,6 +61,12 @@ def main() -> int:
 
     channels = load_channels(CHANNELS)
     filled = 0
+    for ch in channels:
+        decided = owner_decision(ch.name)
+        if decided and "country" in decided and ch.country != decided["country"]:
+            print(f"  country {ch.country or '--'} -> {decided['country']}: {ch.name} (owner's decision)")
+            ch.country = decided["country"]
+            filled += 1
     for ch in channels:
         if not ch.country:
             c = country_from_canonical_id(ch)

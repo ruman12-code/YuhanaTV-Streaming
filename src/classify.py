@@ -17,7 +17,9 @@ reliable signal available, and a list's tagging is the least.
 
 from __future__ import annotations
 
+import json
 import re
+from pathlib import Path
 
 # Ordered: the first pattern that matches decides. More specific first, so
 # "Disney Junior" is kids rather than being caught by a general entertainment rule.
@@ -346,3 +348,24 @@ def display_key(name: str) -> str:
     if not compact:     # a name that is nothing but "TV": keep it as written
         compact = " ".join(_DISPLAY_STRIP.sub(" ", clean_display_name(name).lower()).split())
     return (compact + paren).strip()
+
+
+# --- the owner's own placements ---------------------------------------------
+# Rules above are inferences. When the owner has looked at a channel and said
+# where it goes, that is the answer, and no rule - a .bd canonical id, a group
+# title, a Bangladeshi relay host - moves it back.
+_DECISIONS_PATH = Path(__file__).resolve().parent.parent / "data" / "owner-decisions.json"
+_DECISIONS: dict | None = None
+
+
+def owner_decision(name: str) -> dict | None:
+    """{"category": ..., "country": ...} the owner set for this channel, or None."""
+    global _DECISIONS
+    if _DECISIONS is None:
+        try:
+            rows = json.loads(_DECISIONS_PATH.read_text(encoding="utf-8")).get("channels", [])
+        except (OSError, ValueError):
+            rows = []
+        _DECISIONS = {display_key(r["name"]): r for r in rows if r.get("name")}
+    return _DECISIONS.get(display_key(name))
+
