@@ -1,46 +1,46 @@
 {
- "generated_at": "2026-11-01T04:55:54.842533+00:00",
+ "generated_at": "2026-11-01T05:38:25.770707+00:00",
  "refresh": {
   "cron": "0 */3 * * *",
   "$note": "What the schedule asks for. GitHub defers scheduled runs under load, so measure the real cadence from the ages below rather than from the cron.",
   "check_budget_seconds": 2400
  },
  "verification_age_hours": {
-  "never_verified": 47,
-  "median": 52.1,
-  "p90": 66.8,
-  "worst": 67.0,
+  "never_verified": 0,
+  "median": 48.7,
+  "p90": 58.9,
+  "worst": 59.1,
   "distribution": {
-   "<6h": 204,
-   "6-12h": 0,
+   "<6h": 4326,
+   "6-12h": 196,
    "12-24h": 0,
-   "1-2d": 2352,
-   "2-7d": 11236,
+   "1-2d": 0,
+   "2-7d": 9412,
    ">7d": 0
   }
  },
  "dead_tile_exposure_hours": {
   "strikes_before_pulled": 2,
-  "typical": 104.3,
-  "worst_case": 134.0,
+  "typical": 97.5,
+  "worst_case": 118.2,
   "$note": "A channel that dies must fail this many consecutive probes before it leaves the TV, and probes come round only as often as the ages above. This is the window in which the owner can press a tile and get nothing."
  },
  "published": {
-  "total": 7666,
-  "one_probe_from_being_pulled": 932,
-  "video_confirmed_by_decoder": 1754,
-  "video_never_confirmed": 5912,
+  "total": 7700,
+  "one_probe_from_being_pulled": 957,
+  "video_confirmed_by_decoder": 1797,
+  "video_never_confirmed": 5903,
   "mostly_black_when_decoded": 11,
   "$note_unproven": "No decoder has yet opened these and got frames out. The manifest and segment checks describe the outside of a stream; only a decode speaks to what is in it. The rotation clears this backlog a few hundred channels per run."
  },
  "withheld": {
   "denied_host": 10,
-  "last_probe_failed": 1529,
-  "requires_custom_http_headers": 1299,
-  "same_stream_as_another_tile": 59,
-  "status_degraded": 1553,
-  "status_invalid": 16,
-  "status_offline": 1647,
-  "unreliable": 60
+  "last_probe_failed": 2231,
+  "requires_custom_http_headers": 1323,
+  "same_stream_as_another_tile": 76,
+  "status_degraded": 871,
+  "status_invalid": 17,
+  "status_offline": 1585,
+  "unreliable": 121
  }
 }
