@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-05T02:01:57.882584+00:00",
+ "generated_at": "2026-11-05T11:09:59.641989+00:00",
  "refresh": {
   "cron": "0 */3 * * *",
   "$note": "What the schedule asks for. GitHub defers scheduled runs under load, so measure the real cadence from the ages below rather than from the cron.",
@@ -7,40 +7,40 @@
  },
  "verification_age_hours": {
   "never_verified": 0,
-  "median": 6.3,
-  "p90": 24.3,
-  "worst": 24.6,
+  "median": 9.5,
+  "p90": 15.6,
+  "worst": 24.2,
   "distribution": {
-   "<6h": 5162,
-   "6-12h": 3834,
-   "12-24h": 3194,
-   "1-2d": 1806,
+   "<6h": 4328,
+   "6-12h": 4510,
+   "12-24h": 4727,
+   "1-2d": 433,
    "2-7d": 0,
    ">7d": 0
   }
  },
  "dead_tile_exposure_hours": {
   "strikes_before_pulled": 2,
-  "typical": 12.5,
-  "worst_case": 49.2,
+  "typical": 19.1,
+  "worst_case": 48.4,
   "$note": "A channel that dies must fail this many consecutive probes before it leaves the TV, and probes come round only as often as the ages above. This is the window in which the owner can press a tile and get nothing."
  },
  "published": {
-  "total": 7581,
-  "one_probe_from_being_pulled": 1089,
-  "video_confirmed_by_decoder": 2447,
-  "video_never_confirmed": 5134,
+  "total": 7575,
+  "one_probe_from_being_pulled": 1091,
+  "video_confirmed_by_decoder": 2545,
+  "video_never_confirmed": 5030,
   "mostly_black_when_decoded": 18,
   "$note_unproven": "No decoder has yet opened these and got frames out. The manifest and segment checks describe the outside of a stream; only a decode speaks to what is in it. The rotation clears this backlog a few hundred channels per run."
  },
  "withheld": {
   "denied_host": 10,
-  "last_probe_failed": 3231,
+  "last_probe_failed": 3252,
   "requires_custom_http_headers": 1326,
-  "same_stream_as_another_tile": 75,
-  "status_degraded": 72,
+  "same_stream_as_another_tile": 77,
+  "status_degraded": 59,
   "status_invalid": 16,
-  "status_offline": 1522,
-  "unreliable": 163
+  "status_offline": 1515,
+  "unreliable": 168
  }
 }
