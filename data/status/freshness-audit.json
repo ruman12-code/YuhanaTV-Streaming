@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-04T20:12:14.571876+00:00",
+ "generated_at": "2026-11-05T02:01:57.882584+00:00",
  "refresh": {
   "cron": "0 */3 * * *",
   "$note": "What the schedule asks for. GitHub defers scheduled runs under load, so measure the real cadence from the ages below rather than from the cron.",
@@ -7,40 +7,40 @@
  },
  "verification_age_hours": {
   "never_verified": 0,
-  "median": 9.5,
-  "p90": 22.8,
-  "worst": 23.1,
+  "median": 6.3,
+  "p90": 24.3,
+  "worst": 24.6,
   "distribution": {
-   "<6h": 4682,
-   "6-12h": 3194,
-   "12-24h": 6118,
-   "1-2d": 0,
+   "<6h": 5162,
+   "6-12h": 3834,
+   "12-24h": 3194,
+   "1-2d": 1806,
    "2-7d": 0,
    ">7d": 0
   }
  },
  "dead_tile_exposure_hours": {
   "strikes_before_pulled": 2,
-  "typical": 19.0,
-  "worst_case": 46.1,
+  "typical": 12.5,
+  "worst_case": 49.2,
   "$note": "A channel that dies must fail this many consecutive probes before it leaves the TV, and probes come round only as often as the ages above. This is the window in which the owner can press a tile and get nothing."
  },
  "published": {
-  "total": 7556,
-  "one_probe_from_being_pulled": 1066,
-  "video_confirmed_by_decoder": 2395,
-  "video_never_confirmed": 5161,
-  "mostly_black_when_decoded": 17,
+  "total": 7581,
+  "one_probe_from_being_pulled": 1089,
+  "video_confirmed_by_decoder": 2447,
+  "video_never_confirmed": 5134,
+  "mostly_black_when_decoded": 18,
   "$note_unproven": "No decoder has yet opened these and got frames out. The manifest and segment checks describe the outside of a stream; only a decode speaks to what is in it. The rotation clears this backlog a few hundred channels per run."
  },
  "withheld": {
   "denied_host": 10,
-  "last_probe_failed": 3252,
+  "last_probe_failed": 3231,
   "requires_custom_http_headers": 1326,
   "same_stream_as_another_tile": 75,
-  "status_degraded": 89,
+  "status_degraded": 72,
   "status_invalid": 16,
-  "status_offline": 1509,
-  "unreliable": 161
+  "status_offline": 1522,
+  "unreliable": 163
  }
 }
