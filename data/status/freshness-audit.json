@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-05T20:23:39.016362+00:00",
+ "generated_at": "2026-11-06T02:38:09.671497+00:00",
  "refresh": {
   "cron": "0 */3 * * *",
   "$note": "What the schedule asks for. GitHub defers scheduled runs under load, so measure the real cadence from the ages below rather than from the cron.",
@@ -7,40 +7,40 @@
  },
  "verification_age_hours": {
   "never_verified": 0,
-  "median": 18.8,
-  "p90": 24.8,
-  "worst": 33.4,
+  "median": 6.8,
+  "p90": 30.6,
+  "worst": 30.8,
   "distribution": {
-   "<6h": 4524,
-   "6-12h": 0,
-   "12-24h": 4314,
-   "1-2d": 5160,
+   "<6h": 3722,
+   "6-12h": 4300,
+   "12-24h": 0,
+   "1-2d": 6142,
    "2-7d": 0,
    ">7d": 0
   }
  },
  "dead_tile_exposure_hours": {
   "strikes_before_pulled": 2,
-  "typical": 37.5,
-  "worst_case": 66.9,
+  "typical": 13.7,
+  "worst_case": 61.6,
   "$note": "A channel that dies must fail this many consecutive probes before it leaves the TV, and probes come round only as often as the ages above. This is the window in which the owner can press a tile and get nothing."
  },
  "published": {
-  "total": 7582,
-  "one_probe_from_being_pulled": 1091,
-  "video_confirmed_by_decoder": 2546,
-  "video_never_confirmed": 5036,
+  "total": 7683,
+  "one_probe_from_being_pulled": 1098,
+  "video_confirmed_by_decoder": 2655,
+  "video_never_confirmed": 5028,
   "mostly_black_when_decoded": 18,
   "$note_unproven": "No decoder has yet opened these and got frames out. The manifest and segment checks describe the outside of a stream; only a decode speaks to what is in it. The rotation clears this backlog a few hundred channels per run."
  },
  "withheld": {
   "denied_host": 10,
-  "last_probe_failed": 3230,
-  "requires_custom_http_headers": 1326,
-  "same_stream_as_another_tile": 77,
-  "status_degraded": 65,
+  "last_probe_failed": 3272,
+  "requires_custom_http_headers": 1329,
+  "same_stream_as_another_tile": 79,
+  "status_degraded": 88,
   "status_invalid": 16,
-  "status_offline": 1527,
-  "unreliable": 165
+  "status_offline": 1515,
+  "unreliable": 172
  }
 }
