@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-07T10:26:15.636514+00:00",
+ "generated_at": "2026-11-07T18:13:50.565829+00:00",
  "refresh": {
   "cron": "0 */3 * * *",
   "$note": "What the schedule asks for. GitHub defers scheduled runs under load, so measure the real cadence from the ages below rather than from the cron.",
@@ -7,40 +7,40 @@
  },
  "verification_age_hours": {
   "never_verified": 0,
-  "median": 15.4,
-  "p90": 32.1,
-  "worst": 32.3,
+  "median": 8.3,
+  "p90": 31.3,
+  "worst": 31.5,
   "distribution": {
-   "<6h": 4042,
-   "6-12h": 0,
-   "12-24h": 7508,
-   "1-2d": 2814,
+   "<6h": 4685,
+   "6-12h": 3831,
+   "12-24h": 3354,
+   "1-2d": 2494,
    "2-7d": 0,
    ">7d": 0
   }
  },
  "dead_tile_exposure_hours": {
   "strikes_before_pulled": 2,
-  "typical": 30.8,
-  "worst_case": 64.6,
+  "typical": 16.7,
+  "worst_case": 63.0,
   "$note": "A channel that dies must fail this many consecutive probes before it leaves the TV, and probes come round only as often as the ages above. This is the window in which the owner can press a tile and get nothing."
  },
  "published": {
-  "total": 7807,
-  "one_probe_from_being_pulled": 1076,
-  "video_confirmed_by_decoder": 2822,
-  "video_never_confirmed": 4985,
+  "total": 7785,
+  "one_probe_from_being_pulled": 1067,
+  "video_confirmed_by_decoder": 2886,
+  "video_never_confirmed": 4899,
   "mostly_black_when_decoded": 20,
   "$note_unproven": "No decoder has yet opened these and got frames out. The manifest and segment checks describe the outside of a stream; only a decode speaks to what is in it. The rotation clears this backlog a few hundred channels per run."
  },
  "withheld": {
   "denied_host": 10,
-  "last_probe_failed": 3295,
+  "last_probe_failed": 3312,
   "requires_custom_http_headers": 1334,
-  "same_stream_as_another_tile": 83,
-  "status_degraded": 109,
-  "status_invalid": 16,
-  "status_offline": 1548,
-  "unreliable": 162
+  "same_stream_as_another_tile": 85,
+  "status_degraded": 119,
+  "status_invalid": 17,
+  "status_offline": 1542,
+  "unreliable": 160
  }
 }
