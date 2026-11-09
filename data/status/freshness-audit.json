@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-09T01:20:59.839808+00:00",
+ "generated_at": "2026-11-08T20:06:17.040374+00:00",
  "refresh": {
   "cron": "0 */3 * * *",
   "$note": "What the schedule asks for. GitHub defers scheduled runs under load, so measure the real cadence from the ages below rather than from the cron.",
@@ -7,13 +7,13 @@
  },
  "verification_age_hours": {
   "never_verified": 0,
-  "median": 5.7,
-  "p90": 19.8,
-  "worst": 20.1,
+  "median": 7.1,
+  "p90": 22.0,
+  "worst": 22.3,
   "distribution": {
-   "<6h": 9159,
-   "6-12h": 1280,
-   "12-24h": 4023,
+   "<6h": 4525,
+   "6-12h": 3514,
+   "12-24h": 6402,
    "1-2d": 0,
    "2-7d": 0,
    ">7d": 0
@@ -21,26 +21,26 @@
  },
  "dead_tile_exposure_hours": {
   "strikes_before_pulled": 2,
-  "typical": 11.4,
-  "worst_case": 40.1,
+  "typical": 14.2,
+  "worst_case": 44.5,
   "$note": "A channel that dies must fail this many consecutive probes before it leaves the TV, and probes come round only as often as the ages above. This is the window in which the owner can press a tile and get nothing."
  },
  "published": {
-  "total": 7737,
-  "one_probe_from_being_pulled": 1075,
-  "video_confirmed_by_decoder": 3084,
-  "video_never_confirmed": 4653,
-  "mostly_black_when_decoded": 24,
+  "total": 7749,
+  "one_probe_from_being_pulled": 1079,
+  "video_confirmed_by_decoder": 3030,
+  "video_never_confirmed": 4719,
+  "mostly_black_when_decoded": 22,
   "$note_unproven": "No decoder has yet opened these and got frames out. The manifest and segment checks describe the outside of a stream; only a decode speaks to what is in it. The rotation clears this backlog a few hundred channels per run."
  },
  "withheld": {
   "denied_host": 10,
-  "last_probe_failed": 3283,
-  "requires_custom_http_headers": 1387,
+  "last_probe_failed": 3356,
+  "requires_custom_http_headers": 1377,
   "same_stream_as_another_tile": 83,
-  "status_degraded": 196,
+  "status_degraded": 117,
   "status_invalid": 17,
-  "status_offline": 1591,
+  "status_offline": 1574,
   "unreliable": 158
  }
 }
