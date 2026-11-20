@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-11-20T11:43:39+00:00",
+  "generated_at": "2026-11-20T12:07:10+00:00",
   "build_kind": "validated",
   "warning": "",
   "live_channels": {
     "total": 15253,
-    "active": 7875,
-    "degraded": 2488,
-    "offline": 4746,
+    "active": 7874,
+    "degraded": 2487,
+    "offline": 4748,
     "invalid": 144,
     "unverified": 0,
     "by_category": {
@@ -212,10 +212,10 @@
   },
   "resolution": {
     "measured_4k": 8,
-    "measured_1080p": 4212,
-    "measured_720p": 3130,
+    "measured_1080p": 4211,
+    "measured_720p": 3128,
     "measured_576p": 1066,
-    "measured_480p": 574,
+    "measured_480p": 577,
     "unmeasured": 5012,
     "note": "Counts come from #EXT-X-STREAM-INF RESOLUTION only. Source-claimed labels such as '(1080p)' in a channel name are never counted."
   },
@@ -234,35 +234,34 @@
       "playback_discoverable": 4,
       "playback_unverified": 1
     },
-    "rated": 302,
-    "unrated": 281,
-    "matched_to_imdb": 316,
+    "rated": 303,
+    "unrated": 280,
+    "matched_to_imdb": 317,
     "mean_rating": 5.99
   },
   "run_health": {
     "ok": true,
-    "reason": "3% of 1841 baseline channels regressed; within limits",
-    "checked": 3520,
-    "newly_failing": 110,
-    "baseline_active": 1841,
-    "failure_fraction": 0.045,
-    "regression_fraction": 0.031
+    "reason": "1% of 96 baseline channels regressed; within limits",
+    "checked": 207,
+    "newly_failing": 3,
+    "baseline_active": 96,
+    "failure_fraction": 0.0222,
+    "regression_fraction": 0.0104
   },
   "last_probe": {
     "$comment": "What the most recent run actually measured, before the 3-strike demotion rule is applied. `live_channels` above reports stored status, which lags deliberately.",
     "counts": {
-      "ACTIVE": 1808,
-      "OFFLINE": 1128,
-      "DEGRADED": 535,
-      "INVALID": 49
+      "ACTIVE": 98,
+      "OFFLINE": 72,
+      "DEGRADED": 35,
+      "INVALID": 2
     },
     "failing_stage": {
-      "OFFLINE:http": 1055,
-      "DEGRADED:segment": 476,
-      "OFFLINE:dns": 73,
-      "INVALID:manifest": 49,
-      "DEGRADED:variant": 32,
-      "DEGRADED:none": 27
+      "OFFLINE:http": 69,
+      "DEGRADED:decode": 34,
+      "OFFLINE:dns": 3,
+      "INVALID:manifest": 2,
+      "DEGRADED:variant": 1
     }
   },
   "reliability": {
@@ -362,6 +361,12 @@
         "checks": 83
       },
       {
+        "id": "ch-5902fa37dc",
+        "name": "RTV",
+        "reliability": 0.253,
+        "checks": 79
+      },
+      {
         "id": "ch-ea457cd98a",
         "name": "TV Kaliente",
         "reliability": 0.254,
@@ -452,12 +457,6 @@
         "checks": 55
       },
       {
-        "id": "ch-5902fa37dc",
-        "name": "RTV",
-        "reliability": 0.256,
-        "checks": 78
-      },
-      {
         "id": "ch-a80702363f",
         "name": "Polsat Games",
         "reliability": 0.256,
@@ -466,8 +465,14 @@
       {
         "id": "ch-4015ae0fbf",
         "name": "Green TV",
+        "reliability": 0.257,
+        "checks": 144
+      },
+      {
+        "id": "ch-268fd0a701",
+        "name": "Star Plus HD",
         "reliability": 0.259,
-        "checks": 143
+        "checks": 174
       },
       {
         "id": "ch-15b927259f",
@@ -486,12 +491,6 @@
         "name": "Nashe HD",
         "reliability": 0.259,
         "checks": 85
-      },
-      {
-        "id": "ch-268fd0a701",
-        "name": "Star Plus HD",
-        "reliability": 0.26,
-        "checks": 173
       },
       {
         "id": "ch-3171c0c1d2",
@@ -515,19 +514,6 @@
     "note": "reliability is checks_ok/checks_total across validation runs; a channel with checks_total == 0 has never been measured."
   },
   "history": [
-    {
-      "at": "2026-11-18T20:06:33+00:00",
-      "counts": {
-        "DEGRADED": 906,
-        "OFFLINE": 1388,
-        "ACTIVE": 2116,
-        "INVALID": 70
-      },
-      "health_ok": true,
-      "health_reason": "3% of 2108 baseline channels regressed; within limits",
-      "failure_fraction": 0.0317,
-      "regression_fraction": 0.0256
-    },
     {
       "at": "2026-11-18T21:57:53+00:00",
       "counts": {
@@ -644,6 +630,19 @@
       "health_reason": "3% of 1841 baseline channels regressed; within limits",
       "failure_fraction": 0.045,
       "regression_fraction": 0.031
+    },
+    {
+      "at": "2026-11-20T11:48:17+00:00",
+      "counts": {
+        "ACTIVE": 98,
+        "OFFLINE": 72,
+        "DEGRADED": 35,
+        "INVALID": 2
+      },
+      "health_ok": true,
+      "health_reason": "1% of 96 baseline channels regressed; within limits",
+      "failure_fraction": 0.0222,
+      "regression_fraction": 0.0104
     }
   ],
   "epg": {
@@ -95347,10 +95346,6 @@
         "name": "Ananda TV"
       },
       {
-        "id": "ch-0b17a79dd6",
-        "name": "ATN Bangla"
-      },
-      {
         "id": "ch-895d2f0062",
         "name": "ATN Bangla UK"
       },
@@ -95415,10 +95410,6 @@
         "name": "Green TV"
       },
       {
-        "id": "ch-fac8a546cc",
-        "name": "Maasranga TV"
-      },
-      {
         "id": "ch-789be480f4",
         "name": "Matribhumi TV"
       },
@@ -95441,18 +95432,6 @@
       {
         "id": "ch-f110db1460",
         "name": "R TV"
-      },
-      {
-        "id": "ch-5902fa37dc",
-        "name": "RTV"
-      },
-      {
-        "id": "ch-1a5fbace92",
-        "name": "RTV (Bangladesh)"
-      },
-      {
-        "id": "ch-e90153538c",
-        "name": "Rupashi Bangla TV"
       },
       {
         "id": "ch-8c50a7c3cf",
@@ -95925,10 +95904,6 @@
       {
         "id": "ch-1e426d0137",
         "name": "Kto est kto"
-      },
-      {
-        "id": "ch-6066453b6f",
-        "name": "Love Natural"
       },
       {
         "id": "ch-0432d50a10",
@@ -101307,10 +101282,6 @@
         "name": "Drake & Josh"
       },
       {
-        "id": "ch-89824fa4e9",
-        "name": "DreamWorks Channel Asia"
-      },
-      {
         "id": "ch-ef63a5ad33",
         "name": "FMH Kids"
       },
@@ -102865,10 +102836,6 @@
       {
         "id": "ch-322dda8bf5",
         "name": "Filmes Suspense"
-      },
-      {
-        "id": "ch-aad7c7d2d5",
-        "name": "FilmRise Anime"
       },
       {
         "id": "ch-2ffd6ae0ab",
@@ -108795,10 +108762,6 @@
         "name": "Sporty TV"
       },
       {
-        "id": "ch-81034e4726",
-        "name": "Star Sports 2 HD"
-      },
-      {
         "id": "ch-c6ba586309",
         "name": "Star Sports 2 Hindi"
       },
@@ -108885,10 +108848,6 @@
       {
         "id": "ch-d9ab751a02",
         "name": "Voyo Sport 1"
-      },
-      {
-        "id": "ch-2526a07356",
-        "name": "Willow"
       },
       {
         "id": "ch-74c3f68ee6",
@@ -115245,6 +115204,10 @@
         "name": "TV1000 Russian Kino Global"
       },
       {
+        "id": "ch-ce6e44d4cc",
+        "name": "ZB Cinema"
+      },
+      {
         "id": "ch-b1f845d261",
         "name": "CMT"
       },
@@ -115285,16 +115248,16 @@
         "name": "Zee Tamil News"
       },
       {
-        "id": "ch-24219d2719",
-        "name": "Colors Bangla HD"
-      },
-      {
         "id": "ch-24fbe37f17",
         "name": "FashionTV"
       },
       {
         "id": "ch-58eca2e14e",
         "name": "Joy TV"
+      },
+      {
+        "id": "ch-c6ce2c281c",
+        "name": "Sananda Tv"
       },
       {
         "id": "ch-c263017a9a",
@@ -115401,6 +115364,10 @@
         "name": "Ananda TV"
       },
       {
+        "id": "ch-0b17a79dd6",
+        "name": "ATN Bangla"
+      },
+      {
         "id": "ch-04e467977d",
         "name": "DBC News"
       },
@@ -115421,8 +115388,24 @@
         "name": "Gazi TV"
       },
       {
+        "id": "ch-fac8a546cc",
+        "name": "Maasranga TV"
+      },
+      {
+        "id": "ch-5902fa37dc",
+        "name": "RTV"
+      },
+      {
         "id": "ch-9f69837491",
         "name": "RTV"
+      },
+      {
+        "id": "ch-1a5fbace92",
+        "name": "RTV (Bangladesh)"
+      },
+      {
+        "id": "ch-e90153538c",
+        "name": "Rupashi Bangla TV"
       },
       {
         "id": "ch-d2e3422ad1",
@@ -119165,6 +119148,10 @@
         "name": "Doraemon"
       },
       {
+        "id": "ch-89824fa4e9",
+        "name": "DreamWorks Channel Asia"
+      },
+      {
         "id": "ch-c575ee6512",
         "name": "DreamWorks Channel Asia"
       },
@@ -121445,6 +121432,10 @@
         "name": "City 41"
       },
       {
+        "id": "ch-24219d2719",
+        "name": "Colors Bangla HD"
+      },
+      {
         "id": "ch-a1799f271c",
         "name": "Colors Bangla HD"
       },
@@ -122601,6 +122592,10 @@
         "name": "Star Sports 2"
       },
       {
+        "id": "ch-81034e4726",
+        "name": "Star Sports 2 HD"
+      },
+      {
         "id": "ch-9625617c80",
         "name": "Star Sports Khel"
       },
@@ -122695,6 +122690,10 @@
       {
         "id": "ch-89f2a17dc1",
         "name": "We Sport TV"
+      },
+      {
+        "id": "ch-2526a07356",
+        "name": "Willow"
       }
     ],
     "unreliable": [
@@ -123346,12 +123345,12 @@
   },
   "withheld_counts": {
     "denied_host": 10,
-    "last_probe_failed": 3391,
+    "last_probe_failed": 3381,
     "requires_custom_http_headers": 1459,
     "same_stream_as_another_tile": 88,
-    "status_degraded": 56,
+    "status_degraded": 57,
     "status_invalid": 18,
-    "status_offline": 1825,
+    "status_offline": 1834,
     "unreliable": 161
   },
   "broken_urls": [
@@ -123480,6 +123479,13 @@
       "status": "OFFLINE",
       "host": "app24.jagobd.com.bd",
       "note": "source claimed quality '720p' (unverified)"
+    },
+    {
+      "id": "ch-8c50a7c3cf",
+      "name": "SRK",
+      "status": "OFFLINE",
+      "host": "srknowapp.ncare.live",
+      "note": ""
     },
     {
       "id": "ch-d2e3422ad1",
@@ -124789,13 +124795,6 @@
       "status": "OFFLINE",
       "host": "reflect-channel36-la.cablecast.tv",
       "note": "source claimed quality '1080p' (unverified)"
-    },
-    {
-      "id": "ch-6066453b6f",
-      "name": "Love Natural",
-      "status": "OFFLINE",
-      "host": "27.124.71.27",
-      "note": ""
     },
     {
       "id": "ch-0d9bd4a0e5",
@@ -140912,6 +140911,13 @@
       "note": "source marks the channel geo-restricted to its home region"
     },
     {
+      "id": "ch-89824fa4e9",
+      "name": "DreamWorks Channel Asia",
+      "status": "OFFLINE",
+      "host": "cdn12.178.indevs.in",
+      "note": "source claimed quality '1080p' (unverified)"
+    },
+    {
       "id": "ch-c575ee6512",
       "name": "DreamWorks Channel Asia",
       "status": "OFFLINE",
@@ -151116,6 +151122,13 @@
       "status": "OFFLINE",
       "host": "163.61.227.29:8000",
       "note": "source claimed quality '576p' (unverified)"
+    },
+    {
+      "id": "ch-24219d2719",
+      "name": "Colors Bangla HD",
+      "status": "OFFLINE",
+      "host": "103.165.93.31:8095",
+      "note": ""
     },
     {
       "id": "ch-a1799f271c",
@@ -255515,7 +255528,7 @@
       "live/documentary/region-fr.m3u": 2015,
       "live/documentary/region-sa.m3u": 965,
       "live/documentary/region-it.m3u": 2426,
-      "live/documentary/region-other.m3u": 12967,
+      "live/documentary/region-other.m3u": 13154,
       "live/documentary/region-pl.m3u": 1211,
       "live/documentary/region-ca.m3u": 5599,
       "live/documentary/region-vn.m3u": 1208,
@@ -255731,9 +255744,9 @@
       "live/lifestyle/region-at.m3u": 4138,
       "live/lifestyle/region-other.m3u": 7418,
       "live/lifestyle.m3u": 3960,
-      "live/movies/lang-indian.m3u": 17028,
-      "live/movies/lang-english/01.m3u": 16858,
-      "live/movies/lang-english/02.m3u": 17080,
+      "live/movies/lang-indian.m3u": 16812,
+      "live/movies/lang-english/01.m3u": 16834,
+      "live/movies/lang-english/02.m3u": 17314,
       "live/movies/lang-english.m3u": 447,
       "live/movies/lang-others/01.m3u": 26050,
       "live/movies/lang-others/02.m3u": 27882,
@@ -255858,9 +255871,9 @@
       "live/other/region-in/03.m3u": 22725,
       "live/other/region-in/04.m3u": 21779,
       "live/other/region-in/05.m3u": 22700,
-      "live/other/region-in/06.m3u": 21593,
-      "live/other/region-in/07.m3u": 22072,
-      "live/other/region-in/08.m3u": 23361,
+      "live/other/region-in/06.m3u": 21522,
+      "live/other/region-in/07.m3u": 22067,
+      "live/other/region-in/08.m3u": 23206,
       "live/other/region-in.m3u": 1539,
       "live/other/region-us.m3u": 4425,
       "live/other/region-pk.m3u": 3994,
@@ -255964,7 +255977,7 @@
       "live/country/in/news.m3u": 617,
       "live/country/in/sports.m3u": 3429,
       "live/country/in/entertainment.m3u": 4485,
-      "live/country/in/movies.m3u": 16105,
+      "live/country/in/movies.m3u": 15889,
       "live/country/in/music.m3u": 11987,
       "live/country/in/kids.m3u": 3032,
       "live/country/in/documentary.m3u": 2321,
@@ -255975,9 +255988,9 @@
       "live/country/in/others/03.m3u": 22725,
       "live/country/in/others/04.m3u": 21779,
       "live/country/in/others/05.m3u": 22700,
-      "live/country/in/others/06.m3u": 21593,
-      "live/country/in/others/07.m3u": 22072,
-      "live/country/in/others/08.m3u": 23361,
+      "live/country/in/others/06.m3u": 21522,
+      "live/country/in/others/07.m3u": 22067,
+      "live/country/in/others/08.m3u": 23206,
       "live/country/in/others.m3u": 1555,
       "live/country/in.m3u": 1995,
       "live/country/pk/news.m3u": 2424,
@@ -255989,7 +256002,7 @@
       "live/country/us/news.m3u": 437,
       "live/country/us/sports.m3u": 19138,
       "live/country/us/entertainment.m3u": 30195,
-      "live/country/us/movies.m3u": 27785,
+      "live/country/us/movies.m3u": 27995,
       "live/country/us/series.m3u": 13216,
       "live/country/us/music.m3u": 7785,
       "live/country/us/kids.m3u": 19681,
@@ -256410,8 +256423,8 @@
       "live/country/au.m3u": 5563,
       "live/country/nz.m3u": 3609,
       "live/country/_oc.m3u": 429,
-      "live/country/others.m3u": 22422,
-      "live/by-country.m3u": 2397,
+      "live/country/others.m3u": 22609,
+      "live/by-country.m3u": 2398,
       "live/az/sym/01.m3u": 18229,
       "live/az/sym/02.m3u": 16652,
       "live/az/sym.m3u": 403,
@@ -256443,7 +256456,7 @@
       "live/az/e/02.m3u": 21768,
       "live/az/e/03.m3u": 21556,
       "live/az/e.m3u": 565,
-      "live/az/f/01.m3u": 25363,
+      "live/az/f/01.m3u": 25573,
       "live/az/f/02.m3u": 27886,
       "live/az/f.m3u": 395,
       "live/az/g/01.m3u": 20946,
@@ -256460,7 +256473,7 @@
       "live/az/k/02.m3u": 22641,
       "live/az/k.m3u": 395,
       "live/az/l/01.m3u": 24292,
-      "live/az/l/02.m3u": 23798,
+      "live/az/l/02.m3u": 23985,
       "live/az/l.m3u": 395,
       "live/az/m/01.m3u": 21076,
       "live/az/m/02.m3u": 22933,
@@ -256488,12 +256501,12 @@
       "live/az/r/04.m3u": 24204,
       "live/az/r/05.m3u": 24996,
       "live/az/r.m3u": 923,
-      "live/az/s/01.m3u": 22341,
-      "live/az/s/02.m3u": 23622,
-      "live/az/s/03.m3u": 24229,
-      "live/az/s/04.m3u": 24804,
-      "live/az/s/05.m3u": 27096,
-      "live/az/s/06.m3u": 24751,
+      "live/az/s/01.m3u": 22110,
+      "live/az/s/02.m3u": 23437,
+      "live/az/s/03.m3u": 24000,
+      "live/az/s/04.m3u": 24511,
+      "live/az/s/05.m3u": 26920,
+      "live/az/s/06.m3u": 25634,
       "live/az/s.m3u": 1099,
       "live/az/t/01.m3u": 23844,
       "live/az/t/02.m3u": 25231,
@@ -256512,21 +256525,21 @@
       "live/az/w.m3u": 27673,
       "live/az/x.m3u": 7260,
       "live/az/y.m3u": 7545,
-      "live/az/z.m3u": 21998,
+      "live/az/z.m3u": 21782,
       "live/a-z.m3u": 4587,
-      "live/my-channels.m3u": 23316,
+      "live/my-channels.m3u": 23266,
       "movies/drama.m3u": 28397,
       "movies/romance.m3u": 8081,
-      "movies/adventure.m3u": 9503,
+      "movies/adventure.m3u": 9862,
       "movies/comedy.m3u": 7288,
       "movies/action.m3u": 5709,
       "movies/fantasy.m3u": 3079,
       "movies/crime.m3u": 17973,
-      "movies/thriller.m3u": 10920,
+      "movies/thriller.m3u": 11027,
       "movies/documentary.m3u": 2049,
-      "movies/horror.m3u": 8217,
+      "movies/horror.m3u": 8576,
       "movies/english.m3u": 5982,
-      "movies/scifi.m3u": 7022,
+      "movies/scifi.m3u": 7129,
       "movies/animation.m3u": 1734,
       "movies/family.m3u": 1915,
       "movies/hd.m3u": 5481,
@@ -256537,7 +256550,7 @@
       "movies/movies.m3u": 3506,
       "master.m3u": 1545
     },
-    "total_bytes": 6161438,
+    "total_bytes": 6162171,
     "structure_ok": true,
     "structure_errors": 0,
     "structure_warnings": 0,
