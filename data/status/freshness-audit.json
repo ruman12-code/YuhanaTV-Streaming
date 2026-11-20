@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-20T02:47:00.981875+00:00",
+ "generated_at": "2026-11-20T11:43:35.800244+00:00",
  "refresh": {
   "cron": "0 */3 * * *",
   "$note": "What the schedule asks for. GitHub defers scheduled runs under load, so measure the real cadence from the ages below rather than from the cron.",
@@ -7,40 +7,40 @@
  },
  "verification_age_hours": {
   "never_verified": 0,
-  "median": 6.5,
-  "p90": 30.1,
-  "worst": 30.3,
+  "median": 9.6,
+  "p90": 32.9,
+  "worst": 33.1,
   "distribution": {
-   "<6h": 4845,
-   "6-12h": 3993,
-   "12-24h": 1598,
-   "1-2d": 4817,
+   "<6h": 3526,
+   "6-12h": 4833,
+   "12-24h": 3993,
+   "1-2d": 2901,
    "2-7d": 0,
    ">7d": 0
   }
  },
  "dead_tile_exposure_hours": {
   "strikes_before_pulled": 2,
-  "typical": 13.0,
-  "worst_case": 60.7,
+  "typical": 19.2,
+  "worst_case": 66.3,
   "$note": "A channel that dies must fail this many consecutive probes before it leaves the TV, and probes come round only as often as the ages above. This is the window in which the owner can press a tile and get nothing."
  },
  "published": {
-  "total": 8239,
-  "one_probe_from_being_pulled": 1121,
-  "video_confirmed_by_decoder": 4226,
-  "video_never_confirmed": 4013,
-  "mostly_black_when_decoded": 35,
+  "total": 8245,
+  "one_probe_from_being_pulled": 1152,
+  "video_confirmed_by_decoder": 4222,
+  "video_never_confirmed": 4023,
+  "mostly_black_when_decoded": 37,
   "$note_unproven": "No decoder has yet opened these and got frames out. The manifest and segment checks describe the outside of a stream; only a decode speaks to what is in it. The rotation clears this backlog a few hundred channels per run."
  },
  "withheld": {
   "denied_host": 10,
-  "last_probe_failed": 3388,
+  "last_probe_failed": 3391,
   "requires_custom_http_headers": 1459,
-  "same_stream_as_another_tile": 89,
-  "status_degraded": 58,
+  "same_stream_as_another_tile": 88,
+  "status_degraded": 56,
   "status_invalid": 18,
-  "status_offline": 1831,
+  "status_offline": 1825,
   "unreliable": 161
  }
 }
