@@ -1,29 +1,33 @@
 {
  "checked": 70,
  "summary": {
-  "published": 61,
-  "absent": 5,
-  "withheld": 4
+  "published": 59,
+  "withheld": 6,
+  "absent": 5
  },
  "rows": [
   {
    "name": "&TV",
    "verdict": "published",
-   "detail": "3402 of 5998 variants on the TV",
+   "detail": "3428 of 5998 variants on the TV",
    "examples": [
     "&TV",
     "&TV HD",
-    "&TV HD",
-    "&TV International"
+    "&TV International",
+    "+TV"
    ]
   },
   {
    "name": "&pictures",
-   "verdict": "published",
-   "detail": "1 of 3 variants on the TV",
-   "examples": [
-    "&pictures HD"
-   ]
+   "verdict": "withheld",
+   "detail": "status_degraded, status_offline",
+   "variants": 3,
+   "best_variant": {
+    "name": "&pictures HD",
+    "status": "OFFLINE",
+    "checks": "2/12",
+    "reason": "connection error: [Errno 111] Connection refused"
+   }
   },
   {
    "name": "&flix",
@@ -39,26 +43,30 @@
   {
    "name": "&xplor",
    "verdict": "published",
-   "detail": "6 of 19 variants on the TV",
+   "detail": "5 of 19 variants on the TV",
    "examples": [
-    "&xplor HD",
     "The Explorers",
     "Viasat Explore Classic",
-    "Xplore"
+    "Xplore",
+    "Xplore TV"
    ]
   },
   {
    "name": "&prive",
-   "verdict": "published",
-   "detail": "1 of 1 variants on the TV",
-   "examples": [
-    "Privesc.Eu TV"
-   ]
+   "verdict": "withheld",
+   "detail": "last_probe_failed",
+   "variants": 1,
+   "best_variant": {
+    "name": "Privesc.Eu TV",
+    "status": "DEGRADED",
+    "checks": "57/69",
+    "reason": "body is not an HLS manifest (no #EXTM3U)"
+   }
   },
   {
    "name": "&Music",
    "verdict": "published",
-   "detail": "95 of 164 variants on the TV",
+   "detail": "97 of 164 variants on the TV",
    "examples": [
     "1HD Music Television",
     "30A Music",
@@ -202,7 +210,7 @@
   {
    "name": "Colors",
    "verdict": "published",
-   "detail": "19 of 44 variants on the TV",
+   "detail": "18 of 44 variants on the TV",
    "examples": [
     "Colors",
     "Colors Bangla Cinema",
@@ -255,23 +263,23 @@
   {
    "name": "Cinemax",
    "verdict": "published",
-   "detail": "7 of 19 variants on the TV",
+   "detail": "8 of 19 variants on the TV",
    "examples": [
     "Cinemax (Czech Republic)",
+    "Cinemax (United States) West",
     "Cinemax 2",
-    "Cinemax 2 Central Europe",
-    "Cinemax Action East HD"
+    "Cinemax 2 Central Europe"
    ]
   },
   {
    "name": "WB",
    "verdict": "published",
-   "detail": "7 of 22 variants on the TV",
+   "detail": "9 of 22 variants on the TV",
    "examples": [
+    "ABC WBAY-TV",
     "ABC WBRZ-TV",
     "Best of The Drew Barrymore Show",
-    "NBC WBTS-CD",
-    "The CW WWBT"
+    "Fox (United States) WBRC"
    ]
   },
   {
@@ -312,11 +320,11 @@
   {
    "name": "BTV",
    "verdict": "published",
-   "detail": "42 of 72 variants on the TV",
+   "detail": "43 of 72 variants on the TV",
    "examples": [
     "5AAB TV",
+    "ABC WSB-TV",
     "ABTV Bariloche",
-    "ADB TV",
     "ARDB TV"
    ]
   },
@@ -399,10 +407,9 @@
   {
    "name": "Maasranga",
    "verdict": "published",
-   "detail": "2 of 3 variants on the TV",
+   "detail": "1 of 3 variants on the TV",
    "examples": [
-    "Maasranga",
-    "Maasranga TV"
+    "Maasranga"
    ]
   },
   {
@@ -482,7 +489,7 @@
    "best_variant": {
     "name": "Bijoy TV",
     "status": "OFFLINE",
-    "checks": "132/184",
+    "checks": "132/185",
     "reason": "HTTP 404 Not Found"
    }
   },
@@ -504,7 +511,7 @@
    "best_variant": {
     "name": "Gazi TV",
     "status": "DEGRADED",
-    "checks": "16/89",
+    "checks": "16/90",
     "reason": "no video stream in the container (plays as a black screen)"
    }
   },
@@ -532,17 +539,18 @@
   {
    "name": "BBC News",
    "verdict": "published",
-   "detail": "3 of 12 variants on the TV",
+   "detail": "4 of 12 variants on the TV",
    "examples": [
     "BBC News Asia Pacific",
     "BBC News Latin America",
+    "BBC News North America",
     "BBC News South Asia"
    ]
   },
   {
    "name": "CNN",
    "verdict": "published",
-   "detail": "18 of 27 variants on the TV",
+   "detail": "19 of 27 variants on the TV",
    "examples": [
     "A2 CNN",
     "ACNN",
@@ -597,7 +605,7 @@
   {
    "name": "Discovery",
    "verdict": "published",
-   "detail": "29 of 72 variants on the TV",
+   "detail": "25 of 72 variants on the TV",
    "examples": [
     "Asharq Discovery",
     "Discovery Asia Taiwan",
@@ -608,7 +616,7 @@
   {
    "name": "National Geographic",
    "verdict": "published",
-   "detail": "7 of 48 variants on the TV",
+   "detail": "6 of 48 variants on the TV",
    "examples": [
     "National Geographic (Croatia)",
     "National Geographic (Finland)",
@@ -630,18 +638,18 @@
   {
    "name": "History",
    "verdict": "published",
-   "detail": "17 of 58 variants on the TV",
+   "detail": "15 of 58 variants on the TV",
    "examples": [
     "Autentic History",
     "History (United States)",
-    "History 2",
-    "History 2 Latin America"
+    "History 2 Latin America",
+    "History Asia"
    ]
   },
   {
    "name": "Cartoon Network",
    "verdict": "published",
-   "detail": "16 of 37 variants on the TV",
+   "detail": "15 of 37 variants on the TV",
    "examples": [
     "Cartoon Network (Italy) HD",
     "Cartoon Network (Japan) HD",
@@ -663,12 +671,12 @@
   {
    "name": "Disney Channel",
    "verdict": "published",
-   "detail": "14 of 35 variants on the TV",
+   "detail": "12 of 35 variants on the TV",
    "examples": [
     "Disney Channel",
-    "Disney Channel",
     "Disney Channel (Bulgaria)",
-    "Disney Channel (Czech Republic)"
+    "Disney Channel (Czech Republic)",
+    "Disney Channel (France)"
    ]
   },
   {
