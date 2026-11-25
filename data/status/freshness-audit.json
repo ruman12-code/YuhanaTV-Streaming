@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-25T04:43:06.066257+00:00",
+ "generated_at": "2026-11-25T17:38:19.047423+00:00",
  "refresh": {
   "cron": "0 */3 * * *",
   "$note": "What the schedule asks for. GitHub defers scheduled runs under load, so measure the real cadence from the ages below rather than from the cron.",
@@ -7,40 +7,40 @@
  },
  "verification_age_hours": {
   "never_verified": 0,
-  "median": 8.5,
-  "p90": 28.6,
-  "worst": 28.9,
+  "median": 13.5,
+  "p90": 32.3,
+  "worst": 32.5,
   "distribution": {
-   "<6h": 4526,
-   "6-12h": 4473,
-   "12-24h": 4151,
-   "1-2d": 2502,
+   "<6h": 4686,
+   "6-12h": 0,
+   "12-24h": 8787,
+   "1-2d": 2179,
    "2-7d": 0,
    ">7d": 0
   }
  },
  "dead_tile_exposure_hours": {
   "strikes_before_pulled": 2,
-  "typical": 17.0,
-  "worst_case": 57.7,
+  "typical": 27.0,
+  "worst_case": 65.0,
   "$note": "A channel that dies must fail this many consecutive probes before it leaves the TV, and probes come round only as often as the ages above. This is the window in which the owner can press a tile and get nothing."
  },
  "published": {
-  "total": 8361,
-  "one_probe_from_being_pulled": 1204,
-  "video_confirmed_by_decoder": 4579,
-  "video_never_confirmed": 3782,
-  "mostly_black_when_decoded": 37,
+  "total": 8358,
+  "one_probe_from_being_pulled": 1206,
+  "video_confirmed_by_decoder": 4645,
+  "video_never_confirmed": 3713,
+  "mostly_black_when_decoded": 36,
   "$note_unproven": "No decoder has yet opened these and got frames out. The manifest and segment checks describe the outside of a stream; only a decode speaks to what is in it. The rotation clears this backlog a few hundred channels per run."
  },
  "withheld": {
   "denied_host": 10,
-  "last_probe_failed": 3511,
+  "last_probe_failed": 3512,
   "requires_custom_http_headers": 1485,
-  "same_stream_as_another_tile": 99,
-  "status_degraded": 80,
-  "status_invalid": 19,
-  "status_offline": 1923,
+  "same_stream_as_another_tile": 98,
+  "status_degraded": 78,
+  "status_invalid": 18,
+  "status_offline": 1929,
   "unreliable": 164
  }
 }
