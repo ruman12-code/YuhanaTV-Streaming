@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-11-27T07:54:47+00:00",
+  "generated_at": "2026-11-27T13:00:50+00:00",
   "build_kind": "validated",
   "warning": "",
   "live_channels": {
     "total": 15826,
-    "active": 8040,
-    "degraded": 2545,
-    "offline": 5109,
+    "active": 8036,
+    "degraded": 2541,
+    "offline": 5117,
     "invalid": 132,
     "unverified": 0,
     "by_category": {
@@ -212,8 +212,8 @@
   },
   "resolution": {
     "measured_4k": 8,
-    "measured_1080p": 4423,
-    "measured_720p": 3310,
+    "measured_1080p": 4425,
+    "measured_720p": 3308,
     "measured_576p": 1172,
     "measured_480p": 596,
     "unmeasured": 4999,
@@ -234,50 +234,41 @@
       "playback_discoverable": 9,
       "playback_unverified": 1
     },
-    "rated": 297,
-    "unrated": 276,
-    "matched_to_imdb": 311,
+    "rated": 298,
+    "unrated": 275,
+    "matched_to_imdb": 312,
     "mean_rating": 5.99
   },
   "run_health": {
     "ok": true,
-    "reason": "2% of 1922 baseline channels regressed; within limits",
-    "checked": 4320,
-    "newly_failing": 72,
-    "baseline_active": 1922,
-    "failure_fraction": 0.0241,
-    "regression_fraction": 0.0229
+    "reason": "3% of 97 baseline channels regressed; within limits",
+    "checked": 210,
+    "newly_failing": 14,
+    "baseline_active": 97,
+    "failure_fraction": 0.1037,
+    "regression_fraction": 0.0309
   },
   "last_probe": {
     "$comment": "What the most recent run actually measured, before the 3-strike demotion rule is applied. `live_channels` above reports stored status, which lags deliberately.",
     "counts": {
-      "ACTIVE": 1994,
-      "OFFLINE": 1342,
-      "DEGRADED": 946,
-      "INVALID": 38
+      "ACTIVE": 98,
+      "OFFLINE": 85,
+      "DEGRADED": 26,
+      "INVALID": 1
     },
     "failing_stage": {
-      "OFFLINE:http": 1242,
-      "DEGRADED:segment": 808,
-      "OFFLINE:dns": 100,
-      "DEGRADED:none": 88,
-      "DEGRADED:variant": 47,
-      "INVALID:manifest": 38,
-      "DEGRADED:decode": 3
+      "OFFLINE:http": 82,
+      "DEGRADED:decode": 26,
+      "OFFLINE:dns": 3,
+      "INVALID:manifest": 1
     }
   },
   "reliability": {
     "channels_with_history": 15826,
-    "mean_reliability": 0.6493,
-    "fully_reliable": 5170,
+    "mean_reliability": 0.6492,
+    "fully_reliable": 5168,
     "never_once_up": 2810,
     "flapping": [
-      {
-        "id": "ch-111817b2a3",
-        "name": "T Sports",
-        "reliability": 0.25,
-        "checks": 4
-      },
       {
         "id": "ch-da8c26ec4f",
         "name": "IDX Channel",
@@ -511,24 +502,17 @@
         "name": "RTL Otthon",
         "reliability": 0.25,
         "checks": 36
+      },
+      {
+        "id": "ch-12cc3902ea",
+        "name": "Sorozatklub",
+        "reliability": 0.25,
+        "checks": 36
       }
     ],
     "note": "reliability is checks_ok/checks_total across validation runs; a channel with checks_total == 0 has never been measured."
   },
   "history": [
-    {
-      "at": "2026-11-25T12:57:31+00:00",
-      "counts": {
-        "ACTIVE": 100,
-        "OFFLINE": 73,
-        "DEGRADED": 34,
-        "INVALID": 1
-      },
-      "health_ok": true,
-      "health_reason": "1% of 94 baseline channels regressed; within limits",
-      "failure_fraction": 0.024,
-      "regression_fraction": 0.0106
-    },
     {
       "at": "2026-11-25T16:54:58+00:00",
       "counts": {
@@ -645,6 +629,19 @@
       "health_reason": "2% of 1922 baseline channels regressed; within limits",
       "failure_fraction": 0.0241,
       "regression_fraction": 0.0229
+    },
+    {
+      "at": "2026-11-27T08:36:07+00:00",
+      "counts": {
+        "ACTIVE": 98,
+        "OFFLINE": 85,
+        "DEGRADED": 26,
+        "INVALID": 1
+      },
+      "health_ok": true,
+      "health_reason": "3% of 97 baseline channels regressed; within limits",
+      "failure_fraction": 0.1037,
+      "regression_fraction": 0.0309
     }
   ],
   "epg": {
@@ -96217,10 +96214,6 @@
     ],
     "last_probe_failed": [
       {
-        "id": "ch-b5cca1e8a4",
-        "name": "Ananda TV"
-      },
-      {
         "id": "ch-471e3349dd",
         "name": "Ananda TV"
       },
@@ -96245,10 +96238,6 @@
         "name": "BTV News"
       },
       {
-        "id": "ch-5cc55e1ac4",
-        "name": "Channel S"
-      },
-      {
         "id": "ch-b8abb43470",
         "name": "Channel S"
       },
@@ -96261,18 +96250,6 @@
         "name": "Channel S (United Kingdom)"
       },
       {
-        "id": "ch-a0f0b63e98",
-        "name": "Desh TV"
-      },
-      {
-        "id": "ch-787284cc9b",
-        "name": "Ekhon"
-      },
-      {
-        "id": "ch-8fd784bf92",
-        "name": "Ekushe TV"
-      },
-      {
         "id": "ch-ab2d394907",
         "name": "Enter TV"
       },
@@ -96281,24 +96258,12 @@
         "name": "Gazi TV"
       },
       {
-        "id": "ch-d429a5c212",
-        "name": "Global TV"
-      },
-      {
-        "id": "ch-00d7c1cd76",
-        "name": "Green TV"
-      },
-      {
         "id": "ch-4015ae0fbf",
         "name": "Green TV"
       },
       {
         "id": "ch-789be480f4",
         "name": "Matribhumi TV"
-      },
-      {
-        "id": "ch-a718b81488",
-        "name": "My TV"
       },
       {
         "id": "ch-794a560b41",
@@ -96311,14 +96276,6 @@
       {
         "id": "ch-769bf0cf68",
         "name": "NAN TV"
-      },
-      {
-        "id": "ch-f110db1460",
-        "name": "R TV"
-      },
-      {
-        "id": "ch-e90153538c",
-        "name": "Rupashi Bangla TV"
       },
       {
         "id": "ch-8c50a7c3cf",
@@ -96743,10 +96700,6 @@
       {
         "id": "ch-1e426d0137",
         "name": "Kto est kto"
-      },
-      {
-        "id": "ch-6066453b6f",
-        "name": "Love Natural"
       },
       {
         "id": "ch-0432d50a10",
@@ -98967,6 +98920,10 @@
       {
         "id": "ch-931025f77b",
         "name": "AWE"
+      },
+      {
+        "id": "ch-e928b8886d",
+        "name": "AWE Plus"
       },
       {
         "id": "ch-8543a56298",
@@ -104013,6 +103970,10 @@
         "name": "Goldmines Movies"
       },
       {
+        "id": "ch-ac5ccde55d",
+        "name": "Hallmark Movies & More"
+      },
+      {
         "id": "ch-2da1354050",
         "name": "Happy Days (Sweden)"
       },
@@ -105359,6 +105320,10 @@
       {
         "id": "ch-ae37113633",
         "name": "Westerns 4U"
+      },
+      {
+        "id": "ch-ce6e44d4cc",
+        "name": "ZB Cinema"
       },
       {
         "id": "ch-c10fad7a45",
@@ -107089,6 +107054,10 @@
         "name": "QTV-1"
       },
       {
+        "id": "ch-aa5eff6477",
+        "name": "R Plus News"
+      },
+      {
         "id": "ch-2f0e121432",
         "name": "Raj News Kannada"
       },
@@ -108153,10 +108122,6 @@
         "name": "Iqra Bangla"
       },
       {
-        "id": "ch-b55bcca7df",
-        "name": "Islamic TV"
-      },
-      {
         "id": "ch-f6f8a5dd05",
         "name": "It's Supernatural! Network"
       },
@@ -108209,20 +108174,12 @@
         "name": "Madani TV"
       },
       {
-        "id": "ch-f47172f491",
-        "name": "Makkah Live"
-      },
-      {
         "id": "ch-2d56def4d8",
         "name": "Makkah TV"
       },
       {
         "id": "ch-911ef65798",
         "name": "MCN Television"
-      },
-      {
-        "id": "ch-ae793780a7",
-        "name": "Medina Live"
       },
       {
         "id": "ch-aaad941da5",
@@ -108295,6 +108252,14 @@
       {
         "id": "ch-4675556265",
         "name": "Nuevo Tiempo TV"
+      },
+      {
+        "id": "ch-bc09a73355",
+        "name": "Peace TV Bangla"
+      },
+      {
+        "id": "ch-bc09a73355",
+        "name": "Peace TV Bangla"
       },
       {
         "id": "ch-30404ff55b",
@@ -116931,6 +116896,10 @@
         "name": "Groovia Kids"
       },
       {
+        "id": "ch-7304184149",
+        "name": "Nick Bangla"
+      },
+      {
         "id": "ch-c17917a572",
         "name": "Nickelodeon"
       },
@@ -117159,6 +117128,10 @@
     ],
     "status_offline": [
       {
+        "id": "ch-b5cca1e8a4",
+        "name": "Ananda TV"
+      },
+      {
         "id": "ch-36c01967d5",
         "name": "Ananda TV"
       },
@@ -117167,20 +117140,32 @@
         "name": "ATN Bangla"
       },
       {
+        "id": "ch-5cc55e1ac4",
+        "name": "Channel S"
+      },
+      {
         "id": "ch-04e467977d",
         "name": "DBC News"
       },
       {
-        "id": "ch-71f522f61c",
-        "name": "Duronto TV"
+        "id": "ch-a0f0b63e98",
+        "name": "Desh TV"
       },
       {
         "id": "ch-c6319d12a8",
         "name": "Duronto TV"
       },
       {
+        "id": "ch-787284cc9b",
+        "name": "Ekhon"
+      },
+      {
         "id": "ch-0bc4c14b1a",
         "name": "Ekhon TV"
+      },
+      {
+        "id": "ch-8fd784bf92",
+        "name": "Ekushe TV"
       },
       {
         "id": "ch-589eca07cd",
@@ -117191,12 +117176,24 @@
         "name": "Gazi TV"
       },
       {
+        "id": "ch-d429a5c212",
+        "name": "Global TV"
+      },
+      {
+        "id": "ch-00d7c1cd76",
+        "name": "Green TV"
+      },
+      {
         "id": "ch-fac8a546cc",
         "name": "Maasranga TV"
       },
       {
-        "id": "ch-8090d498ec",
-        "name": "News 21 Bangla TV"
+        "id": "ch-a718b81488",
+        "name": "My TV"
+      },
+      {
+        "id": "ch-f110db1460",
+        "name": "R TV"
       },
       {
         "id": "ch-5902fa37dc",
@@ -117209,6 +117206,10 @@
       {
         "id": "ch-1a5fbace92",
         "name": "RTV (Bangladesh)"
+      },
+      {
+        "id": "ch-e90153538c",
+        "name": "Rupashi Bangla TV"
       },
       {
         "id": "ch-d2e3422ad1",
@@ -124151,6 +124152,10 @@
         "name": "Islam Channel"
       },
       {
+        "id": "ch-b55bcca7df",
+        "name": "Islamic TV"
+      },
+      {
         "id": "ch-8b5e7d7edf",
         "name": "JBN"
       },
@@ -124175,12 +124180,20 @@
         "name": "Madani Channel English"
       },
       {
+        "id": "ch-f47172f491",
+        "name": "Makkah Live"
+      },
+      {
         "id": "ch-0fad30d3f6",
         "name": "Maria Vision"
       },
       {
         "id": "ch-0e0b1b7871",
         "name": "Master's TV"
+      },
+      {
+        "id": "ch-ae793780a7",
+        "name": "Medina Live"
       },
       {
         "id": "ch-f22817da96",
@@ -125497,10 +125510,6 @@
         "name": "Geekdot"
       },
       {
-        "id": "ch-7304184149",
-        "name": "Nick Bangla"
-      },
-      {
         "id": "ch-8d9b78cefd",
         "name": "Fortuna TV"
       },
@@ -125740,15 +125749,22 @@
   },
   "withheld_counts": {
     "denied_host": 10,
-    "last_probe_failed": 3552,
+    "last_probe_failed": 3544,
     "requires_custom_http_headers": 1495,
     "same_stream_as_another_tile": 103,
-    "status_degraded": 65,
+    "status_degraded": 66,
     "status_invalid": 18,
-    "status_offline": 1971,
-    "unreliable": 173
+    "status_offline": 1982,
+    "unreliable": 172
   },
   "broken_urls": [
+    {
+      "id": "ch-b5cca1e8a4",
+      "name": "Ananda TV",
+      "status": "OFFLINE",
+      "host": "app24.jagobd.com.bd",
+      "note": ""
+    },
     {
       "id": "ch-36c01967d5",
       "name": "Ananda TV",
@@ -125792,11 +125808,25 @@
       "note": ""
     },
     {
+      "id": "ch-5cc55e1ac4",
+      "name": "Channel S",
+      "status": "OFFLINE",
+      "host": "app24.jagobd.com.bd",
+      "note": ""
+    },
+    {
       "id": "ch-04e467977d",
       "name": "DBC News",
       "status": "OFFLINE",
       "host": "tvn3.chowdhury-shaheb.com",
       "note": "source claimed quality '480p' (unverified)"
+    },
+    {
+      "id": "ch-a0f0b63e98",
+      "name": "Desh TV",
+      "status": "OFFLINE",
+      "host": "app24.jagobd.com.bd",
+      "note": ""
     },
     {
       "id": "ch-42b1bdce94",
@@ -125806,13 +125836,6 @@
       "note": "source claimed quality '720p' (unverified); source required custom HTTP headers"
     },
     {
-      "id": "ch-71f522f61c",
-      "name": "Duronto TV",
-      "status": "OFFLINE",
-      "host": "rangdhonulive.samiulislamabhi.workers.dev",
-      "note": "source claimed quality '720p' (unverified)"
-    },
-    {
       "id": "ch-c6319d12a8",
       "name": "Duronto TV",
       "status": "OFFLINE",
@@ -125820,11 +125843,25 @@
       "note": "source claimed quality '1080p' (unverified)"
     },
     {
+      "id": "ch-787284cc9b",
+      "name": "Ekhon",
+      "status": "OFFLINE",
+      "host": "app24.jagobd.com.bd",
+      "note": ""
+    },
+    {
       "id": "ch-0bc4c14b1a",
       "name": "Ekhon TV",
       "status": "OFFLINE",
       "host": "tplay.live",
       "note": "source claimed quality '1080p' (unverified)"
+    },
+    {
+      "id": "ch-8fd784bf92",
+      "name": "Ekushe TV",
+      "status": "OFFLINE",
+      "host": "app24.jagobd.com.bd",
+      "note": ""
     },
     {
       "id": "ch-589eca07cd",
@@ -125839,6 +125876,13 @@
       "status": "OFFLINE",
       "host": "103.135.253.32:8080",
       "note": "source claimed quality '720p' (unverified)"
+    },
+    {
+      "id": "ch-d429a5c212",
+      "name": "Global TV",
+      "status": "OFFLINE",
+      "host": "app24.jagobd.com.bd",
+      "note": ""
     },
     {
       "id": "ch-00d7c1cd76",
@@ -125862,17 +125906,17 @@
       "note": "source claimed quality '720p' (unverified)"
     },
     {
-      "id": "ch-769bf0cf68",
-      "name": "NAN TV",
+      "id": "ch-a718b81488",
+      "name": "My TV",
       "status": "OFFLINE",
-      "host": "app.ncare.live",
-      "note": "source claimed quality '720p' (unverified)"
+      "host": "app24.jagobd.com.bd",
+      "note": ""
     },
     {
-      "id": "ch-8090d498ec",
-      "name": "News 21 Bangla TV",
+      "id": "ch-f110db1460",
+      "name": "R TV",
       "status": "OFFLINE",
-      "host": "103.190.133.68:1935",
+      "host": "app24.jagobd.com.bd",
       "note": ""
     },
     {
@@ -157929,6 +157973,13 @@
       "note": "source marks the channel as not 24/7"
     },
     {
+      "id": "ch-b55bcca7df",
+      "name": "Islamic TV",
+      "status": "OFFLINE",
+      "host": "app24.jagobd.com.bd",
+      "note": ""
+    },
+    {
       "id": "ch-8b5e7d7edf",
       "name": "JBN",
       "status": "OFFLINE",
@@ -158048,6 +158099,13 @@
       "note": "source claimed quality '720p' (unverified)"
     },
     {
+      "id": "ch-f47172f491",
+      "name": "Makkah Live",
+      "status": "OFFLINE",
+      "host": "app24.jagobd.com.bd",
+      "note": ""
+    },
+    {
       "id": "ch-0fad30d3f6",
       "name": "Maria Vision",
       "status": "OFFLINE",
@@ -158067,6 +158125,13 @@
       "status": "OFFLINE",
       "host": "eu1.servers10.com:8081",
       "note": "source claimed quality '720p' (unverified)"
+    },
+    {
+      "id": "ch-ae793780a7",
+      "name": "Medina Live",
+      "status": "OFFLINE",
+      "host": "app24.jagobd.com.bd",
+      "note": ""
     },
     {
       "id": "ch-82cb87402e",
@@ -258897,7 +258962,7 @@
   },
   "playlists": {
     "files": {
-      "live/bangladesh.m3u": 5559,
+      "live/bangladesh.m3u": 6007,
       "live/business/region-us.m3u": 3815,
       "live/business/region-tr.m3u": 754,
       "live/business/region-ru.m3u": 671,
@@ -258916,7 +258981,7 @@
       "live/documentary/region-fr.m3u": 2015,
       "live/documentary/region-sa.m3u": 965,
       "live/documentary/region-it.m3u": 2426,
-      "live/documentary/region-other.m3u": 12650,
+      "live/documentary/region-other.m3u": 12837,
       "live/documentary/region-pl.m3u": 986,
       "live/documentary/region-ca.m3u": 5599,
       "live/documentary/region-vn.m3u": 1407,
@@ -258996,9 +259061,9 @@
       "live/general/region-ru.m3u": 448,
       "live/general/region-th.m3u": 8845,
       "live/general/region-de.m3u": 26617,
-      "live/general/region-us/01.m3u": 28204,
-      "live/general/region-us/02.m3u": 29580,
-      "live/general/region-us/03.m3u": 28816,
+      "live/general/region-us/01.m3u": 28282,
+      "live/general/region-us/02.m3u": 29561,
+      "live/general/region-us/03.m3u": 28551,
       "live/general/region-us.m3u": 645,
       "live/general/region-es.m3u": 17630,
       "live/general/region-mx.m3u": 13855,
@@ -259136,8 +259201,8 @@
       "live/lifestyle/region-at.m3u": 4138,
       "live/lifestyle/region-other.m3u": 8021,
       "live/lifestyle.m3u": 3767,
-      "live/movies/lang-indian.m3u": 17856,
-      "live/movies/lang-english/01.m3u": 16524,
+      "live/movies/lang-indian.m3u": 17640,
+      "live/movies/lang-english/01.m3u": 16097,
       "live/movies/lang-english/02.m3u": 16113,
       "live/movies/lang-english.m3u": 447,
       "live/movies/lang-others/01.m3u": 25017,
@@ -259202,7 +259267,7 @@
       "live/news/region-in/01.m3u": 16697,
       "live/news/region-in/02.m3u": 17941,
       "live/news/region-in/03.m3u": 16889,
-      "live/news/region-in/04.m3u": 17183,
+      "live/news/region-in/04.m3u": 16969,
       "live/news/region-in.m3u": 789,
       "live/news/region-pk.m3u": 2164,
       "live/news/region-ar.m3u": 1557,
@@ -259328,7 +259393,7 @@
       "live/religious/region-pk.m3u": 835,
       "live/religious/region-it.m3u": 2323,
       "live/religious/region-py.m3u": 1039,
-      "live/religious/region-ae.m3u": 2156,
+      "live/religious/region-ae.m3u": 1685,
       "live/religious/region-tt.m3u": 864,
       "live/religious.m3u": 9642,
       "live/series/region-us.m3u": 12510,
@@ -259370,15 +259435,15 @@
       "live/sports/region-ph.m3u": 1650,
       "live/sports.m3u": 5629,
       "live/live-tv.m3u": 2629,
-      "live/country/bd.m3u": 5559,
+      "live/country/bd.m3u": 6007,
       "live/country/in/news/01.m3u": 16697,
       "live/country/in/news/02.m3u": 17941,
       "live/country/in/news/03.m3u": 16889,
-      "live/country/in/news/04.m3u": 17183,
+      "live/country/in/news/04.m3u": 16969,
       "live/country/in/news.m3u": 793,
       "live/country/in/sports.m3u": 3584,
       "live/country/in/entertainment.m3u": 4485,
-      "live/country/in/movies.m3u": 16933,
+      "live/country/in/movies.m3u": 16717,
       "live/country/in/music.m3u": 11492,
       "live/country/in/kids.m3u": 3032,
       "live/country/in/documentary.m3u": 2321,
@@ -259405,14 +259470,14 @@
       "live/country/us/news.m3u": 437,
       "live/country/us/sports.m3u": 19022,
       "live/country/us/entertainment.m3u": 29313,
-      "live/country/us/movies.m3u": 25747,
+      "live/country/us/movies.m3u": 25320,
       "live/country/us/series.m3u": 12510,
       "live/country/us/music.m3u": 8004,
       "live/country/us/kids.m3u": 19211,
       "live/country/us/documentary.m3u": 25062,
-      "live/country/us/general/01.m3u": 28204,
-      "live/country/us/general/02.m3u": 29580,
-      "live/country/us/general/03.m3u": 28816,
+      "live/country/us/general/01.m3u": 28282,
+      "live/country/us/general/02.m3u": 29561,
+      "live/country/us/general/03.m3u": 28551,
       "live/country/us/general.m3u": 648,
       "live/country/us/business.m3u": 3815,
       "live/country/us/lifestyle.m3u": 16531,
@@ -259432,7 +259497,7 @@
       "live/country/uk/religious.m3u": 3328,
       "live/country/uk/others.m3u": 2427,
       "live/country/uk.m3u": 2380,
-      "live/country/ae.m3u": 10417,
+      "live/country/ae.m3u": 9946,
       "live/country/af.m3u": 2186,
       "live/country/am.m3u": 1658,
       "live/country/az.m3u": 4218,
@@ -259840,7 +259905,7 @@
       "live/country/au.m3u": 5597,
       "live/country/nz.m3u": 3609,
       "live/country/_oc.m3u": 429,
-      "live/country/others.m3u": 19627,
+      "live/country/others.m3u": 19814,
       "live/by-country.m3u": 2397,
       "live/az/sym/01.m3u": 18268,
       "live/az/sym/02.m3u": 17238,
@@ -259850,7 +259915,7 @@
       "live/az/a/03.m3u": 26755,
       "live/az/a/04.m3u": 28412,
       "live/az/a/05.m3u": 24516,
-      "live/az/a/06.m3u": 25427,
+      "live/az/a/06.m3u": 25221,
       "live/az/a.m3u": 1099,
       "live/az/b/01.m3u": 22454,
       "live/az/b/02.m3u": 23274,
@@ -259867,7 +259932,7 @@
       "live/az/c.m3u": 1275,
       "live/az/d/01.m3u": 25145,
       "live/az/d/02.m3u": 28131,
-      "live/az/d/03.m3u": 25977,
+      "live/az/d/03.m3u": 26181,
       "live/az/d.m3u": 571,
       "live/az/e/01.m3u": 20539,
       "live/az/e/02.m3u": 21808,
@@ -259879,8 +259944,8 @@
       "live/az/g/01.m3u": 22518,
       "live/az/g/02.m3u": 23353,
       "live/az/g.m3u": 395,
-      "live/az/h/01.m3u": 26316,
-      "live/az/h/02.m3u": 25231,
+      "live/az/h/01.m3u": 26187,
+      "live/az/h/02.m3u": 24933,
       "live/az/h.m3u": 395,
       "live/az/i/01.m3u": 22361,
       "live/az/i/02.m3u": 26977,
@@ -259890,7 +259955,7 @@
       "live/az/k/02.m3u": 24965,
       "live/az/k.m3u": 395,
       "live/az/l/01.m3u": 24468,
-      "live/az/l/02.m3u": 24309,
+      "live/az/l/02.m3u": 24496,
       "live/az/l.m3u": 395,
       "live/az/m/01.m3u": 21748,
       "live/az/m/02.m3u": 23896,
@@ -259899,25 +259964,25 @@
       "live/az/m/05.m3u": 24748,
       "live/az/m.m3u": 923,
       "live/az/n/01.m3u": 22938,
-      "live/az/n/02.m3u": 18714,
-      "live/az/n/03.m3u": 21108,
-      "live/az/n/04.m3u": 23061,
-      "live/az/n/05.m3u": 21492,
+      "live/az/n/02.m3u": 18773,
+      "live/az/n/03.m3u": 21151,
+      "live/az/n/04.m3u": 22898,
+      "live/az/n/05.m3u": 21797,
       "live/az/n.m3u": 913,
       "live/az/o/01.m3u": 21103,
       "live/az/o/02.m3u": 21422,
       "live/az/o.m3u": 391,
-      "live/az/p/01.m3u": 21495,
-      "live/az/p/02.m3u": 20123,
-      "live/az/p/03.m3u": 21369,
-      "live/az/p/04.m3u": 20482,
+      "live/az/p/01.m3u": 21396,
+      "live/az/p/02.m3u": 20206,
+      "live/az/p/03.m3u": 21388,
+      "live/az/p/04.m3u": 20008,
       "live/az/p.m3u": 739,
       "live/az/q.m3u": 11096,
-      "live/az/r/01.m3u": 26721,
-      "live/az/r/02.m3u": 25241,
-      "live/az/r/03.m3u": 25177,
-      "live/az/r/04.m3u": 25000,
-      "live/az/r/05.m3u": 26000,
+      "live/az/r/01.m3u": 26785,
+      "live/az/r/02.m3u": 25369,
+      "live/az/r/03.m3u": 24945,
+      "live/az/r/04.m3u": 25027,
+      "live/az/r/05.m3u": 25799,
       "live/az/r.m3u": 923,
       "live/az/s/01.m3u": 23058,
       "live/az/s/02.m3u": 24263,
@@ -259943,32 +260008,32 @@
       "live/az/w.m3u": 27791,
       "live/az/x.m3u": 7471,
       "live/az/y.m3u": 8040,
-      "live/az/z.m3u": 22308,
-      "live/a-z.m3u": 4589,
-      "live/my-channels.m3u": 23493,
+      "live/az/z.m3u": 22092,
+      "live/a-z.m3u": 4587,
+      "live/my-channels.m3u": 22615,
       "movies/drama.m3u": 27541,
       "movies/romance.m3u": 7796,
-      "movies/adventure.m3u": 8886,
+      "movies/adventure.m3u": 9245,
       "movies/comedy.m3u": 7288,
       "movies/action.m3u": 5066,
       "movies/fantasy.m3u": 3079,
       "movies/crime.m3u": 17713,
-      "movies/thriller.m3u": 10588,
+      "movies/thriller.m3u": 10695,
       "movies/documentary.m3u": 2049,
-      "movies/horror.m3u": 7885,
+      "movies/horror.m3u": 8244,
       "movies/english.m3u": 5671,
-      "movies/scifi.m3u": 7022,
+      "movies/scifi.m3u": 7129,
       "movies/animation.m3u": 1734,
       "movies/family.m3u": 1915,
       "movies/hd.m3u": 5481,
       "movies/fullhd.m3u": 751,
       "movies/top-rated.m3u": 7781,
-      "movies/recently-added.m3u": 7636,
+      "movies/recently-added.m3u": 7532,
       "movies/trending.m3u": 8317,
       "movies/movies.m3u": 3506,
       "master.m3u": 1545
     },
-    "total_bytes": 6284450,
+    "total_bytes": 6281701,
     "structure_ok": true,
     "structure_errors": 0,
     "structure_warnings": 0,
