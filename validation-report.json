@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-11-28T03:52:20+00:00",
+  "generated_at": "2026-11-28T12:15:33+00:00",
   "build_kind": "validated",
   "warning": "",
   "live_channels": {
     "total": 15870,
-    "active": 8050,
-    "degraded": 2570,
+    "active": 8048,
+    "degraded": 2572,
     "offline": 5117,
     "invalid": 133,
     "unverified": 0,
@@ -212,8 +212,8 @@
   },
   "resolution": {
     "measured_4k": 8,
-    "measured_1080p": 4440,
-    "measured_720p": 3313,
+    "measured_1080p": 4442,
+    "measured_720p": 3309,
     "measured_576p": 1179,
     "measured_480p": 599,
     "unmeasured": 5010,
@@ -221,17 +221,17 @@
   },
   "movies": {
     "catalogue_total": 573,
-    "playable": 563,
-    "discoverable": 9,
+    "playable": 561,
+    "discoverable": 11,
     "excluded": 0,
     "unverified": 1,
     "published_as_vod": 148,
-    "eligible_on_rights_and_playback": 563,
+    "eligible_on_rights_and_playback": 561,
     "withheld": {
       "runtime_unknown": 132,
-      "rating_below_6": 125,
+      "rating_below_6": 123,
       "shorter_than_60_min": 158,
-      "playback_discoverable": 9,
+      "playback_discoverable": 11,
       "playback_unverified": 1
     },
     "rated": 298,
@@ -241,48 +241,35 @@
   },
   "run_health": {
     "ok": true,
-    "reason": "2% of 1837 baseline channels regressed; within limits",
-    "checked": 3360,
-    "newly_failing": 74,
-    "baseline_active": 1837,
-    "failure_fraction": 0.0325,
-    "regression_fraction": 0.0229
+    "reason": "2% of 97 baseline channels regressed; within limits",
+    "checked": 210,
+    "newly_failing": 3,
+    "baseline_active": 97,
+    "failure_fraction": 0.0221,
+    "regression_fraction": 0.0206
   },
   "last_probe": {
     "$comment": "What the most recent run actually measured, before the 3-strike demotion rule is applied. `live_channels` above reports stored status, which lags deliberately.",
     "counts": {
-      "ACTIVE": 1847,
-      "OFFLINE": 1107,
-      "DEGRADED": 371,
-      "INVALID": 35
+      "ACTIVE": 99,
+      "OFFLINE": 75,
+      "DEGRADED": 35,
+      "INVALID": 1
     },
     "failing_stage": {
-      "OFFLINE:http": 1049,
-      "DEGRADED:segment": 321,
-      "OFFLINE:dns": 58,
-      "INVALID:manifest": 35,
-      "DEGRADED:none": 32,
-      "DEGRADED:variant": 18
+      "OFFLINE:http": 72,
+      "DEGRADED:decode": 33,
+      "OFFLINE:dns": 3,
+      "DEGRADED:none": 2,
+      "INVALID:manifest": 1
     }
   },
   "reliability": {
     "channels_with_history": 15870,
     "mean_reliability": 0.6489,
-    "fully_reliable": 5181,
+    "fully_reliable": 5180,
     "never_once_up": 2814,
     "flapping": [
-      {
-        "id": "ch-00d7c1cd76",
-        "name": "Green TV",
-        "reliability": 0.25,
-        "checks": 196
-      },
-      {
-        "id": "ch-37e9ee2459",
-        "name": "T Sports HD",
-        "reliability": 0.25,
-        "checks": 196
-      },
       {
         "id": "ch-da8c26ec4f",
         "name": "IDX Channel",
@@ -508,26 +495,25 @@
       {
         "id": "ch-769bf0cf68",
         "name": "NAN TV",
-        "reliability": 0.253,
-        "checks": 166
+        "reliability": 0.251,
+        "checks": 167
+      },
+      {
+        "id": "ch-c4a1d6eadd",
+        "name": "Sony Marathi",
+        "reliability": 0.254,
+        "checks": 71
+      },
+      {
+        "id": "ch-8393f2bc48",
+        "name": "BLK Regional TV",
+        "reliability": 0.254,
+        "checks": 71
       }
     ],
     "note": "reliability is checks_ok/checks_total across validation runs; a channel with checks_total == 0 has never been measured."
   },
   "history": [
-    {
-      "at": "2026-11-26T05:06:39+00:00",
-      "counts": {
-        "ACTIVE": 97,
-        "OFFLINE": 72,
-        "DEGRADED": 40,
-        "INVALID": 1
-      },
-      "health_ok": true,
-      "health_reason": "1% of 95 baseline channels regressed; within limits",
-      "failure_fraction": 0.0214,
-      "regression_fraction": 0.0105
-    },
     {
       "at": "2026-11-26T11:59:01+00:00",
       "counts": {
@@ -644,6 +630,19 @@
       "health_reason": "2% of 1837 baseline channels regressed; within limits",
       "failure_fraction": 0.0325,
       "regression_fraction": 0.0229
+    },
+    {
+      "at": "2026-11-28T10:28:36+00:00",
+      "counts": {
+        "ACTIVE": 99,
+        "OFFLINE": 75,
+        "DEGRADED": 35,
+        "INVALID": 1
+      },
+      "health_ok": true,
+      "health_reason": "2% of 97 baseline channels regressed; within limits",
+      "failure_fraction": 0.0221,
+      "regression_fraction": 0.0206
     }
   ],
   "epg": {
@@ -96315,10 +96314,6 @@
         "name": "Ekushe TV"
       },
       {
-        "id": "ch-ab2d394907",
-        "name": "Enter TV"
-      },
-      {
         "id": "ch-0b53406ae5",
         "name": "Gazi TV"
       },
@@ -102363,6 +102358,10 @@
         "name": "Drake & Josh"
       },
       {
+        "id": "ch-89824fa4e9",
+        "name": "DreamWorks Channel Asia"
+      },
+      {
         "id": "ch-7a6b122464",
         "name": "Duck TV"
       },
@@ -105393,6 +105392,10 @@
       {
         "id": "ch-ae37113633",
         "name": "Westerns 4U"
+      },
+      {
+        "id": "ch-ce6e44d4cc",
+        "name": "ZB Cinema"
       },
       {
         "id": "ch-c10fad7a45",
@@ -117285,6 +117288,10 @@
         "name": "Ekhon TV"
       },
       {
+        "id": "ch-ab2d394907",
+        "name": "Enter TV"
+      },
+      {
         "id": "ch-589eca07cd",
         "name": "Gazi TV"
       },
@@ -121251,10 +121258,6 @@
       {
         "id": "ch-742fa16d93",
         "name": "Doraemon"
-      },
-      {
-        "id": "ch-89824fa4e9",
-        "name": "DreamWorks Channel Asia"
       },
       {
         "id": "ch-c575ee6512",
@@ -125850,7 +125853,7 @@
   },
   "withheld_counts": {
     "denied_host": 10,
-    "last_probe_failed": 3556,
+    "last_probe_failed": 3557,
     "requires_custom_http_headers": 1495,
     "same_stream_as_another_tile": 104,
     "status_degraded": 76,
@@ -125928,6 +125931,13 @@
       "status": "OFFLINE",
       "host": "tplay.live",
       "note": "source claimed quality '1080p' (unverified)"
+    },
+    {
+      "id": "ch-ab2d394907",
+      "name": "Enter TV",
+      "status": "OFFLINE",
+      "host": "live1.entertv.com.bd",
+      "note": ""
     },
     {
       "id": "ch-589eca07cd",
@@ -144639,13 +144649,6 @@
       "status": "OFFLINE",
       "host": "drlive03hls.akamaized.net",
       "note": "source marks the channel geo-restricted to its home region"
-    },
-    {
-      "id": "ch-89824fa4e9",
-      "name": "DreamWorks Channel Asia",
-      "status": "OFFLINE",
-      "host": "cdn12.178.indevs.in",
-      "note": "source claimed quality '1080p' (unverified)"
     },
     {
       "id": "ch-c575ee6512",
@@ -259361,7 +259364,7 @@
       "live/lifestyle/region-at.m3u": 4138,
       "live/lifestyle/region-other.m3u": 7820,
       "live/lifestyle.m3u": 3767,
-      "live/movies/lang-indian.m3u": 17668,
+      "live/movies/lang-indian.m3u": 17452,
       "live/movies/lang-english/01.m3u": 16097,
       "live/movies/lang-english/02.m3u": 16113,
       "live/movies/lang-english.m3u": 447,
@@ -259587,7 +259590,7 @@
       "live/sports/region-ua.m3u": 865,
       "live/sports/region-pl.m3u": 1818,
       "live/sports/region-nl.m3u": 837,
-      "live/sports/region-other.m3u": 11094,
+      "live/sports/region-other.m3u": 11095,
       "live/sports/region-pt.m3u": 824,
       "live/sports/region-ca.m3u": 924,
       "live/sports/region-vn.m3u": 1095,
@@ -259603,7 +259606,7 @@
       "live/country/in/news.m3u": 617,
       "live/country/in/sports.m3u": 3584,
       "live/country/in/entertainment.m3u": 4485,
-      "live/country/in/movies.m3u": 16745,
+      "live/country/in/movies.m3u": 16529,
       "live/country/in/music.m3u": 11476,
       "live/country/in/kids.m3u": 3032,
       "live/country/in/documentary.m3u": 2321,
@@ -260068,7 +260071,7 @@
       "live/country/au.m3u": 5597,
       "live/country/nz.m3u": 3609,
       "live/country/_oc.m3u": 429,
-      "live/country/others.m3u": 19560,
+      "live/country/others.m3u": 19561,
       "live/by-country.m3u": 2397,
       "live/az/sym/01.m3u": 18053,
       "live/az/sym/02.m3u": 17070,
@@ -260102,7 +260105,7 @@
       "live/az/e/03.m3u": 21879,
       "live/az/e.m3u": 565,
       "live/az/f/01.m3u": 25345,
-      "live/az/f/02.m3u": 27983,
+      "live/az/f/02.m3u": 27984,
       "live/az/f.m3u": 395,
       "live/az/g/01.m3u": 22312,
       "live/az/g/02.m3u": 23150,
@@ -260170,9 +260173,9 @@
       "live/az/w.m3u": 27992,
       "live/az/x.m3u": 7471,
       "live/az/y.m3u": 8040,
-      "live/az/z.m3u": 22308,
-      "live/a-z.m3u": 4591,
-      "live/my-channels.m3u": 23291,
+      "live/az/z.m3u": 22092,
+      "live/a-z.m3u": 4589,
+      "live/my-channels.m3u": 23076,
       "movies/drama.m3u": 27541,
       "movies/romance.m3u": 7796,
       "movies/adventure.m3u": 9245,
@@ -260190,12 +260193,12 @@
       "movies/hd.m3u": 5481,
       "movies/fullhd.m3u": 751,
       "movies/top-rated.m3u": 7781,
-      "movies/recently-added.m3u": 7532,
-      "movies/trending.m3u": 8317,
+      "movies/recently-added.m3u": 7636,
+      "movies/trending.m3u": 8233,
       "movies/movies.m3u": 3506,
       "master.m3u": 1545
     },
-    "total_bytes": 6306179,
+    "total_bytes": 6305337,
     "structure_ok": true,
     "structure_errors": 0,
     "structure_warnings": 0,
